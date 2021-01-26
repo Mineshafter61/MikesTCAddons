@@ -1,0 +1,11 @@
+name: OldThrottle
+version: ${project.version}
+main: mikeshafter.oldthrottle.OldThrottle
+api-version: 1.16
+authors: [ MikeShafter ]
+depend: [BKCommonLib]
+commands:
+  throttle:
+    usage: /throttle <speed>
+    description: Sets throttle speed
+description: Old throttle system inspired by the JR 103 series.
