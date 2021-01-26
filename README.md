@@ -8,31 +8,31 @@ OldThrottle Plugin for Limaru: A new way to control your trains!
 2. Get into the driver's cab.
 3. Run `/train claim`.
 4. Run `/throttle on`.
-5. Locate the item named `Off and Release` in your hotbar.
+5. Locate the item named **`Off and Release`** in your hotbar.
 6. Right click while holding the item in Step 5.
 
 ### Accelerating
-7. Locate the item named `Shunt` in your hotbar.
+7. Locate the item named **`Shunt`** in your hotbar.
 8. Right click while holding the item in Step 7.
-9. To gain more speed, locate the item named `Series` in your hotbar.
+9. To gain more speed, locate the item named **`Series`** in your hotbar.
 10. Right click while holding the item in Step 8.
-11. To gain EVEN more speed, locate the item named `Parallel` in your hotbar.
+11. To gain EVEN more speed, locate the item named **`Parallel`** in your hotbar.
 12. Right click while holding the item in Step 11.
 
 ### Levelling off at a fixed speed
-13. Locate the item named `Off and Release` in your hotbar.
+13. Locate the item named **`Off and Release`** in your hotbar.
 14. Right click while holding the item in Step 13.
-15. To automatically round your speed to the nearest 0.1 metre per tick, locate the item named `Auto Zone` in your hotbar.
+15. To automatically round your speed to the nearest 0.1 metre per tick, locate the item named **`Auto Zone`** in your hotbar.
 16. Right click while holding the item in Step 15.
 
 ### Decelerating
-17. Locate the item named `Add Brake` in your hotbar.
+17. Locate the item named **`Add Brake`** in your hotbar.
 18. Right click while holding the item in Step 17.
 19. To add more brake, right click again while holding the item in Step 17 until you are satisfied with the brake.
 
 ### Emergency Brake
 20. The emergency brake feature is only to be used in an emergency.
-21. To bring the train to a halt in an instant (no time at all), locate the item named `Emergency Brake` in your hotbar.
+21. To bring the train to a halt in an instant (no time at all), locate the item named **`Emergency Brake`** in your hotbar.
 22. Right click while holding the item in Step 21.
 
 ## TrainCarts Dependency
