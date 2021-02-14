@@ -1,5 +1,5 @@
 # OldThrottle
-OldThrottle Plugin for Limaru: A new way to control your trains!
+OldThrottle Plugin: A new way to control your trains!
 
 ## How to use
 
