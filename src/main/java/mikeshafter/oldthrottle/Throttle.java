@@ -206,23 +206,25 @@ public class Throttle implements Listener, CommandExecutor{
         //if we can, get properties from the train the cart is part of
         TrainProperties properties = cartProperties.getTrainProperties();
         //set acceleration
-        switch (modeHashMap.get(player)){
-          case 1: // shunt
-            if (speedHashMap.get(player) < 0.4) accelerationHashMap.put(player, 1);
-            else accelerationHashMap.put(player, 0);
-            break;
-          case 2: // series
-            if (speedHashMap.get(player) < 0.3) accelerationHashMap.put(player, 0);
-            else if (speedHashMap.get(player) < 0.6) accelerationHashMap.put(player, 3);
-            else if (speedHashMap.get(player) < 0.9) accelerationHashMap.put(player, 2);
-            else accelerationHashMap.put(player, 1);
-            break;
-          case 3: // parallel
-            if (speedHashMap.get(player) < 0.5) accelerationHashMap.put(player, 0);
-            else if (speedHashMap.get(player) < 0.7) accelerationHashMap.put(player, 5);
-            else if (speedHashMap.get(player) < 1.0) accelerationHashMap.put(player, 4);
-            else if (speedHashMap.get(player) < 1.2) accelerationHashMap.put(player, 3);
-            else accelerationHashMap.put(player, 2);
+        if (modeHashMap.get(player) == (byte) 1){
+          if (speedHashMap.get(player) < 0.4) accelerationHashMap.put(player, 1);
+          else accelerationHashMap.put(player, 0);
+        }
+        else if (modeHashMap.get(player) == (byte) 2){
+          if (speedHashMap.get(player) < 0.3) accelerationHashMap.put(player, 0);
+          else if (speedHashMap.get(player) < 0.6) accelerationHashMap.put(player, 3);
+          else if (speedHashMap.get(player) < 0.9) accelerationHashMap.put(player, 2);
+          else accelerationHashMap.put(player, 1);
+        }
+        else if (modeHashMap.get(player) == (byte) 3){
+          if (speedHashMap.get(player) < 0.5) accelerationHashMap.put(player, 0);
+          else if (speedHashMap.get(player) < 0.7) accelerationHashMap.put(player, 5);
+          else if (speedHashMap.get(player) < 1.0) accelerationHashMap.put(player, 4);
+          else if (speedHashMap.get(player) < 1.2) accelerationHashMap.put(player, 3);
+          else accelerationHashMap.put(player, 2);
+        }
+        else {
+          accelerationHashMap.put(player, 0);
         }
         //save current speed in a variable to make working with it easier, and update it
         float currentSpeed = Math.max(speedHashMap.get(player)+(accelerationHashMap.get(player)*acceleration), 0.0F);
