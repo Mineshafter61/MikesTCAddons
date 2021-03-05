@@ -6,6 +6,6 @@ authors: [ MikeShafter ]
 depend: [BKCommonLib]
 commands:
   throttle:
-    usage: /throttle <speed>
-    description: Sets throttle speed
+    usage: /throttle <on|off>
+    description: Toggles throttle
 description: Old throttle system inspired by the JR 103 series.
