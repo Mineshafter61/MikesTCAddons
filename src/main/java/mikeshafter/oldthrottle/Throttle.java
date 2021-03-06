@@ -223,9 +223,6 @@ public class Throttle implements Listener, CommandExecutor{
           else if (speedHashMap.get(player) < 1.2) accelerationHashMap.put(player, 3);
           else accelerationHashMap.put(player, 2);
         }
-        else {
-          accelerationHashMap.put(player, 0);
-        }
         //save current speed in a variable to make working with it easier, and update it
         float currentSpeed = Math.max(speedHashMap.get(player)+(accelerationHashMap.get(player)*acceleration), 0.0F);
         //update speed limit of the train
