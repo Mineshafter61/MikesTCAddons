@@ -8,4 +8,17 @@ commands:
   throttle:
     usage: /throttle <on|off>
     description: Toggles throttle
+  ta:
+    usage: /ta <message>
+    description: Makes an announcement
+  setunloadedblock:
+    usage: /setunloadedblock <world> <x> <y> <z> <block>
+    description: Sets a block in an unloaded chunk
+permissions:
+  OldThrottle.throttle:
+    default: true
+    description: Lets players use throttle controls
+  OldThrottle.ta:
+    default: op
+    description: Gives access to the /ta command
 description: Old throttle system inspired by the JR 103 series.

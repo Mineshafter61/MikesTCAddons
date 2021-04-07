@@ -1,7 +1,9 @@
 package mikeshafter.oldthrottle;
 
+import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.properties.CartProperties;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
+import com.bergerkiller.bukkit.tc.signactions.SignActionAnnounce;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -38,57 +40,61 @@ public class Throttle implements Listener, CommandExecutor{
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
     if (command.getName().equalsIgnoreCase("throttle")){
-      FileConfiguration config = plugin.getConfig();
-      
-      // Switch on Throttle
-      if (args.length == 1 && args[0].equalsIgnoreCase("on")){
-        Player player = (Player) sender;
-        // If it is already on do nothing
-        if (accelerationHashMap.get(player) != null){
-          sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned on.");
-        }
-        // Else do something; include player in playerSpeed and playerAcceleration hashmaps
-        else {
-          speedHashMap.put(player, 0F);
-          accelerationHashMap.put(player, 0);
-          sender.sendMessage(ChatColor.AQUA+"Throttle has been enabled.");
-          // Store inventory
-          for (int i = 0; i < 41; i++){
-            config.set("inv."+player.getName()+"."+i, player.getInventory().getItem(i));
+      if (sender instanceof Player && sender.hasPermission("OldThrottle.throttle")){
+        FileConfiguration config = plugin.getConfig();
+        
+        // Switch on Throttle
+        if (args.length == 1 && args[0].equalsIgnoreCase("on")){
+          Player player = (Player) sender;
+          // If it is already on do nothing
+          if (accelerationHashMap.get(player) != null){
+            sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned on.");
           }
-          plugin.saveConfig();
+          // Else do something; include player in playerSpeed and playerAcceleration hashmaps
+          else {
+            speedHashMap.put(player, 0F);
+            accelerationHashMap.put(player, 0);
+            modeHashMap.put(player, (byte) 0);
+            sender.sendMessage(ChatColor.AQUA+"Throttle has been enabled.");
+            // Store inventory
+            for (int i = 0; i < 41; i++){
+              config.set("inv."+player.getName()+"."+i, player.getInventory().getItem(i));
+            }
+            plugin.saveConfig();
+          }
+      
+          // Make items into OldThrottle controls
+          invItemsPg1(player);
+          return true;
         }
     
-        // Make items into OldThrottle controls
-        invItems(player);
-        return true;
-      }
-  
-      // Switch off throttle
-      else if (args.length == 1 && args[0].equalsIgnoreCase("off")){
-        Player player = (Player) sender;
-        //but do nothing if throttle was already off
-        if (accelerationHashMap.get(player) == null){
-          sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned off.");
-        } else {
-          //remove speed and acceleration hashmap entry
-          speedHashMap.remove(player);
-          accelerationHashMap.remove(player);
-          modeHashMap.remove(player);
-          //restore inventory
-          for (int i = 0; i < 41; i++){
-            player.getInventory().setItem(i, (ItemStack) config.get("inv."+player.getName()+"."+i));
+        // Switch off throttle
+        else if (args.length == 1 && args[0].equalsIgnoreCase("off")){
+          Player player = (Player) sender;
+          //but do nothing if throttle was already off
+          if (accelerationHashMap.get(player) == null){
+            sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned off.");
+          } else {
+            //remove speed and acceleration hashmap entry
+            speedHashMap.remove(player);
+            accelerationHashMap.remove(player);
+            modeHashMap.remove(player);
+            //restore inventory
+            for (int i = 0; i < 41; i++){
+              player.getInventory().setItem(i, (ItemStack) config.get("inv."+player.getName()+"."+i));
+            }
+            //send message to player
+            sender.sendMessage(ChatColor.AQUA+"Throttle turned off");
           }
-          //send message to player
-          sender.sendMessage(ChatColor.AQUA+"Throttle turned off");
+          return true;
         }
-        return true;
       }
     }
+    
     return false;
   }
   
-  public void invItems(Player player) {
+  public void invItemsPg1(Player player) {
     ItemStack item = new ItemStack(Material.BLUE_CONCRETE, 1);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
@@ -120,11 +126,7 @@ public class Throttle implements Listener, CommandExecutor{
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(6, item);
     item.setType(Material.LIGHT_GRAY_CONCRETE);
-    itemMeta.setDisplayName("Turn Left");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(7, item);
-    item.setType(Material.LIGHT_GRAY_CONCRETE);
-    itemMeta.setDisplayName("Turn Right");
+    itemMeta.setDisplayName("More");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(8, item);
   }
@@ -173,6 +175,7 @@ public class Throttle implements Listener, CommandExecutor{
             accelerationHashMap.put(player, 0);
             break;
           case "Off and Release":
+            if (speedHashMap.get(player) < 0.1f) player.performCommand("train launch 15");
             modeHashMap.put(player, (byte) 0);
             accelerationHashMap.put(player, 0);
             break;
@@ -189,12 +192,16 @@ public class Throttle implements Listener, CommandExecutor{
             modeHashMap.put(player, (byte) 0);
             speedHashMap.put(player, Float.valueOf(String.format("%.1f", speedHashMap.get(player))));
             accelerationHashMap.put(player, 0);
+            break; 
+          case "More":
+            //TODO: Inventory Page 2
+            break;
         }
       }
       event.setCancelled(true);
     }
     if (action == Action.RIGHT_CLICK_BLOCK && speedHashMap.containsKey(player)) // Make items into OldThrottle controls
-      invItems(player);
+      invItemsPg1(player);
   }
   
   public void repeatThrottle() {

@@ -16,15 +16,12 @@ public final class OldThrottle extends JavaPlugin implements Listener{
     saveConfig();
   
     Throttle throttle = new Throttle();
+    TrainAnnounce trainAnnounce = new TrainAnnounce();
     getServer().getPluginManager().registerEvents(throttle, this);
     Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
+    Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
   
-    getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-      @Override
-      public void run() {
-        throttle.repeatThrottle();
-      }
-    }, 0L, 1L);
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, throttle::repeatThrottle, 0L, 1L);
   }
   
   @Override
