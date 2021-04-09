@@ -1,7 +1,7 @@
-# OldThrottle
-OldThrottle Plugin: A new way to control your trains!
+# SimpleThrottle
+SimpleThrottle is a fork of OldThrottle designed to make the train throttle process easier for people who don't understand the traditional throttle system.
 
-## How to use
+## How to use (TO BE UPDATED)
 
 ### Initialising the train
 1. Spawn a train.
