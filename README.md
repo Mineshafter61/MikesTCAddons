@@ -38,4 +38,4 @@ SimpleThrottle is a fork of OldThrottle designed to make the train throttle proc
 ## TrainCarts Dependency
 This plugin and guide assumes that you have the plugin, [TrainCarts](https://www.spigotmc.org/resources/traincarts.39592/), installed. Some commands required to correctly start the train requires a basic knowledge of TrainCarts and its commands.
 
-# OldThrottle is an official plugin of the Limaru City Server.
+# SimpleThrottle is an official plugin of the Limaru City Server.
