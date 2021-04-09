@@ -7,13 +7,12 @@ SimpleThrottle is a fork of OldThrottle designed to make the train throttle proc
 1. Spawn a train.
 2. Get into the driver's cab.
 3. Run `/train claim`.
-4. Run `/throttle on`.
-5. Locate the item named **`Off and Release`** in your hotbar.
-6. Right click while holding the item in Step 5.
+4. Run `/simplethrottle on`.
 
 ### Accelerating
-7. Locate the item named **`Shunt`** in your hotbar.
-8. Right click while holding the item in Step 7.
+5. The **Green** and **Lime** concrete in slots 6 and 7 of the inventory are for accelerating.
+6. Right click while holding the item in Step 5 to activate the mode.
+7. **GREEN** - 
 9. To gain more speed, locate the item named **`Series`** in your hotbar.
 10. Right click while holding the item in Step 8.
 11. To gain EVEN more speed, locate the item named **`Parallel`** in your hotbar.
