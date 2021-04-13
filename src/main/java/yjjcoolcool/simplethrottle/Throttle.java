@@ -1,4 +1,4 @@
-package mikeshafter.oldthrottle;
+package yjjcoolcool.simplethrottle;
 
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.properties.CartProperties;
@@ -35,27 +35,27 @@ public class Throttle implements Listener, CommandExecutor{
   //stores current acceleration mode
   HashMap<Player, Byte> modeHashMap = new HashMap<>();
   
-  private final Plugin plugin = OldThrottle.getPlugin(OldThrottle.class);
+  private final Plugin plugin = SimpleThrottle.getPlugin(SimpleThrottle.class);
   
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-    if (command.getName().equalsIgnoreCase("throttle")){
-      if (sender instanceof Player && sender.hasPermission("OldThrottle.throttle")){
+    if (command.getName().equalsIgnoreCase("simplethrottle")){
+      if (sender instanceof Player && sender.hasPermission("SimpleThrottle.throttle")){
         FileConfiguration config = plugin.getConfig();
         
         // Switch on Throttle
-        if (args.length == 1 && args[0].equalsIgnoreCase("on")){
+        if (args.length == 1 && (args[0].equalsIgnoreCase("on")||args[0].equalsIgnoreCase("enable"))){
           Player player = (Player) sender;
           // If it is already on do nothing
           if (accelerationHashMap.get(player) != null){
-            sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned on.");
+            sender.sendMessage(ChatColor.AQUA+"Simple Throttle has already been turned on.");
           }
           // Else do something; include player in playerSpeed and playerAcceleration hashmaps
           else {
             speedHashMap.put(player, 0F);
             accelerationHashMap.put(player, 0);
             modeHashMap.put(player, (byte) 0);
-            sender.sendMessage(ChatColor.AQUA+"Throttle has been enabled.");
+            sender.sendMessage(ChatColor.AQUA+"Simple Throttle has been enabled.");
             // Store inventory
             for (int i = 0; i < 41; i++){
               config.set("inv."+player.getName()+"."+i, player.getInventory().getItem(i));
@@ -63,17 +63,17 @@ public class Throttle implements Listener, CommandExecutor{
             plugin.saveConfig();
           }
       
-          // Make items into OldThrottle controls
+          // Make items into SimpleThrottle controls
           invItemsPg1(player);
           return true;
         }
     
         // Switch off throttle
-        else if (args.length == 1 && args[0].equalsIgnoreCase("off")){
+        else if (args.length == 1 && args[0].equalsIgnoreCase("off")||args[0].equalsIgnoreCase("disable"))){
           Player player = (Player) sender;
           //but do nothing if throttle was already off
           if (accelerationHashMap.get(player) == null){
-            sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned off.");
+            sender.sendMessage(ChatColor.AQUA+"Simple Throttle has already been turned off.");
           } else {
             //remove speed and acceleration hashmap entry
             speedHashMap.remove(player);
@@ -84,7 +84,7 @@ public class Throttle implements Listener, CommandExecutor{
               player.getInventory().setItem(i, (ItemStack) config.get("inv."+player.getName()+"."+i));
             }
             //send message to player
-            sender.sendMessage(ChatColor.AQUA+"Throttle turned off");
+            sender.sendMessage(ChatColor.AQUA+"Simple Throttle turned off");
           }
           return true;
         }
@@ -95,38 +95,42 @@ public class Throttle implements Listener, CommandExecutor{
   }
   
   public void invItemsPg1(Player player) {
-    ItemStack item = new ItemStack(Material.BLUE_CONCRETE, 1);
+    ItemStack item = new ItemStack(Material.BARRIER, 1);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
-    itemMeta.setDisplayName("Add Brake");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(0, item);
-    item.setType(Material.LIME_CONCRETE);
-    itemMeta.setDisplayName("Off and Release");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(1, item);
-    item.setType(Material.PURPLE_TERRACOTTA);
-    itemMeta.setDisplayName("Shunt");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(2, item);
-    item.setType(Material.PURPLE_CONCRETE);
-    itemMeta.setDisplayName("Series");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(3, item);
-    item.setType(Material.MAGENTA_TERRACOTTA);
-    itemMeta.setDisplayName("Parallel");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(4, item);
-    item.setType(Material.ORANGE_CONCRETE);
-    itemMeta.setDisplayName("Auto Zone");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(5, item);
-    item.setType(Material.RED_CONCRETE);
     itemMeta.setDisplayName("Emergency Brake");
     item.setItemMeta(itemMeta);
+    player.getInventory().setItem(0, item);
+    item.setType(Material.RED_CONCRETE);
+    itemMeta.setDisplayName("Brake - Power 3");
+    item.setItemMeta(itemMeta);
+    player.getInventory().setItem(1, item);
+    item.setType(Material.ORANGE_TERRACOTTA);
+    itemMeta.setDisplayName("Brake - Power 2");
+    item.setItemMeta(itemMeta);
+    player.getInventory().setItem(2, item);
+    item.setType(Material.ORANGE_CONCRETE);
+    itemMeta.setDisplayName("Brake - Power 1");
+    item.setItemMeta(itemMeta);
+    player.getInventory().setItem(3, item);
+    item.setType(Material.YELLOW_CONCRETE);
+    itemMeta.setDisplayName("Idle");
+    item.setItemMeta(itemMeta);
+    player.getInventory().setItem(4, item);
+    item.setType(Material.GREEN_CONCRETE);
+    itemMeta.setDisplayName("Accelerate - Power 1");
+    item.setItemMeta(itemMeta);
+    player.getInventory().setItem(5, item);
+    item.setType(Material.LIME_TERRACOTTA);
+    itemMeta.setDisplayName("Accelerate - Power 2");
+    item.setItemMeta(itemMeta);
     player.getInventory().setItem(6, item);
-    item.setType(Material.LIGHT_GRAY_CONCRETE);
-    itemMeta.setDisplayName("More");
+    item.setType(Material.LIME_TERRACOTTA);
+    itemMeta.setDisplayName("Accelerate - Power 3");
+    item.setItemMeta(itemMeta);
+    player.getInventory().setItem(7, item);
+    item.setType(Material.COMMAND_BLOCK_MINECART);
+    itemMeta.setDisplayName("Auto Zone");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(8, item);
   }
@@ -200,7 +204,7 @@ public class Throttle implements Listener, CommandExecutor{
       }
       event.setCancelled(true);
     }
-    if (action == Action.RIGHT_CLICK_BLOCK && speedHashMap.containsKey(player)) // Make items into OldThrottle controls
+    if (action == Action.RIGHT_CLICK_BLOCK && speedHashMap.containsKey(player)) // Make items into SimpleThrottle controls
       invItemsPg1(player);
   }
   

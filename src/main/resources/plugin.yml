@@ -1,24 +1,15 @@
-name: OldThrottle
+name: SimpleThrottle
 version: ${project.version}
-main: mikeshafter.oldthrottle.OldThrottle
+main: yjjcoolcool.simplethrottle.SimpleThrottle
 api-version: 1.16
-authors: [ MikeShafter ]
+authors: [ MikeShafter, YJJcoolcool ]
 depend: [BKCommonLib]
 commands:
-  throttle:
-    usage: /throttle <on|off>
-    description: Toggles throttle
-  ta:
-    usage: /ta <message>
-    description: Makes an announcement
-  setunloadedblock:
-    usage: /setunloadedblock <world> <x> <y> <z> <block>
-    description: Sets a block in an unloaded chunk
+  simplethrottle:
+    usage: /simplethrottle <on|off|enable|disable>
+    description: Toggles simple throttle
 permissions:
-  OldThrottle.throttle:
+  SimpleThrottle.throttle:
     default: true
-    description: Lets players use throttle controls
-  OldThrottle.ta:
-    default: op
-    description: Gives access to the /ta command
-description: Old throttle system inspired by the JR 103 series.
+    description: Lets players use simple throttle controls
+description: Simple throttle system for normal people.

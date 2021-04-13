@@ -1,4 +1,4 @@
-package mikeshafter.oldthrottle;
+package yjjcoolcool.simplethrottle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
@@ -6,17 +6,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
-public final class OldThrottle extends JavaPlugin implements Listener{
+public final class SimpleThrottle extends JavaPlugin implements Listener{
   
   @Override
   public void onEnable() {
     // Plugin startup logic
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle has been invoked!");
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"SimpleThrottle starting...");
     getConfig().options().copyDefaults(true);
     saveConfig();
   
     Throttle throttle = new Throttle();
-    TrainAnnounce trainAnnounce = new TrainAnnounce();
     getServer().getPluginManager().registerEvents(throttle, this);
     Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
     Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
@@ -28,6 +27,6 @@ public final class OldThrottle extends JavaPlugin implements Listener{
   public void onDisable(){
     // Plugin shutdown logic
     saveConfig();
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle has been disabled.");
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"SimpleThrottle has been disabled.");
   }
 }
