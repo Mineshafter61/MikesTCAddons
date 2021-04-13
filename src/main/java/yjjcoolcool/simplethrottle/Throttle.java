@@ -69,7 +69,7 @@ public class Throttle implements Listener, CommandExecutor{
         }
     
         // Switch off throttle
-        else if (args.length == 1 && args[0].equalsIgnoreCase("off")||args[0].equalsIgnoreCase("disable"))){
+        else if (args.length == 1 && (args[0].equalsIgnoreCase("off")||args[0].equalsIgnoreCase("disable"))){
           Player player = (Player) sender;
           //but do nothing if throttle was already off
           if (accelerationHashMap.get(player) == null){
@@ -169,10 +169,18 @@ public class Throttle implements Listener, CommandExecutor{
       if (player.getInventory().getItemInMainHand().getItemMeta() != null){
         String mode = player.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
         switch (mode){
-          case "Add Brake":
+          case "Brake - Power 1":
             modeHashMap.put(player, (byte) 0);
-            accelerationHashMap.put(player, accelerationHashMap.get(player)-1);
+            accelerationHashMap.put(player, -1);
             break;
+          case "Brake - Power 2":
+              modeHashMap.put(player, (byte) 0);
+              accelerationHashMap.put(player, -2);
+              break;
+          case "Brake - Power 3":
+              modeHashMap.put(player, (byte) 0);
+              accelerationHashMap.put(player, -3);
+              break;
           case "Emergency Brake":
             modeHashMap.put(player, (byte) 0);
             speedHashMap.put(player, 0F);
@@ -183,13 +191,13 @@ public class Throttle implements Listener, CommandExecutor{
             modeHashMap.put(player, (byte) 0);
             accelerationHashMap.put(player, 0);
             break;
-          case "Shunt":
+          case "Accelerate - Power 1":
             modeHashMap.put(player, (byte) 1);
             break;
-          case "Series":
+          case "Accelerate - Power 2":
             modeHashMap.put(player, (byte) 2);
             break;
-          case "Parallel":
+          case "Accelerate - Power 3":
             modeHashMap.put(player, (byte) 3);
             break;
           case "Auto Zone":
@@ -218,24 +226,29 @@ public class Throttle implements Listener, CommandExecutor{
         TrainProperties properties = cartProperties.getTrainProperties();
         //set acceleration
         if (modeHashMap.get(player) == (byte) 1){
-          if (speedHashMap.get(player) < 0.4) accelerationHashMap.put(player, 1);
-          else accelerationHashMap.put(player, 0);
+        	if (speedHashMap.get(player) < 2.0) accelerationHashMap.put(player, 1);
+            else accelerationHashMap.put(player, 0);
         }
         else if (modeHashMap.get(player) == (byte) 2){
-          if (speedHashMap.get(player) < 0.3) accelerationHashMap.put(player, 0);
+        	if (speedHashMap.get(player) < 2.0) accelerationHashMap.put(player, 2);
+            else accelerationHashMap.put(player, 0);
+          /*if (speedHashMap.get(player) < 0.3) accelerationHashMap.put(player, 0);
           else if (speedHashMap.get(player) < 0.6) accelerationHashMap.put(player, 3);
           else if (speedHashMap.get(player) < 0.9) accelerationHashMap.put(player, 2);
-          else accelerationHashMap.put(player, 1);
+          else accelerationHashMap.put(player, 1);*/
         }
         else if (modeHashMap.get(player) == (byte) 3){
-          if (speedHashMap.get(player) < 0.5) accelerationHashMap.put(player, 0);
+        	if (speedHashMap.get(player) < 2.0) accelerationHashMap.put(player, 3);
+            else accelerationHashMap.put(player, 0);
+          /*if (speedHashMap.get(player) < 0.5) accelerationHashMap.put(player, 0);
           else if (speedHashMap.get(player) < 0.7) accelerationHashMap.put(player, 5);
           else if (speedHashMap.get(player) < 1.0) accelerationHashMap.put(player, 4);
           else if (speedHashMap.get(player) < 1.2) accelerationHashMap.put(player, 3);
-          else accelerationHashMap.put(player, 2);
+          else accelerationHashMap.put(player, 2);*/
         }
         //save current speed in a variable to make working with it easier, and update it
         float currentSpeed = Math.max(speedHashMap.get(player)+(accelerationHashMap.get(player)*acceleration), 0.0F);
+        if (currentSpeed>2.0) currentSpeed = 2.0f; //Limit the speed to 2.0
         //update speed limit of the train
         properties.setSpeedLimit(currentSpeed);
         //update new current speed

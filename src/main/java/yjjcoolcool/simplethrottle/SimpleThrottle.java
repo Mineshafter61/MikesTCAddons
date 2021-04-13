@@ -18,7 +18,6 @@ public final class SimpleThrottle extends JavaPlugin implements Listener{
     Throttle throttle = new Throttle();
     getServer().getPluginManager().registerEvents(throttle, this);
     Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
-    Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
   
     getServer().getScheduler().scheduleSyncRepeatingTask(this, throttle::repeatThrottle, 0L, 1L);
   }
