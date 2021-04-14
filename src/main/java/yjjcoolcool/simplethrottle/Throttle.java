@@ -37,7 +37,7 @@ public class Throttle implements Listener, CommandExecutor{
   
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-    if (command.getName().equalsIgnoreCase("simplethrottle")){
+    if (command.getName().equalsIgnoreCase("simplethrottle")||command.getName().equalsIgnoreCase("sthrottle")){
       if (sender instanceof Player && sender.hasPermission("SimpleThrottle.throttle")){
         FileConfiguration config = plugin.getConfig();
         

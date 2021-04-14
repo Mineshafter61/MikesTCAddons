@@ -5,8 +5,13 @@ api-version: 1.16
 authors: [ MikeShafter, YJJcoolcool ]
 depend: [BKCommonLib]
 commands:
+  sthrottle:
+    usage: /sthrottle <on|off|enable|disable>
+    aliases: [on, off, enable, disable]
+    description: Toggles simple throttle
   simplethrottle:
     usage: /simplethrottle <on|off|enable|disable>
+    aliases: [on, off, enable, disable]
     description: Toggles simple throttle
 permissions:
   SimpleThrottle.throttle:
