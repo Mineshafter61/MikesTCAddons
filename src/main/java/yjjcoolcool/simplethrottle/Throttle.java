@@ -1,9 +1,7 @@
 package yjjcoolcool.simplethrottle;
 
-import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.properties.CartProperties;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
-import com.bergerkiller.bukkit.tc.signactions.SignActionAnnounce;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -114,7 +112,7 @@ public class Throttle implements Listener, CommandExecutor{
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(3, item);
     item.setType(Material.YELLOW_CONCRETE);
-    itemMeta.setDisplayName("Idle");
+    itemMeta.setDisplayName("Idle / Launch");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(4, item);
     item.setType(Material.GREEN_CONCRETE);
@@ -125,7 +123,7 @@ public class Throttle implements Listener, CommandExecutor{
     itemMeta.setDisplayName("Accelerate - Power 2");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(6, item);
-    item.setType(Material.LIME_TERRACOTTA);
+    item.setType(Material.LIME_CONCRETE);
     itemMeta.setDisplayName("Accelerate - Power 3");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(7, item);
@@ -182,12 +180,15 @@ public class Throttle implements Listener, CommandExecutor{
               accelerationHashMap.put(player, -3);
               break;
           case "Emergency Brake":
-            modeHashMap.put(player, (byte) 0);
+        	  modeHashMap.put(player, (byte) 0);
+              accelerationHashMap.put(player, -4);
+              break;
+            /*modeHashMap.put(player, (byte) 0);
             speedHashMap.put(player, 0F);
             accelerationHashMap.put(player, 0);
-            break;
-          case "Off and Release":
-            if (speedHashMap.get(player) < 0.1f) player.performCommand("train launch 15");
+            break;*/
+          case "Idle / Launch":
+            if (speedHashMap.get(player) < 0.1f) player.performCommand("train launch 1");
             modeHashMap.put(player, (byte) 0);
             accelerationHashMap.put(player, 0);
             break;
