@@ -8,11 +8,11 @@ commands:
   sthrottle:
     usage: /sthrottle <on|off|enable|disable>
     aliases: [on, off, enable, disable]
-    description: Toggles simple throttle
+    description: Toggles SimpleThrottle
   simplethrottle:
     usage: /simplethrottle <on|off|enable|disable>
     aliases: [on, off, enable, disable]
-    description: Toggles simple throttle
+    description: Toggles SimpleThrottle
 permissions:
   SimpleThrottle.throttle:
     default: true
