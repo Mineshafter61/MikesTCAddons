@@ -20,7 +20,7 @@ public final class OldThrottle extends JavaPlugin implements Listener{
     getServer().getPluginManager().registerEvents(throttle, this);
     Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
     Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
-  
+    Objects.requireNonNull(getCommand("setunloadedblock")).setExecutor(trainAnnounce);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, throttle::repeatThrottle, 0L, 1L);
   }
   
