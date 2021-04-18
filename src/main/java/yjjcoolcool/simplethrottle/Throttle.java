@@ -92,45 +92,36 @@ public class Throttle implements Listener, CommandExecutor{
     return false;
   }
   
+  public ItemStack newPlayerSlotItem(Material material, String displayname) {
+	  ItemStack item = new ItemStack(Material.BARRIER, 1);
+	  ItemMeta itemMeta = item.getItemMeta();
+	  assert itemMeta != null;
+	  item.setType(material);
+	  itemMeta.setDisplayName(displayname);
+	  item.setItemMeta(itemMeta);
+	  return item;
+  }
+  
   public void invItemsPg1(Player player) {
-    ItemStack item = new ItemStack(Material.BARRIER, 1);
+    /*ItemStack item = new ItemStack(Material.BARRIER, 1);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
     itemMeta.setDisplayName("Emergency Brake");
     item.setItemMeta(itemMeta);
-    player.getInventory().setItem(0, item);
-    item.setType(Material.RED_CONCRETE);
+    player.getInventory().setItem(0, item);*/
+    /*item.setType(Material.RED_CONCRETE);
     itemMeta.setDisplayName("Brake - Power 3");
     item.setItemMeta(itemMeta);
-    player.getInventory().setItem(1, item);
-    item.setType(Material.ORANGE_TERRACOTTA);
-    itemMeta.setDisplayName("Brake - Power 2");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(2, item);
-    item.setType(Material.ORANGE_CONCRETE);
-    itemMeta.setDisplayName("Brake - Power 1");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(3, item);
-    item.setType(Material.YELLOW_CONCRETE);
-    itemMeta.setDisplayName("Idle / Launch");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(4, item);
-    item.setType(Material.GREEN_CONCRETE);
-    itemMeta.setDisplayName("Accelerate - Power 1");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(5, item);
-    item.setType(Material.LIME_TERRACOTTA);
-    itemMeta.setDisplayName("Accelerate - Power 2");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(6, item);
-    item.setType(Material.LIME_CONCRETE);
-    itemMeta.setDisplayName("Accelerate - Power 3");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(7, item);
-    item.setType(Material.COMMAND_BLOCK_MINECART);
-    itemMeta.setDisplayName("Auto Zone");
-    item.setItemMeta(itemMeta);
-    player.getInventory().setItem(8, item);
+    player.getInventory().setItem(1, item);*/
+    player.getInventory().setItem(0, newPlayerSlotItem(Material.BARRIER, ChatColor.WHITE+"Emergency Brake"));
+    player.getInventory().setItem(1, newPlayerSlotItem(Material.RED_CONCRETE, ChatColor.WHITE+"Brake - Power 3"));
+    player.getInventory().setItem(2, newPlayerSlotItem(Material.ORANGE_TERRACOTTA, ChatColor.WHITE+"Brake - Power 2"));
+    player.getInventory().setItem(3, newPlayerSlotItem(Material.ORANGE_CONCRETE, ChatColor.WHITE+"Brake - Power 1"));
+    player.getInventory().setItem(4, newPlayerSlotItem(Material.YELLOW_CONCRETE, ChatColor.WHITE+"Idle / Launch"));
+    player.getInventory().setItem(5, newPlayerSlotItem(Material.GREEN_CONCRETE, ChatColor.WHITE+"Accelerate - Power 1"));
+    player.getInventory().setItem(6, newPlayerSlotItem(Material.LIME_TERRACOTTA, ChatColor.WHITE+"Accelerate - Power 2"));
+    player.getInventory().setItem(7, newPlayerSlotItem(Material.LIME_CONCRETE, ChatColor.WHITE+"Accelerate - Power 3"));
+    player.getInventory().setItem(8, newPlayerSlotItem(Material.COMMAND_BLOCK_MINECART, ChatColor.WHITE+"Auto Zone"));
   }
   
   @EventHandler
@@ -163,48 +154,66 @@ public class Throttle implements Listener, CommandExecutor{
   public void onInteract(PlayerInteractEvent event){
     Action action = event.getAction(); // Instance of action
     Player player = event.getPlayer(); // Instance of player.
-    if ((action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK)) && speedHashMap.containsKey(player)){
+    if ((action.equals(Action.RIGHT_CLICK_AIR) || action.equals(Action.RIGHT_CLICK_BLOCK) || action.equals(Action.LEFT_CLICK_AIR) || action.equals(Action.LEFT_CLICK_BLOCK)) && speedHashMap.containsKey(player)){
       if (player.getInventory().getItemInMainHand().getItemMeta() != null){
-        String mode = player.getInventory().getItemInMainHand().getItemMeta().getDisplayName();
+        String mode = ChatColor.stripColor(player.getInventory().getItemInMainHand().getItemMeta().getDisplayName());
         switch (mode){
           case "Brake - Power 1":
-            modeHashMap.put(player, (byte) 0);
-            accelerationHashMap.put(player, -1);
-            break;
+        	  modeHashMap.put(player, (byte) 0);
+        	  accelerationHashMap.put(player, -1);
+        	  invItemsPg1(player);
+        	  player.getInventory().setItem(3, newPlayerSlotItem(Material.ORANGE_CONCRETE, ChatColor.GOLD+"Brake - Power 1"));
+              break;
           case "Brake - Power 2":
               modeHashMap.put(player, (byte) 0);
               accelerationHashMap.put(player, -2);
+              invItemsPg1(player);
+              player.getInventory().setItem(2, newPlayerSlotItem(Material.ORANGE_TERRACOTTA, ChatColor.GOLD+"Brake - Power 2"));
               break;
           case "Brake - Power 3":
               modeHashMap.put(player, (byte) 0);
               accelerationHashMap.put(player, -3);
+              invItemsPg1(player);
+              player.getInventory().setItem(1, newPlayerSlotItem(Material.RED_CONCRETE, ChatColor.GOLD+"Brake - Power 3"));
               break;
           case "Emergency Brake":
         	  modeHashMap.put(player, (byte) 0);
-              accelerationHashMap.put(player, -4);
+              accelerationHashMap.put(player, -5);
+              invItemsPg1(player);
+              player.getInventory().setItem(0, newPlayerSlotItem(Material.BARRIER, ChatColor.RED+"Emergency Brake"));
               break;
             /*modeHashMap.put(player, (byte) 0);
             speedHashMap.put(player, 0F);
             accelerationHashMap.put(player, 0);
             break;*/
           case "Idle / Launch":
-            if (speedHashMap.get(player) < 0.1f) player.performCommand("train launch 1");
+            if (speedHashMap.get(player) < 0.01f) player.performCommand("train launch 1");
             modeHashMap.put(player, (byte) 0);
             accelerationHashMap.put(player, 0);
+            invItemsPg1(player);
+            player.getInventory().setItem(4, newPlayerSlotItem(Material.YELLOW_CONCRETE, ChatColor.GOLD+"Idle / Launch"));
             break;
           case "Accelerate - Power 1":
             modeHashMap.put(player, (byte) 1);
+            invItemsPg1(player);
+            player.getInventory().setItem(5, newPlayerSlotItem(Material.GREEN_CONCRETE, ChatColor.GOLD+"Accelerate - Power 1"));
             break;
           case "Accelerate - Power 2":
             modeHashMap.put(player, (byte) 2);
+            invItemsPg1(player);
+            player.getInventory().setItem(6, newPlayerSlotItem(Material.LIME_TERRACOTTA, ChatColor.GOLD+"Accelerate - Power 2"));
             break;
           case "Accelerate - Power 3":
             modeHashMap.put(player, (byte) 3);
+            invItemsPg1(player);
+            player.getInventory().setItem(7, newPlayerSlotItem(Material.LIME_CONCRETE, ChatColor.GOLD+"Accelerate - Power 3"));
             break;
           case "Auto Zone":
             modeHashMap.put(player, (byte) 0);
             speedHashMap.put(player, Float.valueOf(String.format("%.1f", speedHashMap.get(player))));
             accelerationHashMap.put(player, 0);
+            invItemsPg1(player);
+            player.getInventory().setItem(8, newPlayerSlotItem(Material.COMMAND_BLOCK_MINECART, ChatColor.GOLD+"Auto Zone"));
             break; 
           case "More":
             //TODO: Inventory Page 2
