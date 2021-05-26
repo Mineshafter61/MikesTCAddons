@@ -21,7 +21,12 @@ public class TrainAnnounce implements CommandExecutor {
         Player player = (Player) sender;
         player.sendMessage("it works! (debug code)");
         String message = String.join(" ", args);
-        SignActionAnnounce.sendMessage(null, MinecartGroupStore.get(player), message);
+        try {
+          SignActionAnnounce.sendMessage(null, MinecartGroupStore.get(player), message);
+        } catch (Exception e) {
+          player.sendMessage("This command can only be used in a train!");
+          return false;
+        }
         return true;
       }
     }
