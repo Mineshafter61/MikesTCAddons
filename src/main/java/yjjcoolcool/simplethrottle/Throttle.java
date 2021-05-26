@@ -113,14 +113,14 @@ public class Throttle implements Listener, CommandExecutor{
     itemMeta.setDisplayName("Brake - Power 3");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(1, item);*/
-    player.getInventory().setItem(0, newPlayerSlotItem(Material.BARRIER, ChatColor.WHITE+"Emergency Brake"));
-    player.getInventory().setItem(1, newPlayerSlotItem(Material.RED_CONCRETE, ChatColor.WHITE+"Brake - Power 3"));
-    player.getInventory().setItem(2, newPlayerSlotItem(Material.ORANGE_TERRACOTTA, ChatColor.WHITE+"Brake - Power 2"));
-    player.getInventory().setItem(3, newPlayerSlotItem(Material.ORANGE_CONCRETE, ChatColor.WHITE+"Brake - Power 1"));
-    player.getInventory().setItem(4, newPlayerSlotItem(Material.YELLOW_CONCRETE, ChatColor.WHITE+"Idle / Launch"));
-    player.getInventory().setItem(5, newPlayerSlotItem(Material.GREEN_CONCRETE, ChatColor.WHITE+"Accelerate - Power 1"));
-    player.getInventory().setItem(6, newPlayerSlotItem(Material.LIME_TERRACOTTA, ChatColor.WHITE+"Accelerate - Power 2"));
-    player.getInventory().setItem(7, newPlayerSlotItem(Material.LIME_CONCRETE, ChatColor.WHITE+"Accelerate - Power 3"));
+    player.getInventory().setItem(0, newPlayerSlotItem(Material.STICK, ChatColor.WHITE+"Emergency Brake"));
+    player.getInventory().setItem(1, newPlayerSlotItem(Material.RED_DYE, ChatColor.WHITE+"Brake - Power 3"));
+    player.getInventory().setItem(2, newPlayerSlotItem(Material.ORANGE_DYE, ChatColor.WHITE+"Brake - Power 2"));
+    player.getInventory().setItem(3, newPlayerSlotItem(Material.PINK_DYE, ChatColor.WHITE+"Brake - Power 1"));
+    player.getInventory().setItem(4, newPlayerSlotItem(Material.YELLOW_DYE, ChatColor.WHITE+"Idle / Launch"));
+    player.getInventory().setItem(5, newPlayerSlotItem(Material.GREEN_DYE, ChatColor.WHITE+"Accelerate - Power 1"));
+    player.getInventory().setItem(6, newPlayerSlotItem(Material.LIME_DYE, ChatColor.WHITE+"Accelerate - Power 2"));
+    player.getInventory().setItem(7, newPlayerSlotItem(Material.CYAN_DYE, ChatColor.WHITE+"Accelerate - Power 3"));
     player.getInventory().setItem(8, newPlayerSlotItem(Material.COMMAND_BLOCK_MINECART, ChatColor.WHITE+"Auto Zone"));
   }
   
@@ -162,25 +162,25 @@ public class Throttle implements Listener, CommandExecutor{
         	  modeHashMap.put(player, (byte) 0);
         	  accelerationHashMap.put(player, -1);
         	  invItemsPg1(player);
-        	  player.getInventory().setItem(3, newPlayerSlotItem(Material.ORANGE_CONCRETE, ChatColor.GOLD+"Brake - Power 1"));
+        	  player.getInventory().setItem(3, newPlayerSlotItem(Material.PINK_DYE, ChatColor.GOLD+"Brake - Power 1"));
               break;
           case "Brake - Power 2":
               modeHashMap.put(player, (byte) 0);
               accelerationHashMap.put(player, -2);
               invItemsPg1(player);
-              player.getInventory().setItem(2, newPlayerSlotItem(Material.ORANGE_TERRACOTTA, ChatColor.GOLD+"Brake - Power 2"));
+              player.getInventory().setItem(2, newPlayerSlotItem(Material.ORANGE_DYE, ChatColor.GOLD+"Brake - Power 2"));
               break;
           case "Brake - Power 3":
               modeHashMap.put(player, (byte) 0);
               accelerationHashMap.put(player, -3);
               invItemsPg1(player);
-              player.getInventory().setItem(1, newPlayerSlotItem(Material.RED_CONCRETE, ChatColor.GOLD+"Brake - Power 3"));
+              player.getInventory().setItem(1, newPlayerSlotItem(Material.RED_DYE, ChatColor.GOLD+"Brake - Power 3"));
               break;
           case "Emergency Brake":
         	  modeHashMap.put(player, (byte) 0);
               accelerationHashMap.put(player, -5);
               invItemsPg1(player);
-              player.getInventory().setItem(0, newPlayerSlotItem(Material.BARRIER, ChatColor.RED+"Emergency Brake"));
+              player.getInventory().setItem(0, newPlayerSlotItem(Material.STICK, ChatColor.RED+"Emergency Brake"));
               break;
             /*modeHashMap.put(player, (byte) 0);
             speedHashMap.put(player, 0F);
@@ -191,22 +191,22 @@ public class Throttle implements Listener, CommandExecutor{
             modeHashMap.put(player, (byte) 0);
             accelerationHashMap.put(player, 0);
             invItemsPg1(player);
-            player.getInventory().setItem(4, newPlayerSlotItem(Material.YELLOW_CONCRETE, ChatColor.GOLD+"Idle / Launch"));
+            player.getInventory().setItem(4, newPlayerSlotItem(Material.YELLOW_DYE, ChatColor.GOLD+"Idle / Launch"));
             break;
           case "Accelerate - Power 1":
             modeHashMap.put(player, (byte) 1);
             invItemsPg1(player);
-            player.getInventory().setItem(5, newPlayerSlotItem(Material.GREEN_CONCRETE, ChatColor.GOLD+"Accelerate - Power 1"));
+            player.getInventory().setItem(5, newPlayerSlotItem(Material.GREEN_DYE, ChatColor.GOLD+"Accelerate - Power 1"));
             break;
           case "Accelerate - Power 2":
             modeHashMap.put(player, (byte) 2);
             invItemsPg1(player);
-            player.getInventory().setItem(6, newPlayerSlotItem(Material.LIME_TERRACOTTA, ChatColor.GOLD+"Accelerate - Power 2"));
+            player.getInventory().setItem(6, newPlayerSlotItem(Material.LIME_DYE, ChatColor.GOLD+"Accelerate - Power 2"));
             break;
           case "Accelerate - Power 3":
             modeHashMap.put(player, (byte) 3);
             invItemsPg1(player);
-            player.getInventory().setItem(7, newPlayerSlotItem(Material.LIME_CONCRETE, ChatColor.GOLD+"Accelerate - Power 3"));
+            player.getInventory().setItem(7, newPlayerSlotItem(Material.CYAN_DYE, ChatColor.GOLD+"Accelerate - Power 3"));
             break;
           case "Auto Zone":
             modeHashMap.put(player, (byte) 0);
@@ -214,13 +214,9 @@ public class Throttle implements Listener, CommandExecutor{
             accelerationHashMap.put(player, 0);
             invItemsPg1(player);
             player.getInventory().setItem(8, newPlayerSlotItem(Material.COMMAND_BLOCK_MINECART, ChatColor.GOLD+"Auto Zone"));
-            break; 
-          case "More":
-            //TODO: Inventory Page 2
             break;
         }
       }
-      event.setCancelled(true);
     }
     if (action == Action.RIGHT_CLICK_BLOCK && speedHashMap.containsKey(player)) // Make items into SimpleThrottle controls
       invItemsPg1(player);
