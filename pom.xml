@@ -6,7 +6,7 @@
 
   <groupId>yjjcoolcool</groupId>
   <artifactId>SimpleThrottle</artifactId>
-  <version>1.16.5-v2</version>
+  <version>1.16.5-v3</version>
   <packaging>jar</packaging>
 
   <name>OldThrottle</name>
