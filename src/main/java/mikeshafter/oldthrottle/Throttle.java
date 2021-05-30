@@ -209,15 +209,15 @@ public class Throttle implements Listener, CommandExecutor {
           // Inv Page 1
           case "Add Brake":
             modeHashMap.put(player, (byte) 0);
-            if (brakeHashMap.get(player).getProgress() > 0.08) {
-              brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress()-0.08333);
+            if (brakeHashMap.get(player).getProgress() > 0.062) {
+              brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress()-0.06);
               forceHashMap.put(player, forceHashMap.get(player)-0.001f);
             }
             break;
           case "Emergency Brake":
             modeHashMap.put(player, (byte) 0);
-            while (brakeHashMap.get(player).getProgress() > 0.08) {
-              brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress()-0.08333);
+            while (brakeHashMap.get(player).getProgress() > 0.062) {
+              brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress()-0.06);
               forceHashMap.put(player, forceHashMap.get(player)-0.001f);
             }
             break;
@@ -318,19 +318,22 @@ public class Throttle implements Listener, CommandExecutor {
         TrainProperties properties = cartProperties.getTrainProperties();
         
         // accelerating forces
+        // shunt
         if (modeHashMap.get(player) == (byte) 1){
           if (speedHashMap.get(player) < 0.4) forceHashMap.put(player, 0.001f);
           else forceHashMap.put(player, 0f);
-          if (brakeHashMap.get(player).getProgress() < 0.95) {
-            brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress() + 0.01);
+          if (brakeHashMap.get(player).getProgress() < 0.97) {
+            brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress() + 0.002);
           }
         }
+        // series
         else if (modeHashMap.get(player) == (byte) 2){
           if (speedHashMap.get(player) < 0.2) forceHashMap.put(player, 0f);
           else if (speedHashMap.get(player) < 0.6) forceHashMap.put(player, 0.003f);
           else if (speedHashMap.get(player) < 0.9) forceHashMap.put(player, 0.002f);
           else forceHashMap.put(player, 0.001f);
         }
+        // parallel
         else if (modeHashMap.get(player) == (byte) 3){
           if (speedHashMap.get(player) < 0.5) forceHashMap.put(player, 0f);
           else if (speedHashMap.get(player) < 0.7) forceHashMap.put(player, 0.005f);

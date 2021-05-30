@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>OldThrottle</artifactId>
-  <version>1.16.5r3</version>
+  <version>1.16.5b4</version>
   <packaging>jar</packaging>
 
   <name>OldThrottle</name>
@@ -62,6 +62,10 @@
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
+    <repository>
+      <id>MG-Dev Jenkins CI Maven Repository</id>
+      <url>https://ci.mg-dev.eu/plugin/repository/everything</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -74,8 +78,14 @@
 
     <dependency>
       <groupId>com.bergerkiller.bukkit</groupId>
-      <artifactId>tc</artifactId>
-      <version>1.16.5-v1</version>
+      <artifactId>BKCommonLib</artifactId>
+      <version>1.16.5-v3-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.bergerkiller.bukkit</groupId>
+      <artifactId>TrainCarts</artifactId>
+      <version>1.16.5-v2-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
