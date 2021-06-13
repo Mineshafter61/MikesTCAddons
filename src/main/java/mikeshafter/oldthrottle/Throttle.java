@@ -25,6 +25,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -44,25 +45,25 @@ public class Throttle implements Listener, CommandExecutor {
   private final Plugin plugin = OldThrottle.getPlugin(OldThrottle.class);
   
   @Override
-  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+  public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
     if (command.getName().equalsIgnoreCase("throttle")) {
       if (sender instanceof Player && sender.hasPermission("OldThrottle.throttle")) {
         //FileConfiguration config = plugin.getConfig();
         
         // Switch on Throttle
-        if (args.length == 1 && args[0].equalsIgnoreCase("on")){
+        if (args.length == 1 && args[0].equalsIgnoreCase("on")) {
           Player player = (Player) sender;
           // If it is already on do nothing
-          if (forceHashMap.get(player) != null){
+          if (forceHashMap.get(player) != null) {
             sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned on.");
           }
           // Else do something; include player in playerSpeed and playerAcceleration hashmaps
           else {
-            speedHashMap.put(player, 0F);
+            //speedHashMap.put(player, 0F);
             forceHashMap.put(player, 0f);
             modeHashMap.put(player, (byte) 0);
             sender.sendMessage(ChatColor.AQUA+"Throttle has been enabled.");
-  
+            
             brakeHashMap.put(player, Bukkit.createBossBar("Brake", BarColor.BLUE, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC));
             brakeHashMap.get(player).addPlayer(player); /* Remove player from boss bar */
             // Store inventory
@@ -74,7 +75,7 @@ public class Throttle implements Listener, CommandExecutor {
               playerHB[i] = player.getInventory().getItem(i);
             }
             invHashMap.put(player, playerHB);
-            plugin.saveConfig();
+            //plugin.saveConfig();
           }
       
           // Make items into OldThrottle controls
@@ -119,14 +120,13 @@ public class Throttle implements Listener, CommandExecutor {
   
   public void invItemsPg1(Player player) {
     // Clear inventory (if switching from Page 2)
-    ItemStack item = new ItemStack(Material.AIR, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
     for (int i = 0; i < 9; i++) {
-      player.getInventory().setItem(i, item);
+      player.getInventory().setItem(i, new ItemStack(Material.AIR, 0));
     }
   
-    item = new ItemStack(Material.BLUE_DYE, 1);
+    ItemStack item = new ItemStack(Material.BLUE_DYE, 1);
+    ItemMeta itemMeta = item.getItemMeta();
+    assert itemMeta != null;
     itemMeta.setDisplayName("Add Brake");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(0, item);
@@ -208,7 +208,7 @@ public class Throttle implements Listener, CommandExecutor {
         switch (mode){
           // Inv Page 1
           case "Add Brake":
-            modeHashMap.put(player, (byte) 0);
+            //modeHashMap.put(player, (byte) 0);
             if (brakeHashMap.get(player).getProgress() > 0.062) {
               brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress()-0.06);
               forceHashMap.put(player, forceHashMap.get(player)-0.001f);
@@ -269,29 +269,20 @@ public class Throttle implements Listener, CommandExecutor {
       }
     }
   }
-
-//  @EventHandler
-//  public void onBlockPlace(BlockPlaceEvent event) {
-//    Player player = event.getPlayer(); // Instance of player.
-//    if (speedHashMap.containsKey(player)) {
-//      event.setCancelled(true);
-//    }
-//  }
   
   public void invItemsPg2(Player player) {
     // Clear inventory (if switching from Page 1)
-    ItemStack item = new ItemStack(Material.AIR, 1);
+    for (int i = 0; i < 9; i++) {
+      player.getInventory().setItem(i, new ItemStack(Material.AIR, 0));
+    }
+  
+    ItemStack item = new ItemStack(Material.LIGHT_GRAY_DYE, 1);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
-    for (int i = 0; i < 9; i++) {
-      player.getInventory().setItem(i, item);
-    }
-    
-    item = new ItemStack(Material.LIGHT_GRAY_DYE, 1);
     itemMeta.setDisplayName("Less");
     item.setItemMeta(itemMeta);
     player.getInventory().setItem(0, item);
-    
+  
     item.setType(Material.LIME_DYE);
     itemMeta.setDisplayName("Left");
     item.setItemMeta(itemMeta);
@@ -311,30 +302,31 @@ public class Throttle implements Listener, CommandExecutor {
   public void repeatThrottle() {
     for (Player player : forceHashMap.keySet()) {
       //get properties of the cart the player is currently editing
+  
       CartProperties cartProperties = CartProperties.getEditing(player);
       //check if we got cart properties
-      if (cartProperties != null) {
+      if (cartProperties != null && cartProperties.hasOwners() && cartProperties.getOwners().contains(player.getName())) {
         //if we can, get properties from the train the cart is part of
         TrainProperties properties = cartProperties.getTrainProperties();
-        
+    
         // accelerating forces
         // shunt
-        if (modeHashMap.get(player) == (byte) 1){
+        if (modeHashMap.get(player) == (byte) 1) {
           if (speedHashMap.get(player) < 0.4) forceHashMap.put(player, 0.001f);
           else forceHashMap.put(player, 0f);
           if (brakeHashMap.get(player).getProgress() < 0.97) {
-            brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress() + 0.002);
+            brakeHashMap.get(player).setProgress(brakeHashMap.get(player).getProgress()+0.0026);
           }
         }
         // series
-        else if (modeHashMap.get(player) == (byte) 2){
+        else if (modeHashMap.get(player) == (byte) 2) {
           if (speedHashMap.get(player) < 0.2) forceHashMap.put(player, 0f);
           else if (speedHashMap.get(player) < 0.6) forceHashMap.put(player, 0.003f);
           else if (speedHashMap.get(player) < 0.9) forceHashMap.put(player, 0.002f);
           else forceHashMap.put(player, 0.001f);
         }
         // parallel
-        else if (modeHashMap.get(player) == (byte) 3){
+        else if (modeHashMap.get(player) == (byte) 3) {
           if (speedHashMap.get(player) < 0.5) forceHashMap.put(player, 0f);
           else if (speedHashMap.get(player) < 0.7) forceHashMap.put(player, 0.005f);
           else if (speedHashMap.get(player) < 1.0) forceHashMap.put(player, 0.004f);
@@ -344,12 +336,13 @@ public class Throttle implements Listener, CommandExecutor {
         
         //save current speed in a variable to make working with it easier, and update it
         float currentSpeed = Math.max(speedHashMap.get(player)+forceHashMap.get(player), 0.0F);
+        float torque = forceHashMap.get(player);
         //update speed limit of the train
         properties.setSpeedLimit(currentSpeed);
         //update new current speed
         speedHashMap.put(player, currentSpeed);
         //send speed to player
-        String message = ChatColor.GREEN+"Current speed: "+ChatColor.YELLOW+String.format("%.3f", currentSpeed)+ChatColor.GREEN+"m/t";
+        String message = ChatColor.GREEN+"Speed: "+ChatColor.YELLOW+String.format("%.3f", currentSpeed)+ChatColor.GREEN+"m/t. Torque: "+ChatColor.YELLOW+String.format("%.3f", torque);
         //actionbar version
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
         //boss bar version

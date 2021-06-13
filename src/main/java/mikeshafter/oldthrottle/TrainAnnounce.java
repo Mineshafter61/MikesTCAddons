@@ -2,6 +2,7 @@ package mikeshafter.oldthrottle;
 
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
@@ -11,44 +12,50 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class TrainAnnounce implements CommandExecutor {
+  // Text colour
+  private static final Pattern HEX_PATTERN = Pattern.compile("&(#\\w{6})");
+  
   @Override
   public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String s, String[] args) {
-    if (command.getName().equalsIgnoreCase("ta")){
-
+    
+    // Command format: /ta <message>
+    if (command.getName().equalsIgnoreCase("ta")) {
+      
       // If sent from player
-      if (sender instanceof Player && sender.hasPermission("OldThrottle.ta")){
+      if (sender instanceof Player && sender.hasPermission("OldThrottle.ta")) {
         Player player = (Player) sender;
-        String message = String.join(" ", args);
-        player.sendMessage("DEBUG: "+message); // TODO: DEBUG
-
+        String message = colourise(String.join(" ", args));
+        player.sendMessage("Sent message: "+message);
+        
         // Get the train the player is in
-        MinecartGroupStore store = new MinecartGroupStore();
-        for (MinecartMember<?> member : store.get(player) {
-
+        for (MinecartMember<?> member : MinecartGroupStore.get(player.getVehicle())) {
+          
           // Get every player passenger
           for (Player passenger : member.getEntity().getPlayerPassengers()) {
-           passenger.sendMessage(message);
+            passenger.sendMessage(message);
           }
         }
         return true;
-
+        
         // If sent from command block
       } else if (sender instanceof BlockCommandSender) {
         BlockCommandSender commandSender = (BlockCommandSender) sender;
         Block commandBlock = commandSender.getBlock();
         String message = String.join(" ", args);
-
+        
         // Get every player within 3 blocks of the cmd block
-        // TODO: change this to nearest player within 3 blocks
+        // .distanceSquared() takes up lesser ram than .distance()
         for (Player player : Bukkit.getOnlinePlayers())
-          if (commandBlock.getLocation().distance(player.getLocation()) <= 3) {
-            player.sendMessage("DEBUG: "+message); // TODO: DEBUG
-
+          if (commandBlock.getLocation().distanceSquared(player.getLocation()) <= 9) {
+            
             // Get the train the player is in
-            for (MinecartMember<?> member : MinecartGroupStore.get(player)) {
-
+            for (MinecartMember<?> member : MinecartGroupStore.get(player.getVehicle())) {
+              
               // Get every player passenger
               for (Player passenger : member.getEntity().getPlayerPassengers()) {
                 passenger.sendMessage(message);
@@ -58,23 +65,68 @@ public class TrainAnnounce implements CommandExecutor {
           }
       }
     }
-
-    /*
-    else if (command.getName().equalsIgnoreCase("setunloadedblock")){
-      if (args.length == 5) {
-        Location blockLoc = new Location(Bukkit.getWorld(args[0]), Double.parseDouble(args[1]), Double.parseDouble(args[2]), Double.parseDouble(args[3]));
-        if (!blockLoc.getChunk().isLoaded())
-          blockLoc.getChunk().load();
-        blockLoc.getBlock().setType(Objects.requireNonNull(Material.getMaterial(args[4].toUpperCase())));
-        if (blockLoc.getBlock().getType() == Material.getMaterial(args[4].toUpperCase())) {
-          sender.sendMessage(String.format("Placed %s at world %s, x=%s y=%s z=%s]", args[4], args[0], args[1], args[2], args[3]));
-          blockLoc.getChunk().unload();
-          return true;
+    
+    
+    // Command format: /tj <message>
+    // Same as above, but this sends raw json
+    if (command.getName().equalsIgnoreCase("tj")) {
+      
+      // If sent from player
+      if (sender instanceof Player && sender.hasPermission("OldThrottle.tj")) {
+        Player player = (Player) sender;
+        String message = String.join(" ", args);
+        player.sendMessage("Sent message:");
+        sendJsonMessage(player, message);
+        
+        // Get the train the player is in
+        for (MinecartMember<?> member : MinecartGroupStore.get(player.getVehicle())) {
+          
+          // Get every player passenger
+          for (Player passenger : member.getEntity().getPlayerPassengers()) {
+            sendJsonMessage(passenger, message);
+          }
         }
+        return true;
+        
+        // If sent from command block
+      } else if (sender instanceof BlockCommandSender) {
+        BlockCommandSender commandSender = (BlockCommandSender) sender;
+        Block commandBlock = commandSender.getBlock();
+        String message = String.join(" ", args);
+        
+        // Get every player within 3 blocks of the cmd block
+        // .distanceSquared() takes up lesser ram than .distance()
+        for (Player player : Bukkit.getOnlinePlayers())
+          if (commandBlock.getLocation().distanceSquared(player.getLocation()) <= 9) {
+            
+            // Get the train the player is in
+            for (MinecartMember<?> member : MinecartGroupStore.get(player.getVehicle())) {
+              
+              // Get every player passenger
+              for (Player passenger : member.getEntity().getPlayerPassengers()) {
+                sendJsonMessage(passenger, message);
+              }
+            }
+            return true;
+          }
       }
     }
-    */
-
+    
     return false;
+  }
+  
+  public static String colourise(String message) {
+    Matcher matcher = HEX_PATTERN.matcher(ChatColor.translateAlternateColorCodes('&', message));
+    StringBuffer buffer = new StringBuffer();
+    
+    while (matcher.find()) {
+      matcher.appendReplacement(buffer, ChatColor.of(matcher.group(1)).toString());
+    }
+    
+    return matcher.appendTail(buffer).toString();
+  }
+  
+  public void sendJsonMessage(Player player, String message) {
+    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "/tellraw "+player.getName()+message);
   }
 }

@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>OldThrottle</artifactId>
-  <version>1.16.5b4</version>
+  <version>1.16.5r5</version>
   <packaging>jar</packaging>
 
   <name>OldThrottle</name>
@@ -40,6 +40,7 @@
             </goals>
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <minimizeJar>true</minimizeJar>
             </configuration>
           </execution>
         </executions>

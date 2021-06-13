@@ -11,16 +11,22 @@ public final class OldThrottle extends JavaPlugin implements Listener{
   @Override
   public void onEnable() {
     // Plugin startup logic
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle has been invoked!");
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle by Mineshafter61: 1.16.5r5");
     getConfig().options().copyDefaults(true);
     saveConfig();
   
+    // Initialise classes
     Throttle throttle = new Throttle();
     TrainAnnounce trainAnnounce = new TrainAnnounce();
+  
+    // Register Throttle and repeat it
     getServer().getPluginManager().registerEvents(throttle, this);
     Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
-    Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
     getServer().getScheduler().scheduleSyncRepeatingTask(this, throttle::repeatThrottle, 0L, 1L);
+  
+    // Register train announcers
+    Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
+    Objects.requireNonNull(getCommand("tj")).setExecutor(trainAnnounce);
   }
   
   @Override

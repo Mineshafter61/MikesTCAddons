@@ -3,7 +3,7 @@ version: ${project.version}
 main: mikeshafter.oldthrottle.OldThrottle
 api-version: 1.16
 authors: [ MikeShafter ]
-depend: [BKCommonLib]
+depend: [ BKCommonLib ]
 commands:
   throttle:
     usage: /throttle <on|off>
@@ -11,9 +11,10 @@ commands:
   ta:
     usage: /ta <message>
     description: Makes an announcement
-  setunloadedblock:
-    usage: /setunloadedblock <world> <x> <y> <z> <block>
-    description: Sets a block in an unloaded chunk
+  tj:
+    usage: /tj <JSON message>
+    description: Makes an announcement but using a raw JSON message (like /tellraw)
+
 permissions:
   OldThrottle.throttle:
     default: true
@@ -21,4 +22,8 @@ permissions:
   OldThrottle.ta:
     default: op
     description: Gives access to the /ta command
+  OldThrottle.tj:
+    default: op
+    description: Gives access to the /tj command
+
 description: Old throttle system inspired by the JR 103 series.
