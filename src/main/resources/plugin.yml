@@ -1,9 +1,9 @@
 name: OldThrottle
 version: ${project.version}
 main: mikeshafter.oldthrottle.OldThrottle
-api-version: 1.16
+api-version: 1.13
 authors: [ MikeShafter ]
-depend: [ BKCommonLib ]
+depend: [ BKCommonLib, Train_Carts ]
 commands:
   throttle:
     usage: /throttle <on|off>

@@ -6,12 +6,12 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>OldThrottle</artifactId>
-  <version>1.16.5r5</version>
+  <version>13-17a0</version>
   <packaging>jar</packaging>
 
   <name>OldThrottle</name>
-
   <description>Old throttle system inspired by the JR 103 series.</description>
+
   <properties>
     <java.version>1.8</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,8 +24,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
+          <source>8</source>
+          <target>8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -41,6 +41,8 @@
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <minimizeJar>true</minimizeJar>
+              <outputDirectory>../../M. Shaftere/servers/testserver/plugins</outputDirectory>
+              <outputFile>../../M. Shaftere/servers/testserver/plugins/OldThrottle.jar</outputFile>
             </configuration>
           </execution>
         </executions>
@@ -56,8 +58,8 @@
 
   <repositories>
     <repository>
-      <id>spigotmc-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+      <id>papermc</id>
+      <url>https://papermc.io/repo/repository/maven-public/</url>
     </repository>
     <repository>
       <id>sonatype</id>
@@ -71,8 +73,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
+      <groupId>com.destroystokyo.paper</groupId>
+      <artifactId>paper-api</artifactId>
       <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>

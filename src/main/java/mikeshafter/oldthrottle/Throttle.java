@@ -57,14 +57,14 @@ public class Throttle implements Listener, CommandExecutor {
           if (forceHashMap.get(player) != null) {
             sender.sendMessage(ChatColor.AQUA+"Throttle has already been turned on.");
           }
-          // Else do something; include player in playerSpeed and playerAcceleration hashmaps
+          // Else do something; include player in speed and force hashmaps
           else {
-            //speedHashMap.put(player, 0F);
+            speedHashMap.put(player, 0F);
             forceHashMap.put(player, 0f);
             modeHashMap.put(player, (byte) 0);
             sender.sendMessage(ChatColor.AQUA+"Throttle has been enabled.");
             
-            brakeHashMap.put(player, Bukkit.createBossBar("Brake", BarColor.BLUE, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC));
+            brakeHashMap.put(player, Bukkit.createBossBar(ChatColor.AQUA+"Please run "+ChatColor.YELLOW+"/train claim"+ChatColor.AQUA+" to start OldThrottle!", BarColor.BLUE, BarStyle.SOLID, BarFlag.PLAY_BOSS_MUSIC));
             brakeHashMap.get(player).addPlayer(player); /* Remove player from boss bar */
             // Store inventory
 //            for (int i = 0; i < 41; i++){
@@ -304,11 +304,11 @@ public class Throttle implements Listener, CommandExecutor {
       //get properties of the cart the player is currently editing
   
       CartProperties cartProperties = CartProperties.getEditing(player);
-      //check if we got cart properties
-      if (cartProperties != null && cartProperties.hasOwners() && cartProperties.getOwners().contains(player.getName())) {
-        //if we can, get properties from the train the cart is part of
-        TrainProperties properties = cartProperties.getTrainProperties();
-    
+      //if we can, get properties from the train the cart is part of
+      TrainProperties properties = cartProperties != null ? cartProperties.getTrainProperties() : null;
+      //check if we got cart properties and for owner
+      if (properties != null && properties.hasOwners() && properties.getOwners().contains(player.getName().toLowerCase())) {
+        
         // accelerating forces
         // shunt
         if (modeHashMap.get(player) == (byte) 1) {

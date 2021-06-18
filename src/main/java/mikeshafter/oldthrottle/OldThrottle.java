@@ -19,14 +19,14 @@ public final class OldThrottle extends JavaPlugin implements Listener{
     Throttle throttle = new Throttle();
     TrainAnnounce trainAnnounce = new TrainAnnounce();
   
-    // Register Throttle and repeat it
-    getServer().getPluginManager().registerEvents(throttle, this);
-    Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
-    getServer().getScheduler().scheduleSyncRepeatingTask(this, throttle::repeatThrottle, 0L, 1L);
-  
     // Register train announcers
     Objects.requireNonNull(getCommand("ta")).setExecutor(trainAnnounce);
     Objects.requireNonNull(getCommand("tj")).setExecutor(trainAnnounce);
+  
+    // Register Throttle and repeat it
+    Objects.requireNonNull(getCommand("throttle")).setExecutor(throttle);
+    getServer().getPluginManager().registerEvents(throttle, this);
+    getServer().getScheduler().scheduleSyncRepeatingTask(this, throttle::repeatThrottle, 0L, 1L);
   }
   
   @Override
