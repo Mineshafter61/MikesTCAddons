@@ -1,12 +1,12 @@
 package mikeshafter.oldthrottle;
 
-import org.bukkit.ChatColor;
-import org.bukkit.event.Listener;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
-public final class OldThrottle extends JavaPlugin implements Listener{
+
+public final class OldThrottle extends JavaPlugin {
   
   @Override
   public void onEnable() {
@@ -14,7 +14,7 @@ public final class OldThrottle extends JavaPlugin implements Listener{
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle by Mineshafter61: 1.16.5r5");
     getConfig().options().copyDefaults(true);
     saveConfig();
-  
+    
     // Initialise classes
     Throttle throttle = new Throttle();
     TrainAnnounce trainAnnounce = new TrainAnnounce();
