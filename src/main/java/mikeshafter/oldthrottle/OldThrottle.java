@@ -11,7 +11,7 @@ public final class OldThrottle extends JavaPlugin {
   @Override
   public void onEnable() {
     // Plugin startup logic
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle by Mineshafter61: 1.16.5r5");
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"OldThrottle by Mineshafter61: 1.17.1b1");
     getConfig().options().copyDefaults(true);
     saveConfig();
     
