@@ -191,9 +191,8 @@ public class Throttle implements Listener, CommandExecutor {
   
   @EventHandler
   public void dismount(EntityDismountEvent event) {
-    if (event.getEntity() instanceof Player) {
-      
-      Player player = (Player) event.getEntity();
+    if (event.getEntity() instanceof Player player) {
+    
       if (speedHashMap.containsKey(player)) {
         emergencyBrake(player);
       }

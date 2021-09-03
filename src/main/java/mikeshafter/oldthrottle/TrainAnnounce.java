@@ -30,8 +30,7 @@ public class TrainAnnounce implements CommandExecutor {
     if (command.getName().equalsIgnoreCase("ta")) {
       
       // If sent from player
-      if (sender instanceof Player && sender.hasPermission("OldThrottle.ta")) {
-        Player player = (Player) sender;
+      if (sender instanceof Player player && sender.hasPermission("OldThrottle.ta")) {
         String message = colourise(String.join(" ", args));
         player.sendMessage("Sent message: "+message);
   
@@ -50,14 +49,12 @@ public class TrainAnnounce implements CommandExecutor {
   
   
         // If sent from command block
-      } else if (sender instanceof BlockCommandSender) {
-        BlockCommandSender commandSender = (BlockCommandSender) sender;
+      } else if (sender instanceof BlockCommandSender commandSender) {
         Block commandBlock = commandSender.getBlock();
         AdvancedMessage message = advancedMessage(args);
   
         // Check if message has flags
-        if (message instanceof RadiusMessage) {
-          RadiusMessage radiusMessage = (RadiusMessage) message;
+        if (message instanceof RadiusMessage radiusMessage) {
           Location location = radiusMessage instanceof RadiusMessageCoordinates ?
                                   new Location(commandBlock.getWorld(), ((RadiusMessageCoordinates) radiusMessage).getX(), ((RadiusMessageCoordinates) radiusMessage).getY(), ((RadiusMessageCoordinates) radiusMessage).getZ())
                                   : commandBlock.getLocation();
@@ -76,8 +73,7 @@ public class TrainAnnounce implements CommandExecutor {
               return true;
             }
           }
-        } else if (message instanceof AdvancedMessageBox) {
-          AdvancedMessageBox messageBox = (AdvancedMessageBox) message;
+        } else if (message instanceof AdvancedMessageBox messageBox) {
           int x = messageBox.getX();
           int y = messageBox.getY();
           int z = messageBox.getZ();
@@ -113,31 +109,28 @@ public class TrainAnnounce implements CommandExecutor {
     else if (command.getName().equalsIgnoreCase("tj")) {
   
       // If sent from player
-      if (sender instanceof Player && sender.hasPermission("OldThrottle.tj")) {
-        Player player = (Player) sender;
+      if (sender instanceof Player player && sender.hasPermission("OldThrottle.tj")) {
         String message = String.join(" ", args);
         player.sendMessage("Sent message:");
         sendJsonMessage(player, message);
     
         // Get the train the player is in
         for (MinecartMember<?> member : MinecartGroupStore.get(player.getVehicle())) {
-          
+      
           // Get every player passenger
           for (Player passenger : member.getEntity().getPlayerPassengers()) {
             sendJsonMessage(passenger, message);
           }
         }
         return true;
-        
+    
         // If sent from command block
-      } else if (sender instanceof BlockCommandSender) {
-        BlockCommandSender commandSender = (BlockCommandSender) sender;
+      } else if (sender instanceof BlockCommandSender commandSender) {
         Block commandBlock = commandSender.getBlock();
         AdvancedMessage message = advancedMessage(args);
     
         // Check if message has flags
-        if (message instanceof RadiusMessage) {
-          RadiusMessage radiusMessage = (RadiusMessage) message;
+        if (message instanceof RadiusMessage radiusMessage) {
           Location location = radiusMessage instanceof RadiusMessageCoordinates ?
                                   new Location(commandBlock.getWorld(), ((RadiusMessageCoordinates) radiusMessage).getX(), ((RadiusMessageCoordinates) radiusMessage).getY(), ((RadiusMessageCoordinates) radiusMessage).getZ())
                                   : commandBlock.getLocation();
@@ -156,8 +149,7 @@ public class TrainAnnounce implements CommandExecutor {
               return true;
             }
           }
-        } else if (message instanceof AdvancedMessageBox) {
-          AdvancedMessageBox messageBox = (AdvancedMessageBox) message;
+        } else if (message instanceof AdvancedMessageBox messageBox) {
           int x = messageBox.getX();
           int y = messageBox.getY();
           int z = messageBox.getZ();
@@ -192,7 +184,7 @@ public class TrainAnnounce implements CommandExecutor {
   
   public static String colourise(String message) {
     Matcher matcher = HEX_PATTERN.matcher(ChatColor.translateAlternateColorCodes('&', message));
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
   
     while (matcher.find()) {
       matcher.appendReplacement(buffer, ChatColor.of(matcher.group(1)).toString());
@@ -202,22 +194,18 @@ public class TrainAnnounce implements CommandExecutor {
   }
   
   private AdvancedMessage advancedMessage(String[] args) {
-    switch (args[0]) {
-      case "-r":
-        return new RadiusMessage(String.join(" ", Arrays.copyOfRange(args, 2, args.length)), Integer.parseUnsignedInt(args[1]));
-      case "-rxyz":
-        return new RadiusMessageCoordinates(
-            String.join(" ", Arrays.copyOfRange(args, 2, args.length)),
-            Integer.parseUnsignedInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4])
-        );
-      case "-d":
-        return new AdvancedMessageBox(
-            String.join(" ", Arrays.copyOfRange(args, 2, args.length)),
-            Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6])
-        );
-      default:
-        return new AdvancedMessage(String.join(" ", args));
-    }
+    return switch (args[0]) {
+      case "-r" -> new RadiusMessage(String.join(" ", Arrays.copyOfRange(args, 2, args.length)), Integer.parseUnsignedInt(args[1]));
+      case "-rxyz" -> new RadiusMessageCoordinates(
+          String.join(" ", Arrays.copyOfRange(args, 2, args.length)),
+          Integer.parseUnsignedInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4])
+      );
+      case "-d" -> new AdvancedMessageBox(
+          String.join(" ", Arrays.copyOfRange(args, 2, args.length)),
+          Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4]), Integer.parseInt(args[5]), Integer.parseInt(args[6])
+      );
+      default -> new AdvancedMessage(String.join(" ", args));
+    };
   }
   
   private void sendJsonMessage(Player player, String message) {
