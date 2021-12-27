@@ -1,29 +1,8 @@
-name: OldThrottle
-version: ${project.version}
-main: mikeshafter.oldthrottle.OldThrottle
-api-version: 1.17
-authors: [ MikeShafter ]
+name: OldThrottleReloaded
+version: '${project.version}'
+main: mikeshafter.oldthrottlereloaded.OldThrottleReloaded
+api-version: 1.18
+prefix: OldThrottle
 depend: [ BKCommonLib, Train_Carts ]
-commands:
-  throttle:
-    usage: /throttle <on|off>
-    description: Toggles throttle
-  ta:
-    usage: /ta <message>
-    description: Makes an announcement
-  tj:
-    usage: /tj <JSON message>
-    description: Makes an announcement but using a raw JSON message (like /tellraw)
-
-permissions:
-  OldThrottle.throttle:
-    default: true
-    description: Lets players use throttle controls
-  OldThrottle.ta:
-    default: op
-    description: Gives access to the /ta command
-  OldThrottle.tj:
-    default: op
-    description: Gives access to the /tj command
-
-description: Old throttle system inspired by the JR 103 series.
+authors: [ MikeShafter ]
+description: OldThrottle Plugin, now reloaded for modern versions of TrainCarts!
