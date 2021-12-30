@@ -1,27 +1,20 @@
 package mikeshafter.oldthrottlereloaded;
 
-import com.bergerkiller.bukkit.common.BlockLocation;
-import com.bergerkiller.bukkit.common.math.Quaternion;
-import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
-import com.bergerkiller.bukkit.tc.controller.MinecartMember;
-import com.bergerkiller.bukkit.tc.controller.MinecartMemberStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 public class Throttle {
-  static List<Player> playerList = null;
+  static ArrayList<Player> playerList = new ArrayList<>();
   static HashMap<Player, Double> airReservoir = new HashMap<>();
   static HashMap<Player, ItemStack[]> invHashMap = new HashMap<>();
 
@@ -43,9 +36,7 @@ public class Throttle {
     setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 3);
     setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 4);
     setPlayerInventory(player, "Left", Material.ORANGE_DYE, 5);
-    setPlayerInventory(player, "Door Open", Material.GREEN_DYE, 6);
-    setPlayerInventory(player, "Right", Material.ORANGE_DYE, 7);
-    setPlayerInventory(player, "Door Close", Material.RED_DYE, 8);
+    setPlayerInventory(player, "Right", Material.GREEN_DYE, 6);
   }
 
   public static void removePlayer(Player player) {
@@ -58,10 +49,6 @@ public class Throttle {
       player.getInventory().setItem(i, playerHB[i]);
     }
   }
-
-  public List<Player> getList() {
-    return playerList;
-  }
   
   private static void setPlayerInventory(Player player, String displayName, Material type, int slot) {
     ItemStack item = new ItemStack(type, 1);
@@ -73,6 +60,7 @@ public class Throttle {
   }
 
   public static void throttleTask() {
+    if (playerList != null)
     for (Player player : playerList) {
       MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
       TrainProperties properties = vehicle.getProperties();
@@ -124,7 +112,7 @@ public class Throttle {
         double thrust = force * 1.63 * powerCars ; // real thrust value. IRL value must be multiplied by 1.63 due to Minecraft physics.
         
         // set calculated force
-        vehicle.setForwardForce(thrust - friction - drag > traction ? 0 : thrust - friction - drag);
+        vehicle.setForwardForce(Math.abs(thrust - friction - drag > traction ? 0 : thrust - friction - drag));
       } else {
         removePlayer(player);
       }

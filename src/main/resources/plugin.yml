@@ -1,8 +1,18 @@
 name: OldThrottleReloaded
 version: '${project.version}'
 main: mikeshafter.oldthrottlereloaded.OldThrottleReloaded
-api-version: 1.18
+api-version: 1.17
 prefix: OldThrottle
 depend: [ BKCommonLib, Train_Carts ]
 authors: [ MikeShafter ]
 description: OldThrottle Plugin, now reloaded for modern versions of TrainCarts!
+commands:
+  throttle:
+    description: Main throttle command.
+    usage: /throttle <on|off>
+  door:
+    description: Opens/closes doors.
+    usage: /door <l|r> <o|c>
+  swap:
+    description: Swaps "door_L" and "door_R" animations.
+    usage: /swap
