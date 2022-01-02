@@ -4,6 +4,7 @@ import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import net.kyori.adventure.text.Component;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +32,7 @@ public class Throttle {
     
     // Set items
     setPlayerInventory(player, "Brake Valve Open", Material.BLUE_DYE, 0);
-    setPlayerInventory(player, "Brake Valve Shut, Power Off", Material.LIME_DYE, 1);
+    setPlayerInventory(player, "Release Brakes", Material.LIME_DYE, 1);
     setPlayerInventory(player, "Shunt", Material.PINK_DYE, 2);
     setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 3);
     setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 4);
@@ -70,20 +71,20 @@ public class Throttle {
         double force = 0d;
         
         // get speed and power cars
-        double speed = vehicle.get(0).getRealSpeed() * 20;  // speed in m/s
+        double speed = vehicle.get(0).getRealSpeedLimited()*20;  // speed in m/s
         int powerCars = vehicle.size();  // Future change this to a property
   
         switch (heldItemSlot) {
           case 0 -> {
             if (airReservoir.get(player) < 5) airReservoir.put(player, airReservoir.get(player)+0.01);
             double pressure = airReservoir.get(player)*303.15/0.001;
-            force = pressure*0.137*0.060;
+            force = -1*pressure*0.137*0.060;
           }
           case 1 -> {
             force = 0;
             properties.removeTags("left", "right");
           }
-          case 2 -> force = speed > 0.15 ? 13200/speed : 88000;
+          case 2 -> force = speed > 0.25 ? 13200/speed : 52800;
           case 3 -> force = 160000/speed;  // 80 kW power
           case 4 -> force = 640000/speed;  // 320 kW power
           case 5 -> {
@@ -104,15 +105,22 @@ public class Throttle {
               cart.playNamedAnimation(options);
             }
          */
-        
+  
         // Calculate values
         double drag = 1.05*1.8375*speed*speed; // drag in N
-        double traction = speed == 0 ? 119040 * vehicle.size() : 88320 * vehicle.size() ; // wheel slips (0.31*16*24000 : 0.23*16*24000)
-        double friction = speed == 0 ? 30720 * vehicle.size() : 19200 * vehicle.size() ; // resistive force (0.08*16*24000 : 0.05*16*24000)
-        double thrust = force * 1.63 * powerCars ; // real thrust value. IRL value must be multiplied by 1.63 due to Minecraft physics.
-        
+        double traction = speed == 0 ? 119040*vehicle.size() : 88320*vehicle.size(); // wheel slips (0.31*16*24000 : 0.23*16*24000)
+        double friction = speed == 0 ? 30720*vehicle.size() : 19200*vehicle.size(); // resistive force (0.08*16*24000 : 0.05*16*24000)
+        double drive = force*1.63*powerCars; // real thrust value. IRL value must be multiplied by 1.63 due to Minecraft physics.
+  
         // set calculated force
-        vehicle.setForwardForce(Math.abs(thrust - friction - drag > traction ? 0 : thrust - friction - drag));
+        double resultant = (Math.abs(drive-friction-drag) < traction ? drive-friction-drag : 0)/400;
+        // vehicle.setForwardForce(resultant/24000);
+        vehicle.getProperties().setSpeedLimit(vehicle.getProperties().getSpeedLimit()+resultant/24000);
+        System.out.println(ChatColor.GREEN+"| R "+ChatColor.YELLOW+resultant);
+        // debug
+        Component debug = Component.text(ChatColor.GREEN+"| R "+ChatColor.YELLOW+resultant);
+        player.sendActionBar(debug);
+  
       } else {
         removePlayer(player);
       }
