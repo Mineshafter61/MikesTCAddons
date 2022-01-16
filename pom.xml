@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>mikeshafter</groupId>
-  <artifactId>OldThrottleReloaded</artifactId>
+  <artifactId>MikesTCAddons</artifactId>
   <version>1.18.1a1</version>
   <packaging>jar</packaging>
 
-  <name>OldThrottleReloaded</name>
+  <name>MikesTCAddons</name>
 
   <description>OldThrottle Plugin, now reloaded for modern versions of TrainCarts!</description>
   <properties>

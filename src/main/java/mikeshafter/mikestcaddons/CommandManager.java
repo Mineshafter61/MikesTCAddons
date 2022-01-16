@@ -1,10 +1,13 @@
-package mikeshafter.oldthrottlereloaded;
+package mikeshafter.mikestcaddons;
 
 import com.bergerkiller.bukkit.tc.attachments.animation.Animation;
 import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
+import com.bergerkiller.bukkit.tc.attachments.api.Attachment;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
+import com.bergerkiller.bukkit.tc.controller.MinecartMemberStore;
+import mikeshafter.mikestcaddons.throttle.ThrottleManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,31 +17,29 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 
-public class ThrottleCommands implements CommandExecutor {
+public class CommandManager implements CommandExecutor {
   @Override
   public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String s, String[] args) {
-    
     if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player player) {
       if (args.length > 0 && args[0].equalsIgnoreCase("on")) {
-        Throttle.addPlayer(player);
+        ThrottleManager.addThrottle(player);
         return true;
-      }
-      else if (args.length > 0 && args[0].equalsIgnoreCase("off")) {
-        Throttle.removePlayer(player);
+      } else if (args.length > 0 && args[0].equalsIgnoreCase("off")) {
+        ThrottleManager.removeThrottle(player);
         return true;
       }
     }
     
     else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player && args.length > 1) {
-      MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
+      MinecartGroup vehicle = MinecartMemberStore.getFromEntity(player).getGroup();
       if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
         if (args[0].equalsIgnoreCase("l")) {
           AnimationOptions options = new AnimationOptions();
           
           if (args[1].equalsIgnoreCase("o")) {
-            options.setSpeed(0.5);
+            options.setSpeed(1);
           } else {
-            options.setSpeed(-0.5);
+            options.setSpeed(-1);
           }
           
           options.setName("door_L");
@@ -50,39 +51,49 @@ public class ThrottleCommands implements CommandExecutor {
           AnimationOptions options = new AnimationOptions();
   
           if (args[1].equalsIgnoreCase("o")) {
-            options.setSpeed(0.5);
+            options.setSpeed(1);
           } else {
-            options.setSpeed(-0.5);
+            options.setSpeed(-1);
           }
   
-          options.setName("door_L");
+          options.setName("door_R");
           vehicle.playNamedAnimation(options);
           return true;
         }
       }
-    }
-    
-    else if (command.getName().equalsIgnoreCase("swap") && sender instanceof Player player ) {
+    } else if (command.getName().equalsIgnoreCase("swap") && sender instanceof Player player) {
       MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
       if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-        for (MinecartMember<?> member : vehicle) {
-          Collection<Animation> animations = member.getAttachments().getRootAttachment().getAnimations();
-          for (Animation animation : animations) {
-            if (animation.getOptions().getName().equals("door_L")) {
-              AnimationOptions options = animation.getOptions();
-              options.setName("door_R");
-              animation.setOptions(options);
-            } else if (animation.getOptions().getName().equals("door_R")) {
-              AnimationOptions options = animation.getOptions();
-              options.setName("door_L");
-              animation.setOptions(options);
-            }
-          }
-        }
+        for (MinecartMember<?> member : vehicle) swap(member.getAttachments().getRootAttachment());
+        
+        player.sendMessage("Swapped left and right doors.");
         return true;
       }
     }
-  
+    
     return false;
   }
+  
+  private void swap(Attachment attachment) {
+    // Swap for current attachment
+    Collection<Animation> animations = attachment.getAnimations();
+    for (Animation animation : animations) {
+      if (animation.getOptions().getName().equals("door_R")) {
+        AnimationOptions options = animation.getOptions();
+        options.setName("door_L");
+        animation.setOptions(options);
+        attachment.clearAnimations();
+        attachment.addAnimation(animation);
+      } else if (animation.getOptions().getName().equals("door_L")) {
+        AnimationOptions options = animation.getOptions();
+        options.setName("door_R");
+        animation.setOptions(options);
+        attachment.clearAnimations();
+        attachment.addAnimation(animation);
+      }
+    }
+    // Swap animations for children as well
+    if (!attachment.getChildren().isEmpty()) for (Attachment child : attachment.getChildren()) swap(child);
+  }
+  
 }
