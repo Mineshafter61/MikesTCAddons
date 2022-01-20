@@ -17,9 +17,14 @@ public final class MikesTCAddons extends JavaPlugin {
     // Plugin startup logic
     this.getServer().getScheduler().scheduleSyncRepeatingTask(this, ThrottleManager::throttleTask, 0, 1);
     SignAction.register(signActionSwap);
-    Objects.requireNonNull(getCommand("throttle")).setExecutor(new CommandManager());
-    Objects.requireNonNull(getCommand("door")).setExecutor(new CommandManager());
-    Objects.requireNonNull(getCommand("swap")).setExecutor(new CommandManager());
+    CommandManager manager = new CommandManager();
+    Objects.requireNonNull(getCommand("throttle")).setExecutor(manager);
+    Objects.requireNonNull(getCommand("throttle")).setTabCompleter(manager);
+    Objects.requireNonNull(getCommand("door")).setExecutor(manager);
+    Objects.requireNonNull(getCommand("door")).setTabCompleter(manager);
+    Objects.requireNonNull(getCommand("swap")).setExecutor(manager);
+    Objects.requireNonNull(getCommand("swap")).setTabCompleter(manager);
+    this.getServer().getPluginManager().registerEvents(new ThrottleManager(), this);
     this.getLogger().log(Level.INFO, "OldThrottle has been enabled!");
   }
   

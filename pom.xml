@@ -11,7 +11,7 @@
 
   <name>MikesTCAddons</name>
 
-  <description>OldThrottle Plugin, now reloaded for modern versions of TrainCarts!</description>
+  <description>Mike's TrainCarts Addons</description>
   <properties>
     <java.version>1.8</java.version>
     <project.bkcversion>1.18.1-v2-SNAPSHOT</project.bkcversion>

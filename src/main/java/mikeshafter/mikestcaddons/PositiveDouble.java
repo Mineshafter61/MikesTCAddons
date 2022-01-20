@@ -16,8 +16,9 @@ public class PositiveDouble {
     return Objects.hash(v);
   }
   
-  public double getV() {
-    return v;
+  public void set(double v) {
+    this.v = v;
+    if (this.v < 0) this.v = 0;
   }
   
   @Override
@@ -27,8 +28,8 @@ public class PositiveDouble {
     return Double.compare(that.v, v) == 0;
   }
   
-  public void setV(double v) {
-    this.v = v;
+  public void set(PositiveDouble v) {
+    this.v = v.get();
     if (this.v < 0) this.v = 0;
   }
   
@@ -37,9 +38,8 @@ public class PositiveDouble {
     if (this.v < 0) this.v = 0;
   }
   
-  public void setV(PositiveDouble v) {
-    this.v = v.getV();
-    if (this.v < 0) this.v = 0;
+  public double get() {
+    return v;
   }
   
   public void subtract(double v) {
@@ -58,24 +58,54 @@ public class PositiveDouble {
   }
   
   public void add(PositiveDouble v) {
-    this.v += v.getV();
+    this.v += v.get();
     if (this.v < 0) this.v = 0;
   }
   
   public void subtract(PositiveDouble v) {
-    this.v -= v.getV();
+    this.v -= v.get();
     if (this.v < 0) this.v = 0;
   }
   
   public void multiply(PositiveDouble v) {
-    this.v *= v.getV();
+    this.v *= v.get();
     if (this.v < 0) this.v = 0;
   }
   
   public void divide(PositiveDouble v) {
-    this.v /= v.getV();
+    this.v /= v.get();
     if (this.v < 0) this.v = 0;
   }
   
+  public boolean lessThan(double v) {
+    return this.v < v;
+  }
   
+  public boolean moreThan(double v) {
+    return this.v > v;
+  }
+  
+  public boolean lessThanOrEquals(double v) {
+    return this.v <= v;
+  }
+  
+  public boolean moreThanOrEquals(double v) {
+    return this.v >= v;
+  }
+  
+  public boolean lessThan(PositiveDouble v) {
+    return this.v < v.get();
+  }
+  
+  public boolean moreThan(PositiveDouble v) {
+    return this.v > v.get();
+  }
+  
+  public boolean lessThanOrEquals(PositiveDouble v) {
+    return this.v <= v.get();
+  }
+  
+  public boolean moreThanOrEquals(PositiveDouble v) {
+    return this.v >= v.get();
+  }
 }

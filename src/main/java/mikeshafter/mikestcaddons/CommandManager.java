@@ -9,15 +9,17 @@ import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.controller.MinecartMemberStore;
 import mikeshafter.mikestcaddons.throttle.ThrottleManager;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 
-public class CommandManager implements CommandExecutor {
+public class CommandManager implements TabExecutor {
   @Override
   public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String s, String[] args) {
     if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player player) {
@@ -96,4 +98,21 @@ public class CommandManager implements CommandExecutor {
     if (!attachment.getChildren().isEmpty()) for (Attachment child : attachment.getChildren()) swap(child);
   }
   
+  @Override
+  public List<String> onTabComplete(@NotNull CommandSender sender, Command command, @NotNull String alias, String[] args) {
+    if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player) {
+      return Arrays.asList("on", "off");
+    } else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player) {
+      if (player.getVehicle() != null && MinecartMemberStore.getFromEntity(player.getVehicle()) != null && MinecartMemberStore.getFromEntity(player).getGroup().getProperties().getOwners().contains(player.getName().toLowerCase())) {
+        if (args.length == 1) {
+          return Arrays.asList("l", "r");
+        } else if (args.length == 2) {
+          return Arrays.asList("o", "c");
+        }
+      }
+    } else if (command.getName().equalsIgnoreCase("swap") && sender instanceof Player) {
+      return null;
+    }
+    return null;
+  }
 }
