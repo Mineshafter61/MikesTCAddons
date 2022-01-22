@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons.throttle;
+package mikeshafter.mikestcaddons;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,12 +8,13 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 
-import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ThrottleManager implements Listener {
   
-  private final static LinkedList<Throttle> throttles = new LinkedList<>();
+  private final static List<Throttle> throttles = new CopyOnWriteArrayList<>();
   
   public static void throttleTask() {
     for (Throttle throttle : throttles) {

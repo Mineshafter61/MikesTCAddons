@@ -14,8 +14,9 @@
   <description>Mike's TrainCarts Addons</description>
   <properties>
     <java.version>1.8</java.version>
-    <project.bkcversion>1.18.1-v2-SNAPSHOT</project.bkcversion>
-    <project.tcversion>1.18.1-v2-SNAPSHOT</project.tcversion>
+    <project.bkcversion>1.18.1-v3-SNAPSHOT</project.bkcversion>
+    <project.tcversion>1.18.1-v3-SNAPSHOT</project.tcversion>
+    <project.slversion>1.18.1-v1-SNAPSHOT</project.slversion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -87,6 +88,12 @@
       <groupId>com.bergerkiller.bukkit</groupId>
       <artifactId>TrainCarts</artifactId>
       <version>${project.tcversion}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.bergerkiller.bukkit</groupId>
+      <artifactId>SignLink</artifactId>
+      <version>${project.slversion}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons.door;
+package mikeshafter.mikestcaddons;
 
 import com.bergerkiller.bukkit.tc.attachments.animation.Animation;
 import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
