@@ -31,13 +31,9 @@ public final class MikesTCAddons extends JavaPlugin {
     SignAction.register(signActionTriggerMin);
     CommandManager manager = new CommandManager();
     Objects.requireNonNull(getCommand("throttle")).setExecutor(manager);
-    Objects.requireNonNull(getCommand("throttle")).setTabCompleter(manager);
     Objects.requireNonNull(getCommand("door")).setExecutor(manager);
-    Objects.requireNonNull(getCommand("door")).setTabCompleter(manager);
     Objects.requireNonNull(getCommand("swap")).setExecutor(manager);
-    Objects.requireNonNull(getCommand("swap")).setTabCompleter(manager);
     Objects.requireNonNull(getCommand("decouple")).setExecutor(manager);
-    Objects.requireNonNull(getCommand("decouple")).setTabCompleter(manager);
     this.getServer().getPluginManager().registerEvents(new ThrottleManager(), this);
     this.getLogger().log(Level.INFO, "OldThrottle has been enabled!");
   }

@@ -25,7 +25,7 @@ public class TrigMinManager {
   
       variable.set(trigMin.getMin()+" min");
       time.set(trigMin.getMin()+" min");
-      destination.set(event.getMember().getProperties().getDestination());
+      destination.set(event.getGroup().getProperties().getDestination());
       name.set(event.getGroup().getProperties().getDisplayName());
       speed.set(String.valueOf(Math.min(MathUtil.round(event.getMember().getRealSpeed(), 2), event.getGroup().getProperties().getSpeedLimit())));
   
