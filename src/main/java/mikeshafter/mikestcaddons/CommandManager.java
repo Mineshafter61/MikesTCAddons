@@ -6,8 +6,8 @@ import com.bergerkiller.bukkit.tc.attachments.api.Attachment;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
-import com.bergerkiller.bukkit.tc.controller.MinecartMemberStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -33,6 +33,9 @@ public class CommandManager implements TabExecutor {
             ThrottleManager.removeThrottle(player);
             return true;
           }
+        } else {
+          player.sendMessage(ChatColor.RED+"Please claim the train first!");
+          return true;
         }
       }
     } else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player && args.length == 2 && sender.hasPermission("mikestcaddons.door")) {
@@ -144,13 +147,7 @@ public class CommandManager implements TabExecutor {
     if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player) {
       return Arrays.asList("on", "off");
     } else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player) {
-      if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null && MinecartMemberStore.getFromEntity(player).getGroup().getProperties().getOwners().contains(player.getName().toLowerCase())) {
-        if (args.length == 1) {
-          return Arrays.asList("l", "r");
-        } else if (args.length == 2) {
-          return Arrays.asList("o", "c");
-        }
-      }
+      return null;
     } else if (command.getName().equalsIgnoreCase("swap") && sender instanceof Player) {
       return null;
     }

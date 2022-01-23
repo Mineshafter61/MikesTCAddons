@@ -5,12 +5,13 @@ import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import org.bukkit.Material;
-import org.bukkit.block.Barrel;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Container;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Stack;
 
 
 public class SignActionBarrel extends SignAction {
@@ -28,28 +29,26 @@ public class SignActionBarrel extends SignAction {
     // When a [cart] sign is placed, activate when powered by redstone when each cart
     // goes over the sign, or when redstone is activated.
     if ((event.isTrainSign() && event.isAction(SignActionType.GROUP_ENTER, SignActionType.REDSTONE_ON) && event.isPowered() && event.hasGroup()) || (event.isCartSign() && event.isAction(SignActionType.MEMBER_ENTER, SignActionType.REDSTONE_ON) && event.isPowered() && event.hasMember())) {
-      
+  
       // Barrel
-      Block block = event.getAttachedBlock();
-      // TODO: Debug
-      plugin.getLogger().info(block.getType().toString());
-      if (block instanceof Barrel barrel) {
-        ItemStack itemStack = barrel.getInventory().getItem(0);
-        if (itemStack != null && (itemStack.getType() == Material.WRITABLE_BOOK || itemStack.getType() == Material.WRITTEN_BOOK)) {
-          BookMeta bookMeta = (BookMeta) itemStack.getItemMeta();
+      BlockState state = event.getAttachedBlock().getState();
+      if (state instanceof Container container) {
+        for (ItemStack itemStack : container.getInventory().getContents()) {
+          if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta bookMeta) {
+            for (String page : bookMeta.getPages()) {
           
-          String[] pages = new String[bookMeta.getPageCount()];
+              // parse pages
+              // remove ending \n's
           
-          for (int i = 1; i < pages.length+1; ++i) {
-            pages[i] = bookMeta.getPage(i);
-            
-            // TODO: Debug
-            plugin.getLogger().info(bookMeta.getPage(i));
+              //stack to handle brackets
+              Stack<String> stack = new Stack<>();
+          
+            }
           }
-          
+      
         }
       }
-      
+  
     }
     
     

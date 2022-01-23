@@ -103,7 +103,7 @@ public class Throttle {
       }
       
       moveAir();
-      speed.set(minecartGroup.getAverageForce());
+      speed.set(minecartGroup.get(0).getRealSpeed());
       double brakeForce = airUsed.get()*3;
       double forwardForce = speed.get() > 0.01 ? forwardPower.get()/speed.get() : 2500;
       
