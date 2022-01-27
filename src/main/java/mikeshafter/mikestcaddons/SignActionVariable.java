@@ -1,24 +1,20 @@
 package mikeshafter.mikestcaddons;
 
+import com.bergerkiller.bukkit.sl.API.Variable;
+import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Container;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Stack;
 
-
-public class SignActionBarrel extends SignAction {
+public class SignActionVariable extends SignAction {
   
   @Override
   public boolean match(SignActionEvent event) {
-    return event.isType("barrel", "special");
+    return event.isType("variable", "var", "uvar", "updatevar");
   }
   
   @Override
@@ -29,37 +25,21 @@ public class SignActionBarrel extends SignAction {
     // When a [cart] sign is placed, activate when powered by redstone when each cart
     // goes over the sign, or when redstone is activated.
     if ((event.isTrainSign() && event.isAction(SignActionType.GROUP_ENTER, SignActionType.REDSTONE_ON) && event.isPowered() && event.hasGroup()) || (event.isCartSign() && event.isAction(SignActionType.MEMBER_ENTER, SignActionType.REDSTONE_ON) && event.isPowered() && event.hasMember())) {
-  
-      // Barrel
-      BlockState state = event.getAttachedBlock().getState();
-      if (state instanceof Container container) {
-        for (ItemStack itemStack : container.getInventory().getContents()) {
-          if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta bookMeta) {
-            //stack to handle brackets
-            Stack<String> stack = new Stack<>();
-  
-            for (String page : bookMeta.getPages()) {
-    
-              // parse pages
-              // remove ending \n's
-    
-    
-            }
-          }
       
-        }
-      }
-  
+      String v = event.getLine(3);
+      String newText = event.getLine(4);
+      
+      Variable variable = Variables.getIfExists(v);
+      variable.set(newText);
+      
     }
-    
-    
   }
   
   @Override
   public boolean build(SignChangeActionEvent event) {
     return SignBuildOptions.create()
-        .setName("barrel")
-        .setDescription("do a lot of stuff")
+        .setName("variable updater")
+        .setDescription("update variables")
         .handle(event.getPlayer());
   }
 }
