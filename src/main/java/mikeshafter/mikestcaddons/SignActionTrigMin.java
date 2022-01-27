@@ -1,6 +1,5 @@
 package mikeshafter.mikestcaddons;
 
-import com.bergerkiller.bukkit.common.utils.MathUtil;
 import com.bergerkiller.bukkit.sl.API.Variable;
 import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
@@ -22,16 +21,16 @@ public class SignActionTrigMin extends SignAction {
       String variable = event.getLine(2);
       try {
         int min = Integer.parseInt(event.getLine(3));
-        Variable var = Variables.get(variable);
-        Variable time = Variables.get(variable+"T");
-        Variable destination = Variables.get(variable+"D");
-        Variable name = Variables.get(variable+"N");
-        Variable speed = Variables.get(variable+"V");
+        Variable var = Variables.getIfExists(variable);
+        Variable time = Variables.getIfExists(variable+"T");
+        Variable destination = Variables.getIfExists(variable+"D");
+        Variable name = Variables.getIfExists(variable+"N");
+        Variable speed = Variables.getIfExists(variable+"V");
         var.set(min+" min");
         time.set(min+" min");
         destination.set(event.getMember().getProperties().getDestination());
         name.set(event.getGroup().getProperties().getDisplayName());
-        speed.set(String.valueOf(Math.min(MathUtil.round(event.getMember().getRealSpeed(), 2), event.getGroup().getProperties().getSpeedLimit())));
+        speed.set(String.valueOf(Math.min(event.getGroup().getAverageForce(), event.getGroup().getProperties().getSpeedLimit())));
         TrigMinManager.addTrigMin(min, variable, event);
       } catch (NumberFormatException e) {
         e.printStackTrace();

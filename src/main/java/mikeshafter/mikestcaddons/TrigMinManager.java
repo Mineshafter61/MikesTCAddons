@@ -1,6 +1,5 @@
 package mikeshafter.mikestcaddons;
 
-import com.bergerkiller.bukkit.common.utils.MathUtil;
 import com.bergerkiller.bukkit.sl.API.Variable;
 import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
@@ -27,7 +26,7 @@ public class TrigMinManager {
       time.set(trigMin.getMin()+" min");
       destination.set(event.getGroup().getProperties().getDestination());
       name.set(event.getGroup().getProperties().getDisplayName());
-      speed.set(String.valueOf(Math.min(MathUtil.round(event.getMember().getRealSpeed(), 2), event.getGroup().getProperties().getSpeedLimit())));
+      speed.set(String.valueOf(Math.min(event.getGroup().getAverageForce(), event.getGroup().getProperties().getSpeedLimit())));
   
       if (trigMin.getMin() == 0) trigMins.remove(trigMin);
     }

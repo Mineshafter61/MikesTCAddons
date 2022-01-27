@@ -8,9 +8,10 @@ import java.util.logging.Level;
 
 
 public final class MikesTCAddons extends JavaPlugin {
-  public final SignActionSwap signActionSwap = new SignActionSwap();
-  public final SignActionBarrel signActionBarrel = new SignActionBarrel();
-  public final SignActionTrigMin signActionTriggerMin = new SignActionTrigMin();
+  private final SignActionSwap signActionSwap = new SignActionSwap();
+  private final SignActionBarrel signActionBarrel = new SignActionBarrel();
+  private final SignActionTrigMin signActionTriggerMin = new SignActionTrigMin();
+  private final SignActionVariable signActionVariable = new SignActionVariable();
   
   @Override
   public void onDisable() {
@@ -18,6 +19,7 @@ public final class MikesTCAddons extends JavaPlugin {
     SignAction.unregister(signActionSwap);
     SignAction.unregister(signActionBarrel);
     SignAction.unregister(signActionTriggerMin);
+    SignAction.unregister(signActionVariable);
     this.getLogger().log(Level.INFO, "OldThrottle has been disabled!");
   }
   
@@ -29,6 +31,7 @@ public final class MikesTCAddons extends JavaPlugin {
     SignAction.register(signActionSwap);
     SignAction.register(signActionBarrel);
     SignAction.register(signActionTriggerMin);
+    SignAction.register(signActionVariable);
     CommandManager manager = new CommandManager();
     Objects.requireNonNull(getCommand("throttle")).setExecutor(manager);
     Objects.requireNonNull(getCommand("door")).setExecutor(manager);
