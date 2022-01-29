@@ -130,8 +130,8 @@ public class CommandManager implements CommandExecutor {
     List<String> animationNames = attachment.getAnimationNamesRecursive();
     Map<String, Animation> animationMap = attachment.getInternalState().animations;
   
+    // Swap right doors for left doors
     if (animationNames.contains("door_R")) {
-      // swap right doors for left doors
       for (String name : animationNames) {
         if (name.contains("door_R")) {
           // get full name
@@ -142,19 +142,23 @@ public class CommandManager implements CommandExecutor {
           animationMap.remove(name);
         }
       }
-    } else if (animationNames.contains("door_L")) {
-      // swap left doors for right doors
+    }
+
+    // Swap left doors for right doors
+    else if (animationNames.contains("door_L")) {
       for (String name : animationNames) {
         if (name.contains("door_L")) {
           // get full name
           Animation animation = animationMap.get(name);
-          // change "door_R" to "door_L"
+          // change "door_L" to "door_R"
           animationMap.put("door_R"+name.substring(6), animation);
           // remove original name
           animationMap.remove(name);
         }
       }
     }
+  
+    attachment.onLoad(node);
 //    for (Iterator<Animation> iterator = animations.iterator(); iterator.hasNext(); ) {
 //      Animation animation = iterator.next();
 //
