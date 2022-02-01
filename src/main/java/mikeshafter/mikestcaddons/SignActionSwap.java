@@ -14,39 +14,44 @@ import java.util.Set;
 
 public class SignActionSwap extends SignAction {
   
-  Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
-  
   @Override
   public boolean match(SignActionEvent info) {
     return info.isType("swap", "swapdoor");
   }
   
   private void swap(MinecartMember<?> member) {
-    Set<ConfigurationNode> attachments = member.getProperties().getModel().getConfig().getNode("attachments").getNodes();
+    ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
+  
+    Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
     if (attachments != null) {
-      for (ConfigurationNode node : attachments) swap(node);
+      for (ConfigurationNode node : attachments) {
+        Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
+        plugin.getLogger().info("1 "+node.getHeader());
+        ConfigurationNode attachment = member.getProperties().getModel().getConfig().getNode("attachments");
+        attachment.set(node.getPath(), swap(node));
+        fullConfig.set("attachments", attachment);
+        member.getProperties().getModel().update(fullConfig);
+      }
     }
   }
   
-  private void swap(ConfigurationNode attachmentNode) {
+  private ConfigurationNode swap(ConfigurationNode attachmentNode) {
     Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
     if (attachments != null) {
       for (ConfigurationNode node : attachments) swap(node);
     }
     
-    Set<String> animationNames = attachmentNode.getNode("animations").getKeys();
-    for (String s : animationNames) plugin.getLogger().info(s);
+    ConfigurationNode animations = attachmentNode.getNode("animations");
+    Set<String> animationNames = animations.getKeys();
     
     if (animationNames.contains("door_R")) {
       for (String name : animationNames) {
         if (name.contains("door_R")) {
-          // get full name
-          ConfigurationNode animation = attachmentNode.getNode("animations").getNode(name).clone();
-          for (String s : animation.getKeys()) plugin.getLogger().info(s);
-          // create new node with door_R
-          ConfigurationNode newAnimation = attachmentNode.getNode("animations").getNode("door_L"+name.substring(6));
           // set to new node
-          animation.setTo(newAnimation);
+          animations.set("door_L"+name.substring(6), animations.getNode(name));
+          // remove
+          attachmentNode.remove(name);
+          attachmentNode.set("animations", animations);
         }
       }
     }
@@ -55,15 +60,16 @@ public class SignActionSwap extends SignAction {
     else if (animationNames.contains("door_L")) {
       for (String name : animationNames) {
         if (name.contains("door_L")) {
-          // get full name
-          ConfigurationNode animation = attachmentNode.getNode("animations").getNode(name).clone();
-          // create new node with door_R
-          ConfigurationNode newAnimation = attachmentNode.getNode("animations").getNode("door_R"+name.substring(6));
           // set to new node
-          animation.setTo(newAnimation);
+          animations.set("door_R"+name.substring(6), animations.getNode(name));
+          // remove
+          attachmentNode.remove(name);
+          attachmentNode.set("animations", animations);
         }
       }
     }
+    
+    return attachmentNode;
   }
   
   @Override
