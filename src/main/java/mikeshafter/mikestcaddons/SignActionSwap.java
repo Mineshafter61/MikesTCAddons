@@ -7,7 +7,6 @@ import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
@@ -25,8 +24,7 @@ public class SignActionSwap extends SignAction {
     Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
     if (attachments != null) {
       for (ConfigurationNode node : attachments) {
-        Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
-        plugin.getLogger().info("1 "+node.getHeader());
+  
         ConfigurationNode attachment = member.getProperties().getModel().getConfig().getNode("attachments");
         attachment.set(node.getPath(), swap(node));
         fullConfig.set("attachments", attachment);
@@ -47,10 +45,13 @@ public class SignActionSwap extends SignAction {
     if (animationNames.contains("door_R")) {
       for (String name : animationNames) {
         if (name.contains("door_R")) {
+//          Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
+//          plugin.getLogger().info(name);
+//          plugin.getLogger().info("door_L"+name.substring(6));
           // set to new node
           animations.set("door_L"+name.substring(6), animations.getNode(name));
           // remove
-          attachmentNode.remove(name);
+          animations.remove(name);
           attachmentNode.set("animations", animations);
         }
       }
@@ -63,7 +64,7 @@ public class SignActionSwap extends SignAction {
           // set to new node
           animations.set("door_R"+name.substring(6), animations.getNode(name));
           // remove
-          attachmentNode.remove(name);
+          animations.remove(name);
           attachmentNode.set("animations", animations);
         }
       }
