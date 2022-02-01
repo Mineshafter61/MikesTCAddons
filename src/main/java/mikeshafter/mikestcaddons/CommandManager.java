@@ -78,6 +78,7 @@ public class CommandManager implements CommandExecutor {
         }
       } else player.sendMessage("You need to own a train first!");
       return true;
+  
     } else if (command.getName().equalsIgnoreCase("decouple") && sender instanceof Player player && args.length == 1 && sender.hasPermission("mikestcaddons.decouple")) {
       if (MinecartGroupStore.get(player.getVehicle()) != null) {
         MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
@@ -158,7 +159,10 @@ public class CommandManager implements CommandExecutor {
       }
     }
   
+    attachment.onDetached();
     attachment.onLoad(node);
+    attachment.onAttached();
+    attachment.setFocused(true);
 //    for (Iterator<Animation> iterator = animations.iterator(); iterator.hasNext(); ) {
 //      Animation animation = iterator.next();
 //

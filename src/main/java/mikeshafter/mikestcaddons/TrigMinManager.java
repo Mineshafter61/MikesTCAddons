@@ -18,15 +18,15 @@ public class TrigMinManager {
   
       Variable variable = Variables.get(trigMin.getVariable());
       Variable time = Variables.get(variable+"T");
-      Variable destination = Variables.get(variable+"D");
-      Variable name = Variables.get(variable+"N");
-      Variable speed = Variables.get(variable+"V");
+//      Variable destination = Variables.get(variable+"D");
+//      Variable name = Variables.get(variable+"N");
+//      Variable speed = Variables.get(variable+"V");
   
       variable.set(trigMin.getMin()+" min");
       time.set(trigMin.getMin()+" min");
-      destination.set(event.getGroup().getProperties().getDestination());
-      name.set(event.getGroup().getProperties().getDisplayName());
-      speed.set(String.valueOf(Math.min(event.getGroup().getAverageForce(), event.getGroup().getProperties().getSpeedLimit())));
+//      destination.set(event.getGroup().getProperties().getDestination());
+//      name.set(event.getGroup().getProperties().getDisplayName());
+//      speed.set(String.valueOf(Math.min(event.getGroup().getAverageForce(), event.getGroup().getProperties().getSpeedLimit())));
   
       if (trigMin.getMin() == 0) trigMins.remove(trigMin);
     }
