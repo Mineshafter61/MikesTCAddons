@@ -124,10 +124,10 @@ public class Throttle {
       
       Component p = Component.text(String.format("Pressure %.4f ", airRemaining.get()));
       p = p.color(TextColor.color(255, 0, 0));
-      Component a = Component.text(String.format("Acceleration %.4f ", acceleration/36000));
+      Component a = Component.text(String.format("Accel %.4f ", acceleration/36000));
       a = a.color(TextColor.color(0, 255, 0));
-      Component v = Component.text(String.format("Speed %.4f", speed.get() ));
-      v = v.color(TextColor.color(80, 80, 255));
+      Component v = Component.text(String.format("Speed %.4f m/t, %.4f km/h", speed.get(), speed.get()*72 ));
+      v = v.color(TextColor.color(0, 255, 255));
       Component barText = p.append(a).append(v);
       brakePipe.name(barText);
     }
@@ -135,8 +135,8 @@ public class Throttle {
   
   private void moveAir() {
     if (airRemaining.get() > 0 && move) {
-      airRemaining.subtract(15);
-      airUsed.add(15);
+      airRemaining.subtract(5);
+      airUsed.add(5);
     }
   }
   
