@@ -20,7 +20,7 @@ public class SignActionSwap extends SignAction {
   
   private void swap(MinecartMember<?> member) {
     ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
-  
+    
     Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
     if (attachments != null) {
       for (ConfigurationNode node : attachments) {
@@ -45,9 +45,6 @@ public class SignActionSwap extends SignAction {
     if (animationNames.contains("door_R")) {
       for (String name : animationNames) {
         if (name.contains("door_R")) {
-//          Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
-//          plugin.getLogger().info(name);
-//          plugin.getLogger().info("door_L"+name.substring(6));
           // set to new node
           animations.set("door_L"+name.substring(6), animations.getNode(name));
           // remove
@@ -56,7 +53,7 @@ public class SignActionSwap extends SignAction {
         }
       }
     }
-  
+
     // Swap left doors for right doors
     else if (animationNames.contains("door_L")) {
       for (String name : animationNames) {
@@ -85,7 +82,7 @@ public class SignActionSwap extends SignAction {
       }
       return;
     }
-  
+    
     // When a [cart] sign is placed, activate when powered by redstone when each cart
     // goes over the sign, or when redstone is activated.
     if (info.isCartSign()

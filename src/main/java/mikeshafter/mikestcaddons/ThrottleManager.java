@@ -13,26 +13,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ThrottleManager implements Listener {
-  
   private final static List<Throttle> throttles = new CopyOnWriteArrayList<>();
   
+  // Run the throttle task
   public static void throttleTask() {
-    for (Throttle throttle : throttles) {
-      throttle.run();
-    }
+    for (Throttle throttle : throttles) throttle.run();
   }
   
+  // Player enables throttle
   public static void addThrottle(Player player) {
     throttles.add(new Throttle(player));
   }
   
+  // Methods to switch off throttle
   @EventHandler
   public static void onVehicleLeave(VehicleExitEvent event) {
-    if (event.getExited() instanceof Player player) {
-      removeThrottle(player);
-    }
+    if (event.getExited() instanceof Player player) removeThrottle(player);
   }
   
+  // Helper method
   public static void removeThrottle(Player player) {
     for (Throttle throttle : throttles) {
       if (throttle.getPlayer() == player) {
@@ -52,6 +51,7 @@ public class ThrottleManager implements Listener {
     removeThrottle(event.getPlayer());
   }
   
+  // Disallow the dropping of items
   @EventHandler
   public static void onDrop(PlayerDropItemEvent event) {
     for (Throttle throttle : throttles) {

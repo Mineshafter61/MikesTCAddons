@@ -1,9 +1,7 @@
 package mikeshafter.mikestcaddons;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
-import com.bergerkiller.bukkit.tc.attachments.animation.Animation;
 import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
-import com.bergerkiller.bukkit.tc.attachments.api.Attachment;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
@@ -16,7 +14,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 
 public class CommandManager implements CommandExecutor {
@@ -73,7 +71,7 @@ public class CommandManager implements CommandExecutor {
       if (MinecartGroupStore.get(player.getVehicle()) != null) {
         MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
         if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-          for (MinecartMember<?> member : vehicle) swap(member.getAttachments().getRootAttachment());
+          for (MinecartMember<?> member : vehicle) swap(member.getProperties().getModel().getConfig());
           player.sendMessage("Swapped left and right doors.");
         }
       } else player.sendMessage("You need to own a train first!");
@@ -111,77 +109,55 @@ public class CommandManager implements CommandExecutor {
             newGroup[i] = members.get(i);
           }
           vehicle.subList(0, toDecouple).clear();
-      
+  
           MinecartGroupStore.createSplitFrom(properties, newGroup);
           return true;
         }
       }
   
     }
-    
+  
     return false;
   }
   
-  private void swap(Attachment attachment) {
-    // Swap animations for children
-    if (!attachment.getChildren().isEmpty()) for (Attachment child : attachment.getChildren()) swap(child);
-  
-    // Swap for current attachment
-    ConfigurationNode node = attachment.getConfig().getNode("animations");
-    List<String> animationNames = attachment.getAnimationNamesRecursive();
-    Map<String, Animation> animationMap = attachment.getInternalState().animations;
-  
-    // Swap right doors for left doors
+  private ConfigurationNode swap(ConfigurationNode attachmentNode) {
+    Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
+    if (attachments != null) {
+      for (ConfigurationNode node : attachments) swap(node);
+    }
+    
+    ConfigurationNode animations = attachmentNode.getNode("animations");
+    Set<String> animationNames = animations.getKeys();
+    
     if (animationNames.contains("door_R")) {
       for (String name : animationNames) {
         if (name.contains("door_R")) {
-          // get full name
-          Animation animation = animationMap.get(name);
-          // change "door_R" to "door_L"
-          animationMap.put("door_L"+name.substring(6), animation);
-          // remove original name
-          animationMap.remove(name);
+//          Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
+//          plugin.getLogger().info(name);
+//          plugin.getLogger().info("door_L"+name.substring(6));
+          // set to new node
+          animations.set("door_L"+name.substring(6), animations.getNode(name));
+          // remove
+          animations.remove(name);
+          attachmentNode.set("animations", animations);
         }
       }
     }
-
+    
     // Swap left doors for right doors
     else if (animationNames.contains("door_L")) {
       for (String name : animationNames) {
         if (name.contains("door_L")) {
-          // get full name
-          Animation animation = animationMap.get(name);
-          // change "door_L" to "door_R"
-          animationMap.put("door_R"+name.substring(6), animation);
-          // remove original name
-          animationMap.remove(name);
+          // set to new node
+          animations.set("door_R"+name.substring(6), animations.getNode(name));
+          // remove
+          animations.remove(name);
+          attachmentNode.set("animations", animations);
         }
       }
     }
-  
-    attachment.onDetached();
-    attachment.onLoad(node);
-    attachment.onAttached();
-    attachment.setFocused(true);
-//    for (Iterator<Animation> iterator = animations.iterator(); iterator.hasNext(); ) {
-//      Animation animation = iterator.next();
-//
-//      if (animation.getOptions().getName().equals("door_R")) {
-//        AnimationOptions options = animation.getOptions();
-//        options.setName("door_L");
-//        animation.setOptions(options);
-//        attachment.clearAnimations();
-//        attachment.addAnimation(animation);
-//      } else if (animation.getOptions().getName().equals("door_L")) {
-//        AnimationOptions options = animation.getOptions();
-//        options.setName("door_R");
-//        animation.setOptions(options);
-//        attachment.clearAnimations();
-//        attachment.addAnimation(animation);
-//      }
-//    }
-  
-  
+    
+    return attachmentNode;
   }
   
 }

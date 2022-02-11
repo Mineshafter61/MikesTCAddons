@@ -3,6 +3,8 @@ package mikeshafter.mikestcaddons;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
@@ -89,6 +91,7 @@ public class Throttle {
             forwardPower.set(25);
           }
           traction = 2500;
+          player.playSound(Sound.sound(Key.key("minecraft:train.accelerate"), Sound.Source.MASTER, 2, 1), Sound.Emitter.self());
         }
         case 3 -> forwardPower.set(100);
         case 4 -> forwardPower.set(230);
@@ -101,32 +104,47 @@ public class Throttle {
           minecartGroup.getProperties().removeTags("left");
         }
       }
-      
+  
+      // Move air from the reservoir into the brake pipe, and calculate forces
       moveAir();
       speed.set(Math.min(minecartGroup.getAverageForce(), minecartGroup.getProperties().getSpeedLimit()));
       double brakeForce = airUsed.get()*3;
       double forwardForce = speed.get() > 0.01 ? forwardPower.get()/speed.get() : 2500;
-      
-      brakePipe.progress((float) (airUsed.get()/1250));
-      
+  
+      // Brake pipe quick release valve opened as there was too much air
+      if (brakePipe.progress() > 0.98) airUsed.set(0);
+  
+      // Reflect brake pipe air changes in the bossbar
+      brakePipe.progress((float) (airUsed.get()/250));
+  
+      // Reflect acceleration in speed change
       double acceleration = (forwardForce-brakeForce)*powerCars/minecartGroup.size();
       if (speed.get() == 0 && acceleration < 0 || acceleration > traction) acceleration = 0;
       speed.add(acceleration/36000);
-      
+  
+      // Play sounds
+      if (acceleration < 0) {
+        if (speed.moreThan(0.1))
+          player.playSound(Sound.sound(Key.key("minecraft:train.brake.automatic"), Sound.Source.MASTER, 2, 1), Sound.Emitter.self());
+        else
+          player.playSound(Sound.sound(Key.key("minecraft:train.brake.mandraulic"), Sound.Source.MASTER, 2, 1), Sound.Emitter.self());
+      }
+  
+      // Change speed limit as speed increases
       if (speed.get() > minecartGroup.getProperties().getSpeedLimit())
         minecartGroup.getProperties().setSpeedLimit(Math.round(speed.get()*10)/10d+0.1);
       else if (speed.get() < 0.01) {
         minecartGroup.setForwardForce(0);
         minecartGroup.getProperties().setSpeedLimit(0);
       }
-      
+  
       minecartGroup.setForwardForce(speed.get());
-      
-      Component p = Component.text(String.format("Pressure %.4f ", airRemaining.get()));
+  
+      Component p = Component.text(String.format("| %.1f kPa |", airRemaining.get()));
       p = p.color(TextColor.color(255, 0, 0));
-      Component a = Component.text(String.format("Accel %.4f ", acceleration/36000));
+      Component a = Component.text(String.format("| %.4f m/t² |", acceleration/36000));
       a = a.color(TextColor.color(0, 255, 0));
-      Component v = Component.text(String.format("Speed %.4f m/t, %.4f km/h", speed.get(), speed.get()*72 ));
+      Component v = Component.text(String.format("| %.3f m/t %.2f km/h |", speed.get(), speed.get()*72));
       v = v.color(TextColor.color(0, 255, 255));
       Component barText = p.append(a).append(v);
       brakePipe.name(barText);
