@@ -1,6 +1,5 @@
 package mikeshafter.mikestcaddons;
 
-import com.bergerkiller.bukkit.sl.API.Variable;
 import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
@@ -22,17 +21,20 @@ public class SignActionTrigMin extends SignAction {
       String variable = event.getLine(2);
       try {
         int min = Integer.parseInt(event.getLine(3));
-        Variable var = Variables.get(variable);
-        Variable time = Variables.get(variable+"T");
-        Variable destination = Variables.get(variable+"D");
-        Variable name = Variables.get(variable+"N");
-        Variable speed = Variables.get(variable+"V");
-        var.set(min+" min");
-        time.set(min+" min");
-        destination.set(event.getGroup().getProperties().getDestination());
-        name.set(event.getGroup().getProperties().getDisplayName());
-        speed.set(String.valueOf(Math.min(event.getGroup().getAverageForce(), event.getGroup().getProperties().getSpeedLimit())));
-        TrigMinManager.addTrigMin(min, variable, event);
+  
+        Variables.get(variable).set(min+" min");
+        Variables.get(variable+"T").set(min+" min");
+  
+        if (event.getGroup().getProperties().hasDestination())
+          Variables.get(variable+"D").set(event.getGroup().getProperties().getDestination());
+        else
+          Variables.get(variable+"D").set("Unknown");
+  
+        Variables.get(variable+"N").set(event.getGroup().getProperties().getDisplayName());
+        Variables.get(variable+"V").set(String.valueOf(Math.min(event.getGroup().getAverageForce(), event.getGroup().getProperties().getSpeedLimit())));
+  
+        TrigMinManager.addTrigMin(min, variable);
+  
       } catch (NumberFormatException e) {
         Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
         plugin.getLogger().warning(String.format("TrigMin sign linking to %s is not set up properly!", variable));

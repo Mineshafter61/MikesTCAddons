@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 group 'org.mikeshafter'
-version '1.18.1r2'
+version '1.18.1r3'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -26,6 +27,7 @@ java {
 }
 
 dependencies {
+    implementation 'org.beanshell:bsh:2.0b5'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.18.1-v3-SNAPSHOT'
     compileOnly 'com.bergerkiller.bukkit:TrainCarts:1.18.1-v3-SNAPSHOT'

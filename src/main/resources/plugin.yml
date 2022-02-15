@@ -1,5 +1,5 @@
 name: MikesTCAddons
-version: '${project.version}'
+version: 1.18.1r3
 main: mikeshafter.mikestcaddons.MikesTCAddons
 api-version: 1.17
 prefix: "Mike's TC Addons"

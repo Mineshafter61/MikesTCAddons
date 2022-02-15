@@ -23,6 +23,8 @@ public class Throttle {
   Player player;
   MinecartGroup minecartGroup;
   int powerCars;
+  int previous;
+  int current;
   boolean move;
   BossBar brakePipe;
   
@@ -50,6 +52,7 @@ public class Throttle {
     // Set items
     setPlayerInventory(player, "Brake Valve Open", Material.BLUE_DYE, 0);
     setPlayerInventory(player, "Brake Valve Close", Material.LIME_DYE, 1);
+    setPlayerInventory(player, "Release Brake Air", Material.CYAN_DYE, 1);
     setPlayerInventory(player, "Shunt", Material.PINK_DYE, 2);
     setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 3);
     setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 4);
@@ -68,9 +71,11 @@ public class Throttle {
   
   public void run() {
     if (minecartGroup.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-      
+  
       double traction = 370;
-      switch (player.getInventory().getHeldItemSlot()) {
+      previous = current;
+      current = player.getInventory().getHeldItemSlot();  // current action
+      switch (current) {
         case 0 -> {
           forwardPower.set(0);
           move = true;
@@ -79,7 +84,8 @@ public class Throttle {
           forwardPower.set(0);
           move = false;
         }
-        case 2 -> {
+        case 2 -> airUsed.set(0d);
+        case 3 -> {
           airUsed.set(0d);
           if (airRemaining.lessThan(8275)) {
             // add to remaining tank
@@ -91,15 +97,14 @@ public class Throttle {
             forwardPower.set(25);
           }
           traction = 2500;
-          player.playSound(Sound.sound(Key.key("minecraft:train.accelerate"), Sound.Source.MASTER, 2, 1), Sound.Emitter.self());
         }
-        case 3 -> forwardPower.set(100);
-        case 4 -> forwardPower.set(230);
-        case 5 -> {
+        case 4 -> forwardPower.set(100);
+        case 5 -> forwardPower.set(230);
+        case 6 -> {
           minecartGroup.getProperties().addTags("left");
           minecartGroup.getProperties().removeTags("right");
         }
-        case 6 -> {
+        case 7 -> {
           minecartGroup.getProperties().addTags("right");
           minecartGroup.getProperties().removeTags("left");
         }
@@ -123,22 +128,19 @@ public class Throttle {
       speed.add(acceleration/36000);
   
       // Play sounds
-      if (acceleration < 0) {
-        if (speed.moreThan(0.1))
-          player.playSound(Sound.sound(Key.key("minecraft:train.brake.automatic"), Sound.Source.MASTER, 2, 1), Sound.Emitter.self());
-        else
-          player.playSound(Sound.sound(Key.key("minecraft:train.brake.mandraulic"), Sound.Source.MASTER, 2, 1), Sound.Emitter.self());
+      if (previous != current) {  // Only run this once
+        if (speed.lessThan(0.1) && current == 2)
+          player.playSound(Sound.sound(Key.key("minecraft:train.accelerate"), Sound.Source.PLAYER, 5, 1), Sound.Emitter.self());
+        else if (acceleration < 0 && speed.moreThan(0.1))
+          player.playSound(Sound.sound(Key.key("minecraft:train.brake.automatic"), Sound.Source.PLAYER, 5, 1), Sound.Emitter.self());
+        else if (acceleration < 0)
+          player.playSound(Sound.sound(Key.key("minecraft:train.brake.mandraulic"), Sound.Source.PLAYER, 5, 1), Sound.Emitter.self());
       }
+  
+      player.playSound(Sound.sound(Key.key("minecraft:train.motion"), Sound.Source.PLAYER, (float) speed.get(), 1), Sound.Emitter.self());
   
       // Change speed limit as speed increases
-      if (speed.get() > minecartGroup.getProperties().getSpeedLimit())
-        minecartGroup.getProperties().setSpeedLimit(Math.round(speed.get()*10)/10d+0.1);
-      else if (speed.get() < 0.01) {
-        minecartGroup.setForwardForce(0);
-        minecartGroup.getProperties().setSpeedLimit(0);
-      }
-  
-      minecartGroup.setForwardForce(speed.get());
+      minecartGroup.getProperties().setSpeedLimit(speed.get());
   
       Component p = Component.text(String.format("| %.1f kPa |", airRemaining.get()));
       p = p.color(TextColor.color(255, 0, 0));

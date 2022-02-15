@@ -5,6 +5,7 @@ import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
+import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -37,28 +38,28 @@ public class CommandManager implements CommandExecutor {
         }
       }
     } else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player && args.length == 2 && sender.hasPermission("mikestcaddons.door")) {
-      if (MinecartGroupStore.get(player.getVehicle()) != null) {
-        MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
+      if (CartPropertiesStore.getEditing(player) != null) {
+        MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
         if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-          if (args[0].equalsIgnoreCase("l")) {
+          if (args[0].contains("l")) {
             AnimationOptions options = new AnimationOptions();
         
-            if (args[1].equalsIgnoreCase("o")) {
-              options.setSpeed(1);
-            } else {
+            if (args[1].contains("c")) {
               options.setSpeed(-1);
+            } else {
+              options.setSpeed(1);
             }
-          
+        
             options.setName("door_L");
             vehicle.playNamedAnimation(options);
             return true;
-          } else if (args[0].equalsIgnoreCase("r")) {
+          } else if (args[0].contains("r")) {
             AnimationOptions options = new AnimationOptions();
-          
-            if (args[1].equalsIgnoreCase("o")) {
-              options.setSpeed(1);
-            } else {
+        
+            if (args[1].contains("c")) {
               options.setSpeed(-1);
+            } else {
+              options.setSpeed(1);
             }
         
             options.setName("door_R");
