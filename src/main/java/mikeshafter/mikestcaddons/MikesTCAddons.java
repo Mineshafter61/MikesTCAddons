@@ -38,6 +38,7 @@ public final class MikesTCAddons extends JavaPlugin {
     Objects.requireNonNull(getCommand("swap")).setExecutor(manager);
     Objects.requireNonNull(getCommand("decouple")).setExecutor(manager);
     this.getServer().getPluginManager().registerEvents(new ThrottleManager(), this);
+    this.getServer().getPluginManager().registerEvents(new BarrelVulnerabilityFix(), this);
     this.getLogger().log(Level.INFO, "OldThrottle has been enabled!");
   }
 }

@@ -1,6 +1,5 @@
 package mikeshafter.mikestcaddons;
 
-import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
@@ -15,12 +14,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 
 public class CommandManager implements CommandExecutor {
   @Override
   public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String s, String[] args) {
+  
+    // throttle
     if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player player && args.length == 1 && sender.hasPermission("mikestcaddons.throttle")) {
       if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null) {
         MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
@@ -37,128 +37,122 @@ public class CommandManager implements CommandExecutor {
           return true;
         }
       }
-    } else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player && args.length == 2 && sender.hasPermission("mikestcaddons.door")) {
+    }
+  
+    // door
+    else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player player && args.length == 2 && sender.hasPermission("mikestcaddons.door")) {
+    
+      // Get the train the player is editing
       if (CartPropertiesStore.getEditing(player) != null) {
         MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
+      
+        // Check if the player is an owner
         if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
+        
+          // left side
           if (args[0].contains("l")) {
             AnimationOptions options = new AnimationOptions();
-        
+          
+            // c for close, o for open
             if (args[1].contains("c")) {
               options.setSpeed(-1);
             } else {
               options.setSpeed(1);
             }
-        
+          
             options.setName("door_L");
             vehicle.playNamedAnimation(options);
             return true;
+          
+            // right side
           } else if (args[0].contains("r")) {
             AnimationOptions options = new AnimationOptions();
-        
+          
+            // c for close, o for open
             if (args[1].contains("c")) {
               options.setSpeed(-1);
             } else {
               options.setSpeed(1);
             }
-        
+          
             options.setName("door_R");
             vehicle.playNamedAnimation(options);
             return true;
           }
         }
       }
-    } else if (command.getName().equalsIgnoreCase("swap") && sender instanceof Player player && args.length == 0 && sender.hasPermission("mikestcaddons.swap")) {
-      if (MinecartGroupStore.get(player.getVehicle()) != null) {
-        MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
+    }
+  
+    // swap
+    else if (command.getName().equalsIgnoreCase("swap") && sender instanceof Player player && args.length == 0 && sender.hasPermission("mikestcaddons.swap")) {
+    
+      // Get the train the player is editing
+      if (CartPropertiesStore.getEditing(player).getHolder().getGroup() != null) {
+        MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
+      
+        // Check if the player is an owner
         if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-          for (MinecartMember<?> member : vehicle) swap(member.getProperties().getModel().getConfig());
+        
+          // Swap every door animation name
+          for (MinecartMember<?> member : vehicle) SignActionSwap.swap(member.getProperties().getModel().getConfig());
           player.sendMessage("Swapped left and right doors.");
         }
       } else player.sendMessage("You need to own a train first!");
       return true;
+    
+    }
   
-    } else if (command.getName().equalsIgnoreCase("decouple") && sender instanceof Player player && args.length == 1 && sender.hasPermission("mikestcaddons.decouple")) {
-      if (MinecartGroupStore.get(player.getVehicle()) != null) {
-        MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
-        int toDecouple = Integer.parseInt(args[0]);
-        List<MinecartMember<?>> members = vehicle.stream().toList();
-        TrainProperties properties = vehicle.getProperties();
-        int size = members.size();
-        MinecartMember<?>[] newGroup = new MinecartMember<?>[Math.abs(toDecouple)];
+    // decouple
+    else if (command.getName().equalsIgnoreCase("decouple") && sender instanceof Player player && args.length == 1 && sender.hasPermission("mikestcaddons.decouple")) {
     
-    
-        // if the number to decouple is negative, decouple from the rear:
-        if (toDecouple < 0) {
-          toDecouple = -toDecouple;
+      // Get the train the player is editing
+      if (CartPropertiesStore.getEditing(player).getHolder().getGroup() != null) {
+        MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
       
-          int j = 0;
-          for (int i = size-1; i > size-toDecouple; i--) {
-            newGroup[j] = members.get(i);
-            j++;
-            vehicle.remove(i);
+        // Check if the player is an owner
+        if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
+        
+          int toDecouple = Integer.parseInt(args[0]);  // Get the number of carts to decouple
+          List<MinecartMember<?>> members = vehicle.stream().toList();  // Make the train into a list for easier editing
+          TrainProperties properties = vehicle.getProperties();  // Get properties
+          int size = members.size();  // Get size
+          MinecartMember<?>[] newGroup = new MinecartMember<?>[Math.abs(toDecouple)];  // New train from existing
+        
+        
+          // if the number to decouple is negative, decouple from the rear:
+          if (toDecouple < 0) {
+            toDecouple = -toDecouple;
+          
+            // Remove carts sequentially
+            int j = 0;
+            for (int i = size-1; i > size-toDecouple; i--) {
+              newGroup[j] = members.get(i);
+              ++j;
+              vehicle.remove(i);
+            }
+          
+            // Create new train and store
+            MinecartGroupStore.createSplitFrom(properties, newGroup);
+            return true;
           }
-      
-          MinecartGroupStore.createSplitFrom(properties, newGroup);
-          return true;
-        }
-    
-        // else decouple from the front
-        else if (toDecouple > 0) {
-      
-          for (int i = 0; i < toDecouple; i++) {
-            newGroup[i] = members.get(i);
+        
+          // else decouple from the front
+          else if (toDecouple > 0) {
+          
+            // Remove carts sequentially
+            for (int i = 0; i < toDecouple; i++) newGroup[i] = members.get(i);
+            vehicle.subList(0, toDecouple).clear();
+          
+            // Create new train and store
+            MinecartGroupStore.createSplitFrom(properties, newGroup);
+            return true;
           }
-          vehicle.subList(0, toDecouple).clear();
-  
-          MinecartGroupStore.createSplitFrom(properties, newGroup);
-          return true;
         }
       }
-  
+    
     }
   
     return false;
-  }
-  
-  private ConfigurationNode swap(ConfigurationNode attachmentNode) {
-    Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
-    if (attachments != null) {
-      for (ConfigurationNode node : attachments) swap(node);
-    }
-    
-    ConfigurationNode animations = attachmentNode.getNode("animations");
-    Set<String> animationNames = animations.getKeys();
-    
-    if (animationNames.contains("door_R")) {
-      for (String name : animationNames) {
-        if (name.contains("door_R")) {
-//          Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
-//          plugin.getLogger().info(name);
-//          plugin.getLogger().info("door_L"+name.substring(6));
-          // set to new node
-          animations.set("door_L"+name.substring(6), animations.getNode(name));
-          // remove
-          animations.remove(name);
-          attachmentNode.set("animations", animations);
-        }
-      }
-    }
-    
-    // Swap left doors for right doors
-    else if (animationNames.contains("door_L")) {
-      for (String name : animationNames) {
-        if (name.contains("door_L")) {
-          // set to new node
-          animations.set("door_R"+name.substring(6), animations.getNode(name));
-          // remove
-          animations.remove(name);
-          attachmentNode.set("animations", animations);
-        }
-      }
-    }
-    
-    return attachmentNode;
   }
   
 }

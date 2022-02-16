@@ -36,93 +36,93 @@ public class SignActionBarrel extends SignAction {
       // Barrel
       BlockState state = event.getAttachedBlock().getState();
       if (state instanceof Container container) {
+  
+        // StringBuilder to build code
+        StringBuilder builder = new StringBuilder();
+  
         for (ItemStack itemStack : container.getInventory().getContents()) {
           if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta bookMeta) {
-          
-            StringBuilder builder = new StringBuilder();
+      
             for (Component page : bookMeta.pages()) {
               TextComponent pageText = (TextComponent) page;
-              // parse pages
-              // remove ending \n's
+              // parse pages and append page
               builder.append(pageText.content());
             }
-          
-            // Code to be parsed
-            String code = builder.toString();
-          
-            // Get group for later
-            MinecartGroup group = event.getGroup();
-            TrainProperties trainProperties = (TrainProperties) group.getProperties().clone();
-          
-            // Execute code using BeanShell interpreter
-            Interpreter i = new Interpreter();  // Construct an interpreter
-            try {
-            
-              i.eval("import com.bergerkiller.bukkit.*;");
-              // Set extra variables
-              i.set("tc", new BarrelMethods(group));  // Custom methods
-              i.set("properties", trainProperties);  // General properties
-              // Other properties
-              i.set("bankingSmoothness", trainProperties.getBankingSmoothness());
-              i.set("bankingStrength", trainProperties.getBankingStrength());
-              i.set("canOnlyOwnersEnter", trainProperties.getCanOnlyOwnersEnter());
-              i.set("collision", trainProperties.getCollision());
-              i.set("collisionDamage", trainProperties.getCollisionDamage());
-              i.set("config", trainProperties.getConfig());
-              i.set("currentRouteDestinationIndex", trainProperties.getCurrentRouteDestinationIndex());
-              i.set("destination", trainProperties.getDestination());
-              i.set("destinationRoute", trainProperties.getDestinationRoute());
-              i.set("displayName", trainProperties.getDisplayName());
-              i.set("displayNameOrEmpty", trainProperties.getDisplayNameOrEmpty());
-              i.set("friction", trainProperties.getFriction());
-              i.set("gravity", trainProperties.getGravity());
-              i.set("holder", trainProperties.getHolder());
-              i.set("killMessage", trainProperties.getKillMessage());
-              i.set("lastPathNode", trainProperties.getLastPathNode());
-              i.set("location", trainProperties.getLocation());
-              i.set("nextDestinationOnRoute", trainProperties.getNextDestinationOnRoute());
-              i.set("ownerPermissions", trainProperties.getOwnerPermissions());
-              i.set("owners", trainProperties.getOwners());
-              i.set("playersEnter", trainProperties.getPlayersEnter());
-              i.set("playersExit", trainProperties.getPlayersExit());
-              i.set("skipOptions", trainProperties.getSkipOptions());
-              i.set("spawnItemDrops", trainProperties.getSpawnItemDrops());
-              i.set("speedLimit", trainProperties.getSpeedLimit());
-              i.set("tags", trainProperties.getTags());
-              i.set("tickets", trainProperties.getTickets());
-              i.set("trainName", trainProperties.getTrainName());
-              i.set("typeName", trainProperties.getTypeName());
-              i.set("waitAcceleration", trainProperties.getWaitAcceleration());
-              i.set("waitDeceleration", trainProperties.getWaitDeceleration());
-              i.set("waitDelay", trainProperties.getWaitDelay());
-              i.set("waitDistance", trainProperties.getWaitDistance());
-            
-              // Evaluate code
-              i.eval(code);
-            
-            } catch (EvalError e) {
-              // spit out the entire error message to everyone on the train
-              for (MinecartMember<?> member : group) {
-                member.getEntity().getPlayerPassengers().forEach(player -> TrainCarts.sendMessage(player, e.toString()));
-              }
-            
-            }
           }
-      
+        }
+  
+        // Code to be parsed
+        String code = builder.toString();
+  
+        // Get group and properties for later
+        MinecartGroup group = event.getGroup();
+        TrainProperties trainProperties = (TrainProperties) group.getProperties().clone();
+  
+        // Execute code using BeanShell interpreter
+        Interpreter i = new Interpreter();  // Construct an interpreter
+  
+        try {
+    
+          i.eval("import com.bergerkiller.bukkit.*;");
+          // Set extra variables
+          i.set("tc", new BarrelMethods(group));  // Custom methods
+          i.set("properties", trainProperties);  // General properties
+          // Other properties
+          i.set("bankingSmoothness", trainProperties.getBankingSmoothness());
+          i.set("bankingStrength", trainProperties.getBankingStrength());
+          i.set("canOnlyOwnersEnter", trainProperties.getCanOnlyOwnersEnter());
+          i.set("collision", trainProperties.getCollision());
+          i.set("collisionDamage", trainProperties.getCollisionDamage());
+          i.set("config", trainProperties.getConfig());
+          i.set("currentRouteDestinationIndex", trainProperties.getCurrentRouteDestinationIndex());
+          i.set("destination", trainProperties.getDestination());
+          i.set("destinationRoute", trainProperties.getDestinationRoute());
+          i.set("displayName", trainProperties.getDisplayName());
+          i.set("displayNameOrEmpty", trainProperties.getDisplayNameOrEmpty());
+          i.set("friction", trainProperties.getFriction());
+          i.set("gravity", trainProperties.getGravity());
+          i.set("holder", trainProperties.getHolder());
+          i.set("killMessage", trainProperties.getKillMessage());
+          i.set("lastPathNode", trainProperties.getLastPathNode());
+          i.set("location", trainProperties.getLocation());
+          i.set("nextDestinationOnRoute", trainProperties.getNextDestinationOnRoute());
+          i.set("ownerPermissions", trainProperties.getOwnerPermissions());
+          i.set("owners", trainProperties.getOwners());
+          i.set("playersEnter", trainProperties.getPlayersEnter());
+          i.set("playersExit", trainProperties.getPlayersExit());
+          i.set("skipOptions", trainProperties.getSkipOptions());
+          i.set("spawnItemDrops", trainProperties.getSpawnItemDrops());
+          i.set("speedLimit", trainProperties.getSpeedLimit());
+          i.set("tags", trainProperties.getTags());
+          i.set("tickets", trainProperties.getTickets());
+          i.set("trainName", trainProperties.getTrainName());
+          i.set("typeName", trainProperties.getTypeName());
+          i.set("waitAcceleration", trainProperties.getWaitAcceleration());
+          i.set("waitDeceleration", trainProperties.getWaitDeceleration());
+          i.set("waitDelay", trainProperties.getWaitDelay());
+          i.set("waitDistance", trainProperties.getWaitDistance());
+    
+          // Evaluate code
+          i.eval(code);
+    
+        } catch (EvalError e) {
+          // spit out the entire error message to everyone on the train
+          for (MinecartMember<?> member : group) {
+            member.getEntity().getPlayerPassengers().forEach(player -> TrainCarts.sendMessage(player, e.toString()));
+          }
         }
       }
-  
     }
-    
-    
   }
   
   
   @Override
   public boolean build(SignChangeActionEvent event) {
-    return SignBuildOptions.create()
-        .setName("barrel")
-        .setDescription("do a lot of stuff")
-        .handle(event.getPlayer());
+    if (event.getPlayer().hasPermission("mikestcaddons.barrel")) {
+      return SignBuildOptions.create().setName("barrel").setDescription("do a lot of stuff").handle(event.getPlayer());
+    } else {
+      event.setCancelled(true);
+      return false;
+    }
   }
 }

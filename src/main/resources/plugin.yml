@@ -33,3 +33,6 @@ permissions:
   mikestcaddons.decouple:
     description: allows use of /decouple
     default: op
+  mikestcaddons.barrel:
+    description: allows the placement of the barrel sign and alteration of barrels
+    default: false
