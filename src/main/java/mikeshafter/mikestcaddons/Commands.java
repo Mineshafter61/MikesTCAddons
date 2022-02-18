@@ -8,18 +8,21 @@ import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 
-public class CommandManager implements CommandExecutor {
+public class Commands implements TabExecutor {
+  
+  
   @Override
   public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String s, String[] args) {
-  
+    
     // throttle
     if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player player && args.length == 1 && sender.hasPermission("mikestcaddons.throttle")) {
       if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null) {
@@ -91,8 +94,8 @@ public class CommandManager implements CommandExecutor {
         MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
       
         // Check if the player is an owner
-        if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-        
+        if (vehicle.getProperties().hasOwnership(player)) {
+    
           // Swap every door animation name
           for (MinecartMember<?> member : vehicle) SignActionSwap.swap(member.getProperties().getModel().getConfig());
           player.sendMessage("Swapped left and right doors.");
@@ -110,15 +113,15 @@ public class CommandManager implements CommandExecutor {
         MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
       
         // Check if the player is an owner
-        if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-        
+        if (vehicle.getProperties().hasOwnership(player)) {
+    
           int toDecouple = Integer.parseInt(args[0]);  // Get the number of carts to decouple
           List<MinecartMember<?>> members = vehicle.stream().toList();  // Make the train into a list for easier editing
           TrainProperties properties = vehicle.getProperties();  // Get properties
           int size = members.size();  // Get size
           MinecartMember<?>[] newGroup = new MinecartMember<?>[Math.abs(toDecouple)];  // New train from existing
-        
-        
+    
+    
           // if the number to decouple is negative, decouple from the rear:
           if (toDecouple < 0) {
             toDecouple = -toDecouple;
@@ -149,10 +152,14 @@ public class CommandManager implements CommandExecutor {
           }
         }
       }
-    
+      
     }
-  
+    
     return false;
   }
   
+  @Override
+  public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    return null;
+  }
 }

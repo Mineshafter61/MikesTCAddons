@@ -62,8 +62,9 @@ public class SignActionBarrel extends SignAction {
         Interpreter i = new Interpreter();  // Construct an interpreter
   
         try {
-    
-          i.eval("import com.bergerkiller.bukkit.*;");
+  
+          i.eval("import org.bukkit.*;");
+          i.eval("com.bergerkiller.bukkit.*");
           // Set extra variables
           i.set("tc", new BarrelMethods(group));  // Custom methods
           i.set("properties", trainProperties);  // General properties

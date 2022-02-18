@@ -43,21 +43,21 @@ public class Throttle {
     airUsed = new PositiveDouble(0);
     airRemaining = new PositiveDouble(0);
     forwardPower = new PositiveDouble(0);
-    
+  
     // Store inventory
     for (int i = 0; i < 9; i++) {
       playerHB[i] = player.getInventory().getItem(i);
     }
-    
+  
     // Set items
     setPlayerInventory(player, "Brake Valve Open", Material.BLUE_DYE, 0);
     setPlayerInventory(player, "Brake Valve Close", Material.LIME_DYE, 1);
-    setPlayerInventory(player, "Release Brake Air", Material.CYAN_DYE, 1);
-    setPlayerInventory(player, "Shunt", Material.PINK_DYE, 2);
-    setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 3);
-    setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 4);
-    setPlayerInventory(player, "Left", Material.ORANGE_DYE, 5);
-    setPlayerInventory(player, "Right", Material.GREEN_DYE, 6);
+    setPlayerInventory(player, "Release Brake Air", Material.CYAN_DYE, 2);
+    setPlayerInventory(player, "Shunt", Material.PINK_DYE, 3);
+    setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 4);
+    setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 5);
+    setPlayerInventory(player, "Left", Material.ORANGE_DYE, 6);
+    setPlayerInventory(player, "Right", Material.GREEN_DYE, 7);
   }
   
   private void setPlayerInventory(Player player, String displayName, Material type, int slot) {
