@@ -10,7 +10,7 @@ import java.util.logging.Level;
 public final class MikesTCAddons extends JavaPlugin {
   
   private final SignActionSwap signActionSwap = new SignActionSwap();
-  private final SignActionBarrel signActionBarrel = new SignActionBarrel();
+  private final SignActionBarrelStation signActionBarrelStation = new SignActionBarrelStation();
   private final SignActionTrigMin signActionTriggerMin = new SignActionTrigMin();
   private final SignActionVariable signActionVariable = new SignActionVariable();
   
@@ -18,7 +18,7 @@ public final class MikesTCAddons extends JavaPlugin {
   public void onDisable() {
     // Plugin shutdown logic
     SignAction.unregister(signActionSwap);
-    SignAction.unregister(signActionBarrel);
+    SignAction.unregister(signActionBarrelStation);
     SignAction.unregister(signActionTriggerMin);
     SignAction.unregister(signActionVariable);
     this.getLogger().log(Level.INFO, "OldThrottle has been disabled!");
@@ -36,7 +36,7 @@ public final class MikesTCAddons extends JavaPlugin {
     // Register SignActions
     //
     SignAction.register(signActionSwap);
-    SignAction.register(signActionBarrel);
+    SignAction.register(signActionBarrelStation);
     SignAction.register(signActionTriggerMin);
     SignAction.register(signActionVariable);
     Commands manager = new Commands();
@@ -45,7 +45,6 @@ public final class MikesTCAddons extends JavaPlugin {
     Objects.requireNonNull(getCommand("swap")).setExecutor(manager);
     Objects.requireNonNull(getCommand("decouple")).setExecutor(manager);
     this.getServer().getPluginManager().registerEvents(new ThrottleManager(), this);
-    this.getServer().getPluginManager().registerEvents(new BarrelVulnerabilityFix(), this);
     this.getLogger().log(Level.INFO, "Mike's TC Addons has been enabled!");
   }
 }

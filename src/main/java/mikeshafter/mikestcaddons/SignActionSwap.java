@@ -7,7 +7,6 @@ import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 
@@ -19,7 +18,7 @@ public class SignActionSwap extends SignAction {
     return info.isType("swap", "swapdoor");
   }
   
-  public static void swap(MinecartMember<?> member) {
+  private void swap(MinecartMember<?> member) {
     ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
     
     Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
@@ -34,8 +33,7 @@ public class SignActionSwap extends SignAction {
     }
   }
   
-  public static ConfigurationNode swap(ConfigurationNode attachmentNode) {
-    Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
+  private ConfigurationNode swap(ConfigurationNode attachmentNode) {
     Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
     if (attachments != null) {
       for (ConfigurationNode node : attachments) swap(node);
@@ -46,7 +44,6 @@ public class SignActionSwap extends SignAction {
     
     if (animationNames.contains("door_R")) {
       animationNames.forEach((name) -> {
-        plugin.getLogger().info(name);
         if (name.startsWith("door_R")) {
           // set to new node
           animations.set("door_L"+name.substring(6), animations.getNode(name));
@@ -60,7 +57,6 @@ public class SignActionSwap extends SignAction {
     // Swap left doors for right doors
     else if (animationNames.contains("door_L")) {
       animationNames.forEach((name) -> {
-        plugin.getLogger().info(name);
         if (name.startsWith("door_L")) {
           // set to new node
           animations.set("door_R"+name.substring(6), animations.getNode(name));

@@ -1,5 +1,6 @@
 package mikeshafter.mikestcaddons;
 
+import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 
 public class Commands implements TabExecutor {
@@ -97,7 +99,7 @@ public class Commands implements TabExecutor {
         if (vehicle.getProperties().hasOwnership(player)) {
     
           // Swap every door animation name
-          for (MinecartMember<?> member : vehicle) SignActionSwap.swap(member.getProperties().getModel().getConfig());
+          for (MinecartMember<?> member : vehicle) swap(member);
           player.sendMessage("Swapped left and right doors.");
         }
       } else player.sendMessage("You need to own a train first!");
@@ -157,6 +159,61 @@ public class Commands implements TabExecutor {
     
     return false;
   }
+  
+  
+  private void swap(MinecartMember<?> member) {
+    ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
+    
+    Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
+    if (attachments != null) {
+      for (ConfigurationNode node : attachments) {
+        
+        ConfigurationNode attachment = member.getProperties().getModel().getConfig().getNode("attachments");
+        attachment.set(node.getPath(), swap(node));
+        fullConfig.set("attachments", attachment);
+        member.getProperties().getModel().update(fullConfig);
+      }
+    }
+  }
+  
+  
+  private ConfigurationNode swap(ConfigurationNode attachmentNode) {
+    Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
+    if (attachments != null) {
+      for (ConfigurationNode node : attachments) swap(node);
+    }
+  
+    ConfigurationNode animations = attachmentNode.getNode("animations");
+    Set<String> animationNames = animations.getKeys();
+  
+    if (animationNames.contains("door_R")) {
+      animationNames.forEach((name) -> {
+        if (name.startsWith("door_R")) {
+          // set to new node
+          animations.set("door_L"+name.substring(6), animations.getNode(name));
+          // remove
+          animations.remove(name);
+          attachmentNode.set("animations", animations);
+        }
+      });
+    }
+
+    // Swap left doors for right doors
+    else if (animationNames.contains("door_L")) {
+      animationNames.forEach((name) -> {
+        if (name.startsWith("door_L")) {
+          // set to new node
+          animations.set("door_R"+name.substring(6), animations.getNode(name));
+          // remove
+          animations.remove(name);
+          attachmentNode.set("animations", animations);
+        }
+      });
+    }
+  
+    return attachmentNode;
+  }
+  
   
   @Override
   public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {

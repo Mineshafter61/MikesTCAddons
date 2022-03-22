@@ -140,7 +140,7 @@ public class Throttle {
       player.playSound(Sound.sound(Key.key("minecraft:train.motion"), Sound.Source.PLAYER, (float) speed.get(), 1), Sound.Emitter.self());
   
       // Change speed limit as speed increases
-      minecartGroup.getProperties().setSpeedLimit(speed.get());
+      minecartGroup.getProperties().setSpeedLimit(Math.round(speed.get()*1000)/1000);
   
       Component p = Component.text(String.format("| %.1f kPa |", airRemaining.get()));
       p = p.color(TextColor.color(255, 0, 0));
