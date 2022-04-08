@@ -21,6 +21,10 @@ public class PositiveDouble {
     if (this.v < 0) this.v = 0;
   }
   
+  public void reset() {
+    this.v = 0;
+  }
+  
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

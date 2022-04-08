@@ -4,8 +4,7 @@ import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
-import com.bergerkiller.bukkit.tc.signactions.SignActionMode;
-import com.bergerkiller.bukkit.tc.signactions.SignActionStation;
+import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
 import net.kyori.adventure.text.Component;
@@ -27,11 +26,10 @@ import java.util.Map;
 import static mikeshafter.mikestcaddons.BarrelUtil.*;
 
 
-public class SignActionBarrelStation extends SignActionStation {
-  
+public class SignActionBarrelRun extends SignAction {
   @Override
-  public boolean match(SignActionEvent info) {
-    return info.isType("barrelsta", "specialsta") && info.getMode() != SignActionMode.NONE;
+  public boolean match(SignActionEvent event) {
+    return event.isType("barrelrun", "specialrun");
   }
   
   @Override
@@ -49,10 +47,10 @@ public class SignActionBarrelStation extends SignActionStation {
         
         // StringBuilder to build code
         StringBuilder builder = new StringBuilder();
-  
+        
         for (ItemStack itemStack : container.getInventory().getContents()) {
           if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta bookMeta) {
-  
+            
             for (Component page : bookMeta.pages()) {
               TextComponent pageText = (TextComponent) page;
               // parse pages and append page
@@ -198,9 +196,6 @@ public class SignActionBarrelStation extends SignActionStation {
           group.forEach(m -> m.getEntity().getPlayerPassengers().forEach(p -> p.sendMessage(e.getMessage())));
         }
       }
-  
-      // Do what the station sign does
-      super.execute(info);
       
     }
   }
@@ -208,12 +203,11 @@ public class SignActionBarrelStation extends SignActionStation {
   
   @Override
   public boolean build(SignChangeActionEvent event) {
-    if (event.getPlayer().hasPermission("mikestcaddons.barrelstation")) {
-      return SignBuildOptions.create().setName("barrelstation").setDescription("stop, wait and launch trains, and update blocks").handle(event.getPlayer());
+    if (event.getPlayer().hasPermission("mikestcaddons.barrel")) {
+      return SignBuildOptions.create().setName("barrelrun").setDescription("do what's defined in the barrel").handle(event.getPlayer());
     } else {
       event.setCancelled(true);
       return false;
     }
   }
-  
 }
