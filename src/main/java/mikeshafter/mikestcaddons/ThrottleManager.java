@@ -21,8 +21,8 @@ public class ThrottleManager implements Listener {
   }
   
   // Player enables throttle
-  public static void addThrottle(Player player) {
-    throttles.add(new Throttle(player));
+  public static void addThrottle(Player player, int powerCars) {
+    throttles.add(new Throttle(player, powerCars));
   }
   
   // Methods to switch off throttle

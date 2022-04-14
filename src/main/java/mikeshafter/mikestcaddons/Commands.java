@@ -9,28 +9,35 @@ import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 
-public class Commands implements CommandExecutor {
+public class Commands implements TabExecutor {
   
   
   @Override
   public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String s, String[] args) {
     
     // throttle
-    if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player player && args.length == 1 && sender.hasPermission("mikestcaddons.throttle")) {
+    if (command.getName().equalsIgnoreCase("throttle") && sender instanceof Player player && args.length >= 1 && sender.hasPermission("mikestcaddons.throttle")) {
       if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null) {
         MinecartGroup vehicle = MinecartGroupStore.get(player.getVehicle());
         if (vehicle.getProperties().getOwners().contains(player.getName().toLowerCase())) {
-          if (args[0].equalsIgnoreCase("on")) {
-            ThrottleManager.addThrottle(player);
+          if (args[0].equalsIgnoreCase("mu")) {
+            ThrottleManager.addThrottle(player, vehicle.size());
+            return true;
+          } else if (args[0].equalsIgnoreCase("loc")) {
+            if (args.length == 2 && args[1].matches("\\d+")) ThrottleManager.addThrottle(player, Integer.parseInt(args[1]));
+            else ThrottleManager.addThrottle(player, 1);
             return true;
           } else if (args[0].equalsIgnoreCase("off")) {
             ThrottleManager.removeThrottle(player);
@@ -159,7 +166,6 @@ public class Commands implements CommandExecutor {
     return false;
   }
   
-  
   private void swap(MinecartMember<?> member) {
     ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
     
@@ -174,7 +180,6 @@ public class Commands implements CommandExecutor {
       }
     }
   }
-  
   
   private ConfigurationNode swap(ConfigurationNode attachmentNode) {
     Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
@@ -212,4 +217,35 @@ public class Commands implements CommandExecutor {
   
     return attachmentNode;
   }
+  
+  @Override
+  public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    List<String> completions = new ArrayList<>();
+    List<String> commands = new ArrayList<>();
+    
+    // throttle
+    if (command.getName().equalsIgnoreCase("throttle") && sender.hasPermission("mikestcaddons.throttle")) {
+      if (args.length == 1) {
+        commands.add("mu");
+        commands.add("loc");
+        commands.add("off");
+        StringUtil.copyPartialMatches(args[0], commands, completions);
+      }
+    }
+    
+    else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player && sender.hasPermission("mikestcaddons.door")) {
+      if (args.length == 1) {
+        commands.add("l");
+        commands.add("r");
+        StringUtil.copyPartialMatches(args[0], commands, completions);
+      }
+      else if (args.length == 2) {
+        commands.add("o");
+        commands.add("c");
+        StringUtil.copyPartialMatches(args[1], commands, completions);
+      }
+    }
+    return completions;
+  }
+  
 }

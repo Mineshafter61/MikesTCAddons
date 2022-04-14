@@ -1,12 +1,7 @@
 package mikeshafter.mikestcaddons;
 
-import com.bergerkiller.bukkit.common.config.ConfigurationNode;
-import com.bergerkiller.bukkit.tc.Util;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
-import com.bergerkiller.bukkit.tc.properties.api.ITrainProperty;
-import com.bergerkiller.bukkit.tc.properties.api.PropertyParser;
-import com.bergerkiller.bukkit.tc.properties.api.context.PropertyParseContext;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -15,33 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Optional;
-
 
 public class Throttle {
-  
-  public static final ITrainProperty<Integer> POWER_CARS = new ITrainProperty<Integer>() {
-    
-    @PropertyParser("powerCars")
-    public double parsePowerCars(PropertyParseContext<Integer> context) {
-      return context.inputDouble();
-    }
-    
-    @Override
-    public Integer getDefault() {
-      return 1;
-    }
-    
-    @Override
-    public Optional<Integer> readFromConfig(ConfigurationNode config) {
-      return Util.getConfigOptional(config, "powerCars", int.class);
-    }
-    
-    @Override
-    public void writeToConfig(ConfigurationNode config, Optional<Integer> value) {
-      Util.setConfigOptional(config, "powerCars", value);
-    }
-  };
+
   double airUsed;
   ItemStack[] playerHB;
   Player player;
@@ -52,16 +23,16 @@ public class Throttle {
   BossBar brakePipe;
   double power;
   
-  public Throttle(Player player) {
+  public Throttle(Player player, int powerCars) {
     this.player = player;
+    this.powerCars = powerCars;
     playerHB = new ItemStack[9];
     brakePipe = BossBar.bossBar(Component.text("Claim the train before driving!"), 1f, BossBar.Color.RED, BossBar.Overlay.NOTCHED_10);
     player.showBossBar(brakePipe);
     
     if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null && MinecartGroupStore.get(player.getVehicle()).getProperties().getOwners().contains(player.getName().toLowerCase())) {
       minecartGroup = MinecartGroupStore.get(player.getVehicle());
-      powerCars = minecartGroup.getProperties().get(POWER_CARS);
-    } else powerCars = 0;
+    }
     
     airUsed = 0d;
     power = 0d;
@@ -95,7 +66,7 @@ public class Throttle {
   public void run() {
     if (minecartGroup.getProperties().getOwners().contains(player.getName().toLowerCase())) {
   
-      if (brakePipe.progress() < 0.098) brakePipe.progress(brakePipe.progress()+0.002f);
+      if (brakePipe.progress() < 0.98) brakePipe.progress(brakePipe.progress()+0.002f);
       previous = current;
       current = player.getInventory().getHeldItemSlot();  // current action
   
@@ -106,17 +77,17 @@ public class Throttle {
           minecartGroup.getProperties().removeTags("right");
           //
           if (brakePipe.progress() > 0.01f) {
-            airUsed += 3d;
-            brakePipe.progress(brakePipe.progress()-0.012f);
+            airUsed += 0.0002d;
+            brakePipe.progress(brakePipe.progress()-0.006f);
           }
-          power = -120d;
+          power = -0.003d;
         }
         // air valve closed, maintain dynamic brake
         case 1 -> {
           minecartGroup.getProperties().removeTags("left");
           minecartGroup.getProperties().removeTags("right");
           //
-          power = -120d;
+          power = -0.006d;
         }
         // release air, dynamic brake on
         case 2 -> {
@@ -124,7 +95,7 @@ public class Throttle {
           minecartGroup.getProperties().removeTags("right");
           //
           airUsed = 0d;
-          power = -120d;
+          power = -0.006d;
         }
         // release air, neutral accel, add left tag
         case 3 -> {
@@ -155,7 +126,7 @@ public class Throttle {
           minecartGroup.getProperties().removeTags("left");
           minecartGroup.getProperties().removeTags("right");
           //
-          power = 30d;
+          power = 0.0008d;
         }
         // power on 1 bogie
         case 7 -> {
@@ -163,7 +134,7 @@ public class Throttle {
           minecartGroup.getProperties().removeTags("left");
           minecartGroup.getProperties().removeTags("right");
           //
-          power = 120d;
+          power = 0.003d;
         }
         // power on 2 bogies
         case 8 -> {
@@ -171,23 +142,27 @@ public class Throttle {
           minecartGroup.getProperties().removeTags("left");
           minecartGroup.getProperties().removeTags("right");
           //
-          power = 240d;
+          power = 0.006d;
         }
       }
   
   
       double speed = minecartGroup.getProperties().getSpeedLimit();
-      double brakeForce = airUsed;
-      double forwardForce = speed > 0.01 ? power/speed : 2500;
+      double forwardForce;
+      if (speed < 0.01 && power > 0) forwardForce = 0.07;
+      else if (speed < 0.01) forwardForce = 0;
+      else forwardForce = power/speed;
   
       // Reflect acceleration in speed change
-      double acceleration = (forwardForce-brakeForce)*powerCars/minecartGroup.size();
-      speed += (acceleration/36000);
+      speed += (forwardForce) * powerCars / minecartGroup.size();
+      speed -= airUsed;
+      speed = speed < 0 ? 0 : speed;
   
       // Change speed limit as speed increases
+      minecartGroup.setForwardForce(speed);
       minecartGroup.getProperties().setSpeedLimit(speed);
   
-      Component a = Component.text(String.format("%.4f m/t² |", acceleration/36000));
+      Component a = Component.text(String.format("| %.4f m/t² |", forwardForce - airUsed));
       a = a.color(TextColor.color(0, 255, 0));
       Component v = Component.text(String.format("| %.3f m/t %.2f km/h |", speed, speed*72));
       v = v.color(TextColor.color(0, 255, 255));
