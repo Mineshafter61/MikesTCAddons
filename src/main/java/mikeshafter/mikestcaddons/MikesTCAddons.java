@@ -1,6 +1,8 @@
 package mikeshafter.mikestcaddons;
 
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -24,6 +26,7 @@ public final class MikesTCAddons extends JavaPlugin {
     SignAction.unregister(signActionTriggerMin);
     SignAction.unregister(signActionVariable);
     this.getLogger().log(Level.INFO, "Mike's TC Addons has been disabled!");
+    for (Player player : Bukkit.getOnlinePlayers()) ThrottleManager.removeThrottle(player);
   }
   
   @Override
