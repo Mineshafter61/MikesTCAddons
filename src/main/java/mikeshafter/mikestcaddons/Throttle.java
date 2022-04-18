@@ -32,6 +32,7 @@ public class Throttle {
     
     if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null && MinecartGroupStore.get(player.getVehicle()).getProperties().getOwners().contains(player.getName().toLowerCase())) {
       minecartGroup = MinecartGroupStore.get(player.getVehicle());
+      minecartGroup.getProperties().setSpeedLimit(0d);  // Stop the train so it doesn't go rouge
     }
     
     airUsed = 0d;
@@ -46,12 +47,12 @@ public class Throttle {
     setPlayerInventory(player, "Max Brake", Material.BLUE_DYE, 0);  // air valve open, maintain dynamic brake
     setPlayerInventory(player, "Med Brake", Material.CYAN_DYE, 1);  // air valve closed, maintain dynamic brake
     setPlayerInventory(player, "Min Brake", Material.LIGHT_BLUE_DYE, 2);  // release air, dynamic brake on
-    setPlayerInventory(player, "Left", Material.ORANGE_DYE, 3);  // release air, neutral accel, add left tag
-    setPlayerInventory(player, "Neutral", Material.LIME_DYE, 4);  // release air, neutral accel, remove all tags
-    setPlayerInventory(player, "Right", Material.YELLOW_DYE, 5);  // release air, neutral accel, add right tag
-    setPlayerInventory(player, "Shunt", Material.PINK_DYE, 6);  // positive shunt power
-    setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 7);  // power on 1 bogie
-    setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 8);  // power on 2 bogies
+    setPlayerInventory(player, "Neutral", Material.LIME_DYE, 3);  // release air, neutral accel, remove all tags
+    setPlayerInventory(player, "Shunt", Material.PINK_DYE, 4);  // positive shunt power
+    setPlayerInventory(player, "Series", Material.MAGENTA_DYE, 5);  // power on 1 bogie
+    setPlayerInventory(player, "Parallel", Material.PURPLE_DYE, 6);  // power on 2 bogies
+    setPlayerInventory(player, "Left", Material.ORANGE_DYE, 7);  // release air, neutral accel, add left tag
+    setPlayerInventory(player, "Right", Material.YELLOW_DYE, 8);  // release air, neutral accel, add right tag
   }
   
   private void setPlayerInventory(Player player, String displayName, Material type, int slot) {
@@ -68,86 +69,71 @@ public class Throttle {
   
       if (brakePipe.progress() < 0.98) brakePipe.progress(brakePipe.progress()+0.002f);
       previous = current;
+      double speed = minecartGroup.getProperties().getSpeedLimit();  // get speed
       current = player.getInventory().getHeldItemSlot();  // current action
   
       switch (current) {
         // air valve open, maintain dynamic brake
         case 0 -> {
-          minecartGroup.getProperties().removeTags("left");
-          minecartGroup.getProperties().removeTags("right");
           //
           if (brakePipe.progress() > 0.01f) {
             airUsed += 0.0002d;
             brakePipe.progress(brakePipe.progress()-0.006f);
           }
-          power = -0.003d;
+          power = 0d;
         }
         // air valve closed, maintain dynamic brake
         case 1 -> {
-          minecartGroup.getProperties().removeTags("left");
-          minecartGroup.getProperties().removeTags("right");
           //
-          power = -0.006d;
+          power = airUsed == 0d ? -(speed/200) : 0d;
         }
         // release air, dynamic brake on
         case 2 -> {
-          minecartGroup.getProperties().removeTags("left");
-          minecartGroup.getProperties().removeTags("right");
           //
           airUsed = 0d;
-          power = -0.006d;
+          power = -(speed/200);
         }
         // release air, neutral accel, add left tag
+        // release air, neutral accel, remove all tags
         case 3 -> {
           airUsed = 0d;
           power = 0d;
-          //
-          minecartGroup.getProperties().addTags("left");
-          minecartGroup.getProperties().removeTags("right");
-        }
-        // release air, neutral accel, remove all tags
-        case 4 -> {
-          airUsed = 0d;
-          power = 0d;
           minecartGroup.getProperties().removeTags("left");
           minecartGroup.getProperties().removeTags("right");
-        }
-        // release air, neutral accel, add right tag
-        case 5 -> {
-          airUsed = 0d;
-          power = 0d;
-          //
-          minecartGroup.getProperties().addTags("right");
-          minecartGroup.getProperties().removeTags("left");
         }
         // positive shunt power
-        case 6 -> {
+        case 4 -> {
           airUsed = 0d;
-          minecartGroup.getProperties().removeTags("left");
-          minecartGroup.getProperties().removeTags("right");
           //
           power = 0.0008d;
         }
         // power on 1 bogie
-        case 7 -> {
+        case 5 -> {
           airUsed = 0d;
-          minecartGroup.getProperties().removeTags("left");
-          minecartGroup.getProperties().removeTags("right");
           //
           power = 0.003d;
         }
         // power on 2 bogies
-        case 8 -> {
+        case 6 -> {
           airUsed = 0d;
-          minecartGroup.getProperties().removeTags("left");
-          minecartGroup.getProperties().removeTags("right");
           //
           power = 0.006d;
         }
+        // left tag
+        case 7 -> {
+          //
+          minecartGroup.getProperties().addTags("left");
+          minecartGroup.getProperties().removeTags("right");
+        }
+        // right tag
+        case 8 -> {
+          //
+          minecartGroup.getProperties().addTags("right");
+          minecartGroup.getProperties().removeTags("left");
+        }
       }
   
-  
-      double speed = minecartGroup.getProperties().getSpeedLimit();
+      
       double forwardForce;
       if (speed < 0.01 && power > 0) forwardForce = 0.07;
       else if (speed < 0.01) forwardForce = 0;
@@ -162,11 +148,13 @@ public class Throttle {
       minecartGroup.setForwardForce(speed);
       minecartGroup.getProperties().setSpeedLimit(speed);
   
+      Component p = Component.text(String.format("| %d/%d |", powerCars, minecartGroup.size()));
+      p = p.color(TextColor.color(255, 0, 0));
       Component a = Component.text(String.format("| %.4f m/t² |", forwardForce - airUsed));
       a = a.color(TextColor.color(0, 255, 0));
       Component v = Component.text(String.format("| %.3f m/t %.2f km/h |", speed, speed*72));
       v = v.color(TextColor.color(0, 255, 255));
-      Component barText = a.append(v);
+      Component barText = p.append(a).append(v);
       brakePipe.name(barText);
     }
   }

@@ -23,7 +23,7 @@ public final class MikesTCAddons extends JavaPlugin {
     SignAction.unregister(signActionBarrelRun);
     SignAction.unregister(signActionTriggerMin);
     SignAction.unregister(signActionVariable);
-    this.getLogger().log(Level.INFO, "OldThrottle has been disabled!");
+    this.getLogger().log(Level.INFO, "Mike's TC Addons has been disabled!");
   }
   
   @Override

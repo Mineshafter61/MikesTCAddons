@@ -16,20 +16,14 @@ public class ThrottleManager implements Listener {
   private final static List<Throttle> throttles = new CopyOnWriteArrayList<>();
   
   // Run the throttle task
-  public static void throttleTask() {
-    for (Throttle throttle : throttles) throttle.run();
-  }
+  public static void throttleTask() {for (Throttle throttle : throttles) throttle.run();}
   
   // Player enables throttle
-  public static void addThrottle(Player player, int powerCars) {
-    throttles.add(new Throttle(player, powerCars));
-  }
+  public static void addThrottle(Player player, int powerCars) {throttles.add(new Throttle(player, powerCars));}
   
   // Methods to switch off throttle
   @EventHandler
-  public static void onVehicleLeave(VehicleExitEvent event) {
-    if (event.getExited() instanceof Player player) removeThrottle(player);
-  }
+  public static void onVehicleLeave(VehicleExitEvent event) {if (event.getExited() instanceof Player player) removeThrottle(player);}
   
   // Helper method
   public static void removeThrottle(Player player) {
@@ -53,11 +47,5 @@ public class ThrottleManager implements Listener {
   
   // Disallow the dropping of items
   @EventHandler
-  public static void onDrop(PlayerDropItemEvent event) {
-    for (Throttle throttle : throttles) {
-      if (throttle.getPlayer() == event.getPlayer()) {
-        event.setCancelled(true);
-      }
-    }
-  }
+  public static void onDrop(PlayerDropItemEvent event) {for (Throttle throttle : throttles) if (throttle.getPlayer() == event.getPlayer()) event.setCancelled(true);}
 }
