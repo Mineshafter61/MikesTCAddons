@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.util;
 
 public class TrigMin {
   private final String variable;

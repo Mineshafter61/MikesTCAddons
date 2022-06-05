@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.util;
 
 import com.bergerkiller.bukkit.common.utils.LogicUtil;
 import com.bergerkiller.bukkit.common.utils.ParseUtil;
@@ -8,14 +8,20 @@ import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class BarrelUtil {
+  
+  public static List<Material> glass = Arrays.asList(Material.GLASS, Material.WHITE_STAINED_GLASS, Material.RED_STAINED_GLASS, Material.PINK_STAINED_GLASS, Material.ORANGE_STAINED_GLASS, Material.YELLOW_STAINED_GLASS, Material.GREEN_STAINED_GLASS, Material.LIME_STAINED_GLASS, Material.CYAN_STAINED_GLASS, Material.BLUE_STAINED_GLASS, Material.LIGHT_BLUE_STAINED_GLASS, Material.PURPLE_STAINED_GLASS, Material.MAGENTA_STAINED_GLASS, Material.GRAY_STAINED_GLASS, Material.LIGHT_GRAY_STAINED_GLASS, Material.BLACK_STAINED_GLASS, Material.BROWN_STAINED_GLASS);
+  
   
   // Parse a string to ticks
   public static long parseTicks(String timestring) {
@@ -92,7 +98,7 @@ public class BarrelUtil {
   }
   
   // Helper method for above method
-  public static void playSound(MinecartMember<?> member, @Subst("minecraft") String sound, String source, float volume, float pitch) {
+  public static void playSound(MinecartMember<?> member, String sound, String source, float volume, float pitch) {
 //    Sound.Source s = switch (source) {
 //      case "music" -> Sound.Source.MUSIC;
 //      case "record" -> Sound.Source.RECORD;
@@ -144,4 +150,11 @@ public class BarrelUtil {
     }
   }
   
+  // Open door smoothly
+  public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
+    Block block = new Location(world, x, y, z).getBlock();
+    
+    PlatformGate platformGate = new PlatformGate(block, direction, openTime);
+    platformGate.activateGate();
+  }
 }

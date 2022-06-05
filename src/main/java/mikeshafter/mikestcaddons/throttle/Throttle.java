@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.throttle;
 
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
@@ -27,7 +27,7 @@ public class Throttle {
     this.player = player;
     this.powerCars = powerCars;
     playerHB = new ItemStack[9];
-    brakePipe = BossBar.bossBar(Component.text("Claim the train before driving!"), 1f, BossBar.Color.RED, BossBar.Overlay.NOTCHED_10);
+    brakePipe = BossBar.bossBar(Component.text("Claim the train before driving!"), 0f, BossBar.Color.RED, BossBar.Overlay.NOTCHED_10);
     player.showBossBar(brakePipe);
     
     if (player.getVehicle() != null && MinecartGroupStore.get(player.getVehicle()) != null && MinecartGroupStore.get(player.getVehicle()).getProperties().getOwners().contains(player.getName().toLowerCase())) {
@@ -76,7 +76,7 @@ public class Throttle {
         case 1 -> {
           //
           if (brakePipe.progress() > 0.01f) {
-            airUsed += 0.0002d;
+            airUsed += 0.0002;
             brakePipe.progress(brakePipe.progress()-0.006f);
           }
           power = 0d;
@@ -84,13 +84,13 @@ public class Throttle {
         // air valve closed, maintain dynamic brake
         case 2 -> {
           //
-          power = airUsed == 0d ? 0.15-speed/200 : 0d;
+          power = airUsed == 0d && speed > 0.15 ? (0.15-speed)/200 : 0d;
         }
         // release air, dynamic brake on
         case 3 -> {
           //
           airUsed = 0d;
-          power = 0.15-speed/200;
+          power = (0.15-speed)/200;
         }
         // release air, neutral accel, add left tag
         // release air, neutral accel, remove all tags
@@ -112,13 +112,13 @@ public class Throttle {
         case 6 -> {
           airUsed = 0d;
           //
-          power = speed > 0.15 ? 0.003d : 0d;
+          power = speed > 0.15 ? 0.002d : 0d;
         }
         // power on 2 bogies
         case 7 -> {
           airUsed = 0d;
           //
-          power = speed > 0.15 ? 0.006d : 0d;
+          power = speed > 0.15 ? 0.004d : 0d;
         }
         // left tag
         case 0 -> {

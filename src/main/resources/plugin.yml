@@ -19,6 +19,9 @@ commands:
   decouple:
     description: Decouples minecarts.
     usage: /decouple <no. of minecarts>
+  opengate:
+    description: Opens gates
+    usage: /opengate <x> <y> <z> <direction> <ticks>
 
 permissions:
   oldthrottle.throttle:
@@ -36,3 +39,6 @@ permissions:
   mikestcaddons.barrel:
     description: allows the placement of the barrel sign and alteration of barrels
     default: false
+  mikestcaddons.gate:
+    description: allows the use of /opengate
+    default: op

@@ -1,16 +1,20 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.signactions;
 
 import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
-import com.bergerkiller.bukkit.tc.signactions.SignAction;
+import com.bergerkiller.bukkit.tc.signactions.SignActionMode;
+import com.bergerkiller.bukkit.tc.signactions.SignActionStation;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
+import mikeshafter.mikestcaddons.MikesTCAddons;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.inventory.ItemStack;
@@ -23,18 +27,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static mikeshafter.mikestcaddons.BarrelUtil.*;
+import static mikeshafter.mikestcaddons.util.BarrelUtil.*;
 
 
-public class SignActionBarrelRun extends SignAction {
+public class SignActionBarrelStation extends SignActionStation {
+  
   @Override
-  public boolean match(SignActionEvent event) {
-    return event.isType("barrelrun", "specialrun");
+  public boolean match(SignActionEvent info) {
+    return info.isType("barrelsta", "specialsta") && info.getMode() != SignActionMode.NONE;
   }
+  
   
   @Override
   public void execute(SignActionEvent info) {
-  
+    
     if (info.isTrainSign() && info.isAction(SignActionType.GROUP_ENTER, SignActionType.REDSTONE_ON)) {
       if (!info.hasRailedMember() || !info.isPowered()) return;
       barrel(info, info.getGroup());
@@ -43,7 +49,7 @@ public class SignActionBarrelRun extends SignAction {
         barrel(info, group);
       }
     }
-  
+    
   }
   
   
@@ -190,6 +196,15 @@ public class SignActionBarrelRun extends SignAction {
                         animationOptions.setScene(l.get(0).toString(), l.get(1).toString());
                       group.playNamedAnimation(animationOptions);
                     }
+                    case "open" -> {
+                      World world = state.getWorld();
+                      int x = Integer.parseInt(params.get("x").toString());
+                      int y = Integer.parseInt(params.get("y").toString());
+                      int z = Integer.parseInt(params.get("z").toString());
+                      BlockFace direction = BlockFace.valueOf(params.get("direction").toString());
+                      long time = Long.parseLong(params.get("time").toString());
+                      openDoor(world, x, y, z, direction, time);
+                    }
                   }
                   
                 }
@@ -207,16 +222,19 @@ public class SignActionBarrelRun extends SignAction {
       }
     }
     
+    // Do what the station sign does
+    super.execute(info);
   }
   
   
   @Override
   public boolean build(SignChangeActionEvent event) {
-    if (event.getPlayer().hasPermission("mikestcaddons.barrel")) {
-      return SignBuildOptions.create().setName("barrelrun").setDescription("do what's defined in the barrel").handle(event.getPlayer());
+    if (event.getPlayer().hasPermission("mikestcaddons.barrelstation")) {
+      return SignBuildOptions.create().setName("barrelstation").setDescription("stop, wait and launch trains, and update blocks").handle(event.getPlayer());
     } else {
       event.setCancelled(true);
       return false;
     }
   }
+  
 }

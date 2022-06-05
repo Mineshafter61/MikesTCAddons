@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.throttle;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.signactions;
 
 import com.bergerkiller.bukkit.sl.API.Variable;
 import com.bergerkiller.bukkit.sl.API.Variables;
@@ -7,6 +7,7 @@ import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
+import mikeshafter.mikestcaddons.MikesTCAddons;
 import org.bukkit.plugin.Plugin;
 
 

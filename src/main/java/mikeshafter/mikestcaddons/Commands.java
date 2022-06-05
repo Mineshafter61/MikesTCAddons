@@ -7,7 +7,12 @@ import com.bergerkiller.bukkit.tc.controller.MinecartGroupStore;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
+import mikeshafter.mikestcaddons.throttle.ThrottleManager;
+import mikeshafter.mikestcaddons.util.BarrelUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -18,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -149,18 +155,33 @@ public class Commands implements TabExecutor {
         
           // else decouple from the front
           else if (toDecouple > 0) {
-          
+  
             // Remove carts sequentially
             for (int i = 0; i < toDecouple; i++) newGroup[i] = members.get(i);
             vehicle.subList(0, toDecouple).clear();
-          
+  
             // Create new train and store
             MinecartGroupStore.createSplitFrom(properties, newGroup);
             return true;
           }
         }
       }
-      
+  
+    } else if (command.getName().equalsIgnoreCase("opengate") && (sender instanceof Player || sender instanceof BlockCommandSender) && args.length == 5 && sender.hasPermission("mikestcaddons.gate")) {
+      World world;
+      if (sender instanceof Player player) {
+        world = player.getWorld();
+      } else {
+        BlockCommandSender commandBlock = (BlockCommandSender) sender;
+        world = commandBlock.getBlock().getWorld();
+      }
+      int x = MikesTCAddons.getInteger(args[0], 'x', sender);
+      int y = MikesTCAddons.getInteger(args[1], 'x', sender);
+      int z = MikesTCAddons.getInteger(args[2], 'x', sender);
+      BlockFace direction = BlockFace.valueOf(args[3]);
+      int openTime = Integer.parseInt(args[4]);
+      BarrelUtil.openDoor(world, x, y, z, direction, openTime);
+      return true;
     }
     
     return false;
@@ -222,7 +243,7 @@ public class Commands implements TabExecutor {
   public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
     List<String> completions = new ArrayList<>();
     List<String> commands = new ArrayList<>();
-    
+  
     // throttle
     if (command.getName().equalsIgnoreCase("throttle") && sender.hasPermission("mikestcaddons.throttle")) {
       if (args.length == 1) {
@@ -231,20 +252,43 @@ public class Commands implements TabExecutor {
         commands.add("off");
         StringUtil.copyPartialMatches(args[0], commands, completions);
       }
-    }
-    
-    else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player && sender.hasPermission("mikestcaddons.door")) {
+    } else if (command.getName().equalsIgnoreCase("door") && sender instanceof Player && sender.hasPermission("mikestcaddons.door")) {
       if (args.length == 1) {
         commands.add("l");
         commands.add("r");
         StringUtil.copyPartialMatches(args[0], commands, completions);
-      }
-      else if (args.length == 2) {
+      } else if (args.length == 2) {
         commands.add("o");
         commands.add("c");
         StringUtil.copyPartialMatches(args[1], commands, completions);
       }
+    } else if (command.getName().equalsIgnoreCase("opengate") && (sender instanceof Player player)) {
+      if (args.length == 1) {
+        commands.add(String.valueOf(Objects.requireNonNull(player.getTargetBlock(5)).getX()));
+        StringUtil.copyPartialMatches(args[0], commands, completions);
+      }
+      if (args.length == 2) {
+        commands.add(String.valueOf(Objects.requireNonNull(player.getTargetBlock(5)).getY()));
+        StringUtil.copyPartialMatches(args[1], commands, completions);
+      }
+      if (args.length == 3) {
+        commands.add(String.valueOf(Objects.requireNonNull(player.getTargetBlock(5)).getZ()));
+        StringUtil.copyPartialMatches(args[2], commands, completions);
+      }
+      if (args.length == 4) {
+        commands.add("NORTH");
+        commands.add("SOUTH");
+        commands.add("EAST");
+        commands.add("WEST");
+        StringUtil.copyPartialMatches(args[3], commands, completions);
+      }
+      if (args.length == 5) {
+        commands.add(args[4]+"0");
+        commands.add(args[4]+"00");
+        StringUtil.copyPartialMatches(args[4], commands, completions);
+      }
     }
+  
     return completions;
   }
   

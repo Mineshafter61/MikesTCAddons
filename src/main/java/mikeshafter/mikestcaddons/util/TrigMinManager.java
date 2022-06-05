@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons;
+package mikeshafter.mikestcaddons.util;
 
 import com.bergerkiller.bukkit.sl.API.Variables;
 
