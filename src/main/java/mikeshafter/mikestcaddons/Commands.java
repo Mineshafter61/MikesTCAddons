@@ -10,6 +10,7 @@ import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import mikeshafter.mikestcaddons.throttle.ThrottleManager;
 import mikeshafter.mikestcaddons.util.BarrelUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.BlockCommandSender;
@@ -166,8 +167,10 @@ public class Commands implements TabExecutor {
           }
         }
       }
-  
-    } else if (command.getName().equalsIgnoreCase("opengate") && (sender instanceof Player || sender instanceof BlockCommandSender) && args.length == 5 && sender.hasPermission("mikestcaddons.gate")) {
+    }
+
+    // opengate
+    else if (command.getName().equalsIgnoreCase("opengate") && (sender instanceof Player || sender instanceof BlockCommandSender) && args.length == 5 && sender.hasPermission("mikestcaddons.gate")) {
       World world;
       if (sender instanceof Player player) {
         world = player.getWorld();
@@ -175,9 +178,9 @@ public class Commands implements TabExecutor {
         BlockCommandSender commandBlock = (BlockCommandSender) sender;
         world = commandBlock.getBlock().getWorld();
       }
-      int x = MikesTCAddons.getInteger(args[0], 'x', sender);
-      int y = MikesTCAddons.getInteger(args[1], 'x', sender);
-      int z = MikesTCAddons.getInteger(args[2], 'x', sender);
+      int x = getInteger(args[1], 'x', sender);
+      int y = getInteger(args[1], 'y', sender);
+      int z = getInteger(args[2], 'z', sender);
       BlockFace direction = BlockFace.valueOf(args[3]);
       int openTime = Integer.parseInt(args[4]);
       BarrelUtil.openDoor(world, x, y, z, direction, openTime);
@@ -193,7 +196,7 @@ public class Commands implements TabExecutor {
     Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
     if (attachments != null) {
       for (ConfigurationNode node : attachments) {
-        
+      
         ConfigurationNode attachment = member.getProperties().getModel().getConfig().getNode("attachments");
         attachment.set(node.getPath(), swap(node));
         fullConfig.set("attachments", attachment);
@@ -202,12 +205,26 @@ public class Commands implements TabExecutor {
     }
   }
   
+  private int getInteger(String str, char axis, CommandSender sender) {
+    if ((sender instanceof Player || sender instanceof BlockCommandSender) && str.startsWith("~")) {
+      Location loc = sender instanceof Player ? ((Player) sender).getLocation() : ((BlockCommandSender) sender).getBlock().getLocation();
+      int i = Integer.parseInt(str.substring(1));
+      switch (axis) {
+        case 'x' -> i += loc.getBlockX();
+        case 'y' -> i += loc.getBlockY();
+        case 'z' -> i += loc.getBlockZ();
+      }
+      
+      return i;
+    } else return Integer.parseInt(str);
+  }
+  
   private ConfigurationNode swap(ConfigurationNode attachmentNode) {
     Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
     if (attachments != null) {
       for (ConfigurationNode node : attachments) swap(node);
     }
-  
+    
     ConfigurationNode animations = attachmentNode.getNode("animations");
     Set<String> animationNames = animations.getKeys();
   
@@ -281,11 +298,6 @@ public class Commands implements TabExecutor {
         commands.add("EAST");
         commands.add("WEST");
         StringUtil.copyPartialMatches(args[3], commands, completions);
-      }
-      if (args.length == 5) {
-        commands.add(args[4]+"0");
-        commands.add(args[4]+"00");
-        StringUtil.copyPartialMatches(args[4], commands, completions);
       }
     }
   

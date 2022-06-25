@@ -5,9 +5,6 @@ import mikeshafter.mikestcaddons.signactions.*;
 import mikeshafter.mikestcaddons.throttle.ThrottleManager;
 import mikeshafter.mikestcaddons.util.TrigMinManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,21 +32,6 @@ public final class MikesTCAddons extends JavaPlugin {
     for (Player player : Bukkit.getOnlinePlayers()) ThrottleManager.removeThrottle(player);
   }
   
-  public static int getInteger(String str, char axis, CommandSender sender) {
-    if ((sender instanceof Player || sender instanceof BlockCommandSender) && str.startsWith("~")) {
-      Location loc = sender instanceof Player ? ((Player) sender).getLocation() : ((BlockCommandSender) sender).getBlock().getLocation();
-      int i = Integer.parseInt(str.substring(1));
-      switch (axis) {
-        case 'x' -> i += loc.getBlockX();
-        case 'y' -> i += loc.getBlockY();
-        case 'z' -> i += loc.getBlockZ();
-      }
-      
-      return i;
-    } else {
-      return Integer.parseInt(str);
-    }
-  }
   
   @Override
   public void onEnable() {
