@@ -178,12 +178,29 @@ public class Commands implements TabExecutor {
         BlockCommandSender commandBlock = (BlockCommandSender) sender;
         world = commandBlock.getBlock().getWorld();
       }
-      int x = getInteger(args[1], 'x', sender);
+      int x = getInteger(args[0], 'x', sender);
       int y = getInteger(args[1], 'y', sender);
       int z = getInteger(args[2], 'z', sender);
       BlockFace direction = BlockFace.valueOf(args[3]);
       int openTime = Integer.parseInt(args[4]);
       BarrelUtil.openDoor(world, x, y, z, direction, openTime);
+      return true;
+    }
+
+    // closegate
+    else if (command.getName().equalsIgnoreCase("closegate") && (sender instanceof Player || sender instanceof BlockCommandSender) && args.length == 3 && sender.hasPermission("mikestcaddons.gate")) {
+      World world;
+      if (sender instanceof Player player) {
+        world = player.getWorld();
+      } else {
+        BlockCommandSender commandBlock = (BlockCommandSender) sender;
+        world = commandBlock.getBlock().getWorld();
+      }
+      int x = getInteger(args[0], 'x', sender);
+      int y = getInteger(args[1], 'y', sender);
+      int z = getInteger(args[2], 'z', sender);
+  
+      BarrelUtil.closeDoor(world, x, y, z);
       return true;
     }
     
@@ -208,7 +225,7 @@ public class Commands implements TabExecutor {
   private int getInteger(String str, char axis, CommandSender sender) {
     if ((sender instanceof Player || sender instanceof BlockCommandSender) && str.startsWith("~")) {
       Location loc = sender instanceof Player ? ((Player) sender).getLocation() : ((BlockCommandSender) sender).getBlock().getLocation();
-      int i = Integer.parseInt(str.substring(1));
+      int i = str.substring(1).equals("") ? 0 : Integer.parseInt(str.substring(1));
       switch (axis) {
         case 'x' -> i += loc.getBlockX();
         case 'y' -> i += loc.getBlockY();
@@ -298,6 +315,19 @@ public class Commands implements TabExecutor {
         commands.add("EAST");
         commands.add("WEST");
         StringUtil.copyPartialMatches(args[3], commands, completions);
+      }
+    } else if (command.getName().equalsIgnoreCase("closegate") && (sender instanceof Player player)) {
+      if (args.length == 1) {
+        commands.add(String.valueOf(Objects.requireNonNull(player.getTargetBlock(5)).getX()));
+        StringUtil.copyPartialMatches(args[0], commands, completions);
+      }
+      if (args.length == 2) {
+        commands.add(String.valueOf(Objects.requireNonNull(player.getTargetBlock(5)).getY()));
+        StringUtil.copyPartialMatches(args[1], commands, completions);
+      }
+      if (args.length == 3) {
+        commands.add(String.valueOf(Objects.requireNonNull(player.getTargetBlock(5)).getZ()));
+        StringUtil.copyPartialMatches(args[2], commands, completions);
       }
     }
   

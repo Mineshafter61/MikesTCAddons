@@ -8,11 +8,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class PlatformGate {
   }
   
   private void killFallingSand() {
-    this.armorStand.getWorld().getNearbyEntities(this.armorStand.getLocation(), 1, 1, 1, (entity) -> entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.FALLING_BLOCK).forEach((e) -> e.remove());
+    this.block.getWorld().getNearbyEntities(this.armorStand.getLocation(), 1, 1, 1, (entity) -> entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.FALLING_BLOCK).forEach(Entity::remove);
     this.armorStand.remove();
     this.fallingBlock.remove();
   }

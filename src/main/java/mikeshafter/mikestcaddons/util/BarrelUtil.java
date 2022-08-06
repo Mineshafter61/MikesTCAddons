@@ -14,6 +14,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
 public class BarrelUtil {
   
   public static List<Material> glass = Arrays.asList(Material.GLASS, Material.WHITE_STAINED_GLASS, Material.RED_STAINED_GLASS, Material.PINK_STAINED_GLASS, Material.ORANGE_STAINED_GLASS, Material.YELLOW_STAINED_GLASS, Material.GREEN_STAINED_GLASS, Material.LIME_STAINED_GLASS, Material.CYAN_STAINED_GLASS, Material.BLUE_STAINED_GLASS, Material.LIGHT_BLUE_STAINED_GLASS, Material.PURPLE_STAINED_GLASS, Material.MAGENTA_STAINED_GLASS, Material.GRAY_STAINED_GLASS, Material.LIGHT_GRAY_STAINED_GLASS, Material.BLACK_STAINED_GLASS, Material.BROWN_STAINED_GLASS);
+  public static List<PlatformGate> gates = new ArrayList<>(); // List for forced closing
   
   
   // Parse a string to ticks
@@ -153,8 +155,16 @@ public class BarrelUtil {
   // Open door smoothly
   public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
     Block block = new Location(world, x, y, z).getBlock();
-    
-    PlatformGate platformGate = new PlatformGate(block, direction, openTime);
-    platformGate.activateGate();
+    // optimise code
+    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR)) {
+      PlatformGate platformGate = new PlatformGate(block, direction, openTime);
+      platformGate.activateGate();
+    }
+  }
+  
+  public static void closeDoor(World world, int x, int y, int z) {
+    for (PlatformGate gate : gates) {
+      if (gate.getBlock().getLocation().equals(new Location(world, x, y, z))) gate.closeGate(false);
+    }
   }
 }
