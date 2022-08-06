@@ -12,6 +12,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,7 @@ public class PlatformGate {
   }
   
   private void killFallingSand() {
+    this.armorStand.getWorld().getNearbyEntities(this.armorStand.getLocation(), 1, 1, 1, (entity) -> entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.FALLING_BLOCK).forEach((e) -> e.remove());
     this.armorStand.remove();
     this.fallingBlock.remove();
   }
