@@ -1,0 +1,44 @@
+name: MikesTCAddons
+version: 1.18.1b4
+main: mikeshafter.mikestcaddons.MikesTCAddons
+api-version: 1.14
+prefix: "Mike's TC Addons"
+depend: [ BKCommonLib, Train_Carts ]
+authors: [ MikeShafter ]
+description: Mike's TrainCarts Addons
+commands:
+  throttle:
+    description: Main throttle command.
+    usage: /throttle <mu|loc|off> [power cars (if loc)]
+  door:
+    description: Opens/closes doors.
+    usage: /door <l|r> <o|c>
+  swap:
+    description: Swaps "door_L" and "door_R" animations.
+    usage: /swap
+  decouple:
+    description: Decouples minecarts.
+    usage: /decouple <no. of minecarts>
+  opengate:
+    description: Opens gates
+    usage: /opengate <x> <y> <z> <direction> <ticks>
+
+permissions:
+  oldthrottle.throttle:
+    description: allows use of /throttle
+    default: op
+  mikestcaddons.door:
+    description: allows use of /door
+    default: true
+  mikestcaddons.swap:
+    description: allows use of /swap
+    default: true
+  mikestcaddons.decouple:
+    description: allows use of /decouple
+    default: op
+  mikestcaddons.barrel:
+    description: allows the placement of the barrel sign and alteration of barrels
+    default: false
+  mikestcaddons.gate:
+    description: allows the use of /opengate
+    default: op

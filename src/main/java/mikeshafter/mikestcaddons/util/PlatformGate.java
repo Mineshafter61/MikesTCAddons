@@ -76,7 +76,10 @@ public class PlatformGate {
   }
   
   private void killFallingSand() {
-    this.block.getWorld().getNearbyEntities(this.armorStand.getLocation(), 1, 1, 1, (entity) -> entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.FALLING_BLOCK).forEach(Entity::remove);
+    this.block.getWorld()
+        .getNearbyEntities(this.armorStand.getLocation(), 1, 1, 1,
+            (entity) -> entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.FALLING_BLOCK)
+        .forEach(Entity::remove);
     this.armorStand.remove();
     this.fallingBlock.remove();
   }
@@ -131,7 +134,6 @@ public class PlatformGate {
       this.killFallingSand();
       this.getBlock().setBlockData(this.blockData);
     }
-    
   }
   
   private void resetCountdown() {
