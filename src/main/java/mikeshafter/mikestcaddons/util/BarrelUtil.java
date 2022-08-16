@@ -156,7 +156,7 @@ public class BarrelUtil {
   public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
     Block block = new Location(world, x, y, z).getBlock();
     // optimise code
-    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR)) {
+    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && world.getNearbyEntities(location, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).size() > 0) {
       PlatformGate platformGate = new PlatformGate(block, direction, openTime);
       platformGate.activateGate();
     }
