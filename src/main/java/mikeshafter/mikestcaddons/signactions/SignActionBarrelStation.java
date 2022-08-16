@@ -66,7 +66,7 @@ public class SignActionBarrelStation extends SignActionStation {
       
       for (ItemStack itemStack : container.getInventory().getContents()) {
         if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() instanceof BookMeta bookMeta) {
-          
+    
           for (Component page : bookMeta.pages()) {
             TextComponent pageText = (TextComponent) page;
             // parse pages and append page
@@ -75,14 +75,24 @@ public class SignActionBarrelStation extends SignActionStation {
         }
       }
       // Code to be parsed
-      String content = builder.toString();
-      
+      String[] content = builder.toString().split("\n");
+  
+      // All code must now be done in macros written in config.yml.
+      // Each line in the book corresponds to a macro.
+      boolean inMacro = false;
+      for (String line : content) {
+        // string without colons are macros
+        // string with colons are arguments in the form <argument>:<value>
+        inMacro = line.contains(";");
+    
+      }
+  
       try {
         Yaml yaml = new Yaml();
-        Map<String, Object> data = yaml.load(content);
-        
+        Map<String, Object> data = yaml.load(Arrays.toString(content));
+    
         if (data == null) return;
-        
+    
         // Top level allowed keys:
         //   A number indicating the time after the train has stopped at the station, and/or a statement.
         // Negative numbers are not allowed.

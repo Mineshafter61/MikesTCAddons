@@ -38,11 +38,17 @@ public final class MikesTCAddons extends JavaPlugin {
   @Override
   public void onEnable() {
     //
+    // Register config
+    //
+    this.getConfig().options().copyDefaults(true);
+    this.saveConfig();
+  
+    //
     // Register schedulers
     //
     this.getServer().getScheduler().scheduleSyncRepeatingTask(this, ThrottleManager::throttleTask, 0, 1);
     this.getServer().getScheduler().scheduleSyncRepeatingTask(this, TrigMinManager::setTrigMins, 0, 1200);
-    
+  
     //
     // Register SignActions
     //
