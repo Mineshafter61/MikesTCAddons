@@ -11,6 +11,7 @@ import net.kyori.adventure.sound.Sound;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
 
@@ -154,9 +155,10 @@ public class BarrelUtil {
   
   // Open door smoothly
   public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
-    Block block = new Location(world, x, y, z).getBlock();
+    Location location = new Location(world, x, y, z);
+    Block block = location.getBlock();
     // optimise code
-    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && world.getNearbyEntities(location, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).size() > 0) {
+    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && world.getNearbyEntities(location, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).size() > 0) {
       PlatformGate platformGate = new PlatformGate(block, direction, openTime);
       platformGate.activateGate();
     }
