@@ -25,6 +25,7 @@ import org.yaml.snakeyaml.scanner.ScannerException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static mikeshafter.mikestcaddons.util.BarrelUtil.*;
@@ -80,16 +81,49 @@ public class SignActionBarrelStation extends SignActionStation {
       // All code must now be done in macros written in config.yml.
       // Each line in the book corresponds to a macro.
       boolean inMacro = false;
+      String macroText = "";
+      ArrayList<String> allMacros = new ArrayList<>();
+      
       for (String line : content) {
         // string without colons are macros
         // string with colons are arguments in the form <argument>:<value>
-        inMacro = line.contains(";");
-    
+        inMacro = line.contains(":");
+
+        if (!inMacro) {
+          // add the previous macroText to allMacros before starting a new one (if macroText is not empty)
+          if (macroText != "") allMacros.add(macroText);
+          // start a new macroText
+          macroText = plugin.getConfig().get(line).toString();  // get the yaml to replace
+        }
+        else {  // replace text in the yaml
+          macroText.replaceAll("%"+line.split(":")[0]+"%", line.split(":")[1]);
+        }
       }
+
+      // load through every macro using forEach like a gigachad
+      allMacros.forEach(macro -> loadMacro(macro, group));  // TODO: see what intellij thinks because i coded this using replit and it's probably very botchy
+    }
+    
+    // Do what the station sign does
+    super.execute(info);
+  }
   
-      try {
+  
+  @Override
+  public boolean build(SignChangeActionEvent event) {
+    if (event.getPlayer().hasPermission("mikestcaddons.barrelstation")) {
+      return SignBuildOptions.create().setName("barrelstation").setDescription("stop, wait and launch trains, and update blocks").handle(event.getPlayer());
+    } else {
+      event.setCancelled(true);
+      return false;
+    }
+  }
+
+  // put code in a function cuz i hate myself
+  private void loadMacro(String macro, MinecartGroup group) {
+    try {
         Yaml yaml = new Yaml();
-        Map<String, Object> data = yaml.load(Arrays.toString(content));
+        Map<String, Object> data = yaml.load(macro);
     
         if (data == null) return;
     
@@ -230,21 +264,6 @@ public class SignActionBarrelStation extends SignActionStation {
         // send error messages to passengers
         group.forEach(m -> m.getEntity().getPlayerPassengers().forEach(p -> p.sendMessage(e.getMessage())));
       }
-    }
-    
-    // Do what the station sign does
-    super.execute(info);
-  }
-  
-  
-  @Override
-  public boolean build(SignChangeActionEvent event) {
-    if (event.getPlayer().hasPermission("mikestcaddons.barrelstation")) {
-      return SignBuildOptions.create().setName("barrelstation").setDescription("stop, wait and launch trains, and update blocks").handle(event.getPlayer());
-    } else {
-      event.setCancelled(true);
-      return false;
-    }
   }
   
 }
