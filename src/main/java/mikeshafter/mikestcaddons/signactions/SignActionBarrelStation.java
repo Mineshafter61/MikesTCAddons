@@ -241,7 +241,7 @@ public class SignActionBarrelStation extends SignActionStation {
                     group.playNamedAnimation(animationOptions);
                   }
                   case "open" -> {
-                    World world = state.getWorld();
+                    World world = group.getWorld();
                     int x = Integer.parseInt(params.get("x").toString());
                     int y = Integer.parseInt(params.get("y").toString());
                     int z = Integer.parseInt(params.get("z").toString());

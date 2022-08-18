@@ -31,13 +31,13 @@ import java.util.Map;
 import static mikeshafter.mikestcaddons.util.BarrelUtil.*;
 
 
-public class SignActionBarrelRun {
+public class SignActionBarrelRun extends SignAction {
   // Get plugin
   private Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
   
   @Override
   public boolean match(SignActionEvent info) {
-    return info.isType("barrelsta", "specialsta") && info.getMode() != SignActionMode.NONE;
+    return info.isType("barrelrun", "specialrun") && info.getMode() != SignActionMode.NONE;
   }
   
   
@@ -109,8 +109,8 @@ public class SignActionBarrelRun {
   
   @Override
   public boolean build(SignChangeActionEvent event) {
-    if (event.getPlayer().hasPermission("mikestcaddons.barrelstation")) {
-      return SignBuildOptions.create().setName("barrelstation").setDescription("stop, wait and launch trains, and update blocks").handle(event.getPlayer());
+    if (event.getPlayer().hasPermission("mikestcaddons.barrelrun")) {
+      return SignBuildOptions.create().setName("barrelrun").setDescription("update blocks").handle(event.getPlayer());
     } else {
       event.setCancelled(true);
       return false;
@@ -239,7 +239,7 @@ public class SignActionBarrelRun {
                     group.playNamedAnimation(animationOptions);
                   }
                   case "open" -> {
-                    World world = state.getWorld();
+                    World world = group.getWorld();
                     int x = Integer.parseInt(params.get("x").toString());
                     int y = Integer.parseInt(params.get("y").toString());
                     int z = Integer.parseInt(params.get("z").toString());
@@ -256,7 +256,7 @@ public class SignActionBarrelRun {
         } 
           
         else if (!(data.get(key) instanceof Map))
-          plugin.getLogger().warning("BarrelStation's barrel book is in the wrong format!");
+          plugin.getLogger().warning("BarrelRun's barrel book is in the wrong format!");
       }
       
     } catch (ScannerException e) {
