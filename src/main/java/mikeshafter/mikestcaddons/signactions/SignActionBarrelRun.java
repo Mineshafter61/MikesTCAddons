@@ -4,8 +4,8 @@ import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
-import com.bergerkiller.bukkit.tc.signactions.SignActionMode;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
+import com.bergerkiller.bukkit.tc.signactions.SignActionMode;
 import com.bergerkiller.bukkit.tc.signactions.SignActionType;
 import com.bergerkiller.bukkit.tc.utils.SignBuildOptions;
 import mikeshafter.mikestcaddons.MikesTCAddons;
@@ -23,17 +23,14 @@ import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.scanner.ScannerException;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import static mikeshafter.mikestcaddons.util.BarrelUtil.*;
 
 
 public class SignActionBarrelRun extends SignAction {
   // Get plugin
-  private Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
+  private final Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
   
   @Override
   public boolean match(SignActionEvent info) {
@@ -80,7 +77,7 @@ public class SignActionBarrelRun extends SignAction {
   
       // All code must now be done in macros written in config.yml.
       // Each line in the book corresponds to a macro.
-      boolean inMacro = false;
+      boolean inMacro;
       String macroText = "";
       ArrayList<String> allMacros = new ArrayList<>();
       
@@ -91,17 +88,19 @@ public class SignActionBarrelRun extends SignAction {
 
         if (!inMacro) {
           // add the previous macroText to allMacros before starting a new one (if macroText is not empty)
-          if (macroText != "") allMacros.add(macroText);
+          if (!Objects.equals(macroText, "")) allMacros.add(macroText);
           // start a new macroText
-          macroText = plugin.getConfig().get(line).toString();  // get the yaml to replace
+          // if the macro doesn't exist, quit
+          if (plugin.getConfig().get(line) == null) return;
+          macroText = Objects.requireNonNull(plugin.getConfig().get(line)).toString();  // get the yaml to replace
         }
         else {  // replace text in the yaml
-          macroText.replaceAll("%"+line.split(":")[0]+"%", line.split(":")[1]);
+          macroText = macroText.replaceAll("%"+line.split(":")[0]+"%", line.split(":")[1]);
         }
       }
 
       // load through every macro using forEach like a gigachad
-      allMacros.forEach(macro -> loadMacro(macro, group));  // TODO: see what intellij thinks because i coded this using replit and it's probably very botchy
+      allMacros.forEach(macro -> loadMacro(macro, group));
     }
     
   }
