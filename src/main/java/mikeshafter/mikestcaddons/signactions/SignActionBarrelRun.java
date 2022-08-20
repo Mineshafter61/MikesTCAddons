@@ -29,8 +29,6 @@ import static mikeshafter.mikestcaddons.util.BarrelUtil.*;
 
 
 public class SignActionBarrelRun extends SignAction {
-  // Get plugin
-  private final Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
   
   @Override
   public boolean match(SignActionEvent info) {
@@ -54,6 +52,8 @@ public class SignActionBarrelRun extends SignAction {
   
   
   public void barrel(SignActionEvent info, MinecartGroup group) {
+  
+    Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
     
     // Parse barrel
     BlockState state = info.getAttachedBlock().getState();
@@ -119,6 +119,7 @@ public class SignActionBarrelRun extends SignAction {
   // put code in a function cuz i hate myself
   private void loadMacro(String macro, MinecartGroup group) {
     try {
+      Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
       Yaml yaml = new Yaml();
       Map<String, Object> data = yaml.load(macro);
   

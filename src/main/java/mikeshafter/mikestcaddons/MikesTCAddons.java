@@ -40,9 +40,10 @@ public final class MikesTCAddons extends JavaPlugin {
     //
     // Register config
     //
+    this.saveDefaultConfig();
     this.getConfig().options().copyDefaults(true);
     this.saveConfig();
-  
+    
     //
     // Register schedulers
     //

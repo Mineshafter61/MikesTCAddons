@@ -20,7 +20,6 @@ public class SignActionVariable extends SignAction {
   
   @Override
   public void execute(SignActionEvent event) {
-    Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
     // When a [train] sign is placed, activate when powered by redstone when the train
     // goes over the sign, or when redstone is activated.
     // When a [cart] sign is placed, activate when powered by redstone when each cart
