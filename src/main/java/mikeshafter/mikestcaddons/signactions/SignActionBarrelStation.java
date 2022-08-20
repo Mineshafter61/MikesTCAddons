@@ -93,7 +93,9 @@ public class SignActionBarrelStation extends SignActionStation {
           macroText = Objects.requireNonNull(plugin.getConfig().get(line)).toString();  // get the yaml to replace
         }
         else {  // replace text in the yaml
-          macroText = macroText.replaceAll("%"+line.split(":")[0]+"%", line.split(":")[1]);
+          String[] splitLine = line.split(":");
+          if (splitLine.length != 2) return;  // break if old format
+          macroText = macroText.replaceAll("%"+splitLine[0]+"%", splitLine[1]);
         }
       }
 
