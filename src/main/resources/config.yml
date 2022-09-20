@@ -1,4 +1,4 @@
 barrels:
   example-barrel:
     1 tag:
-      announce: The next station is ${station}.
+      announce: The next station is %station%.

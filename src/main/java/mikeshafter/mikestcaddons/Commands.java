@@ -203,7 +203,11 @@ public class Commands implements TabExecutor {
       BarrelUtil.closeDoor(world, x, y, z);
       return true;
     }
-    
+
+    // reload
+    else if (command.getName().equalsIgnoreCase("reload") && sender.hasPermission("mikestcaddons.reload")) {
+      MikesTCAddons.getPlugin(MikesTCAddons.class).reloadConfig();
+    }
     return false;
   }
   
