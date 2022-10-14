@@ -1,6 +1,8 @@
 # MikesTCAddons
 Mike's TC Addons: Addons for TrainCarts!
 
+2022-10-14: Mark for partial deprecation. Individual components will be moved to individual plugins for a more modular approach.
+
 ## Installation
 1. Install [BKCommonLib](https://www.spigotmc.org/resources/bkcommonlib.39590/) and [TrainCarts](https://www.spigotmc.org/resources/traincarts.39592/)
 2. Download this plugin from the Releases page
