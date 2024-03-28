@@ -22,10 +22,12 @@ java {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:24.0.1'
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.18.1-v3-SNAPSHOT'
     compileOnly 'com.bergerkiller.bukkit:TrainCarts:1.18.1-v3-SNAPSHOT'
     compileOnly 'com.bergerkiller.bukkit:SignLink:1.18.1-v1-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:TCCoasters:1.18.1-v3-SNAPSHOT'
 }
 
 test {

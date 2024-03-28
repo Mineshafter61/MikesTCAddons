@@ -22,9 +22,11 @@ commands:
   opengate:
     description: Opens gates
     usage: /opengate <x> <y> <z> <direction> <ticks>
+  reload:
+    description: reloads config
 
 permissions:
-  oldthrottle.throttle:
+  mikestcaddons.throttle:
     description: allows use of /throttle
     default: op
   mikestcaddons.door:
@@ -41,4 +43,7 @@ permissions:
     default: false
   mikestcaddons.gate:
     description: allows the use of /opengate
+    default: op
+  mikestcaddons.reload:
+    description: reloads config
     default: op

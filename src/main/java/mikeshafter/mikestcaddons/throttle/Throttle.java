@@ -105,20 +105,20 @@ public class Throttle {
           airUsed = 0d;
           if (brakePipe.progress() < 0.98) brakePipe.progress(brakePipe.progress()+0.002f);
           //
-          power = 0.001/(1+Math.pow(3, 10*speed-2));
+          power = 0.0005/(1+Math.pow(3, 10*speed-2));
           minecartGroup.setForwardForce(speed);
         }
         // power on 1 bogie
         case 6 -> {
           airUsed = 0d;
           //
-          power = speed > 0.15 ? 0.002d : 0d;
+          power = speed > 0.15 ? 0.001d : 0d;
         }
         // power on 2 bogies
         case 7 -> {
           airUsed = 0d;
           //
-          power = speed > 0.15 ? 0.004d : 0d;
+          power = speed > 0.15 ? 0.002d : 0d;
         }
         // left tag
         case 0 -> {
