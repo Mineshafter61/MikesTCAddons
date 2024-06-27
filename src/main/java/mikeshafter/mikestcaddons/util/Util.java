@@ -1,12 +1,12 @@
 package mikeshafter.mikestcaddons.util;
 
-import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.common.utils.LogicUtil;
 import com.bergerkiller.bukkit.common.utils.ParseUtil;
 import com.bergerkiller.bukkit.sl.API.TickMode;
 import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
+import mikeshafter.mikestcaddons.dynamics.PlatformGate;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.*;
@@ -15,7 +15,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
-import java.util.Set;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,7 +125,7 @@ public static void playSound(MinecartGroup group, String sound, String source, f
 }
 
 // Helper method for all playSound methods
-public static void _playSound(Player player, @Subst ("minecraft") String sound, String source, float volume, float pitch) {
+private static void _playSound(Player player, @Subst("minecraft") String sound, String source, float volume, float pitch) {
     Sound.Source s = switch (source) {
         case "music" -> Sound.Source.MUSIC;
         case "record" -> Sound.Source.RECORD;
@@ -185,89 +185,6 @@ public static void closeDoor(World world, int x, int y, int z) {
     for (PlatformGate gate : gates) {
         if (gate.getBlock().getLocation().equals(new Location(world, x, y, z))) gate.closeGate(false);
     }
-}
-
-public static void swapMember (MinecartMember<?> member) {
-	ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
-
-	Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
-	if (attachments != null) {
-		for (ConfigurationNode node : attachments) {
-
-			ConfigurationNode attachment = member.getProperties().getModel().getConfig().getNode("attachments");
-			attachment.set(node.getPath(), swapNode(node));
-			fullConfig.set("attachments", attachment);
-		}
-		member.getProperties().getModel().update(fullConfig);
-	}
-}
-
-public static ConfigurationNode swapNode (ConfigurationNode attachmentNode) {
-	Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
-	if (attachments != null) {
-		for (ConfigurationNode node : attachments) {
-			ConfigurationNode attachment = attachmentNode.getNode("attachments");
-			attachment.set(node.getPath(), swapNode(node));
-			attachmentNode.set("attachments", attachment);
-		}
-	}
-
-	ConfigurationNode animations = attachmentNode.getNode("animations");
-	Set<String> animationNames = animations.getKeys();
-
-	for (String name: animationNames) {
-		if (name.startsWith("door_R")) {
-			animations.set("door_L"+name.substring(6), animations.getNode(name));
-		}
-		else if (name.startsWith("door_L")) {
-			animations.set("door_R"+name.substring(6), animations.getNode(name));
-		}
-		animations.remove(name);
-		attachmentNode.set("animations", animations);
-	}
-
-	return attachmentNode;
-}
-
-public static void changeAttachmentItem (MinecartMember<?> member, String attachmentName, Material type, int customModelData) {
-    ConfigurationNode fullConfig = member.getProperties().getModel().getConfig();
-    Set<ConfigurationNode> attachments = fullConfig.getNode("attachments").getNodes();
-    if (attachments != null) {
-        for (ConfigurationNode node : attachments) {
-
-            ConfigurationNode attachment = member.getProperties().getModel().getConfig().getNode("attachments");
-            attachment.set(node.getPath(), newAttachmentItem(node, attachmentName, type, customModelData));
-            fullConfig.set("attachments", attachment);
-        }
-        member.getProperties().getModel().update(fullConfig);
-    }
-}
-
-private static ConfigurationNode newAttachmentItem (ConfigurationNode attachmentNode, String attachmentName, Material type, int customModelData) {
-    Set<ConfigurationNode> attachments = attachmentNode.getNode("attachments").getNodes();
-    if (attachments != null) {
-        for (ConfigurationNode node : attachments) {
-            ConfigurationNode attachment = attachmentNode.getNode("attachments");
-            attachment.set(node.getPath(), newAttachmentItem(node, attachmentName, type, customModelData));
-            attachmentNode.set("attachments", attachment);
-        }
-    }
-
-    ConfigurationNode animations = attachmentNode.getNode("animations");
-    Set<String> animationNames = animations.getKeys();
-
-    for (String name: animationNames) {
-        if (name.startsWith("door_R")) {
-            animations.set("door_L"+name.substring(6), animations.getNode(name));
-        }
-        else if (name.startsWith("door_L")) {
-            animations.set("door_R"+name.substring(6), animations.getNode(name));
-        }
-        animations.remove(name);
-        attachmentNode.set("animations", animations);
-    }
-
-    return attachmentNode;
 }
 
 }

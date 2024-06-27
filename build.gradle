@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group 'org.mikeshafter'
-version '1.18.2b1'
+version '1.20.100'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -22,12 +23,24 @@ java {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:24.0.1'
-    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
-    compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.18.1-v3-SNAPSHOT'
-    compileOnly 'com.bergerkiller.bukkit:TrainCarts:1.18.1-v3-SNAPSHOT'
-    compileOnly 'com.bergerkiller.bukkit:SignLink:1.18.1-v1-SNAPSHOT'
-    compileOnly 'com.bergerkiller.bukkit:TCCoasters:1.18.1-v3-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.6-v1-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:TrainCarts:1.20.6-v1-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:SignLink:1.20.4-v1-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:TCCoasters:1.20.6-v1-SNAPSHOT'
+
+    compileOnly "org.incendo:cloud-paper"
+    compileOnly "org.incendo:cloud-annotations"
+    compileOnly "org.incendo:cloud-minecraft-extras"
+}
+
+shadowJar {
+    minimize {}
+    relocate "org.incendo.cloud", "com.bergerkiller.bukkit.common.dep.cloud"
+}
+
+assemble {
+    dependsOn shadowJar
 }
 
 test {

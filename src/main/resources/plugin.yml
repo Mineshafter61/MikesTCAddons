@@ -6,25 +6,6 @@ prefix: "Mike's TC Addons"
 depend: [ BKCommonLib, Train_Carts ]
 authors: [ MikeShafter ]
 description: Mike's TrainCarts Addons
-commands:
-  throttle:
-    description: Main throttle command.
-    usage: /throttle <mu|loc|off> [power cars (if loc)]
-  door:
-    description: Opens/closes doors.
-    usage: /door <l|r> <o|c>
-  swap:
-    description: Swaps "door_L" and "door_R" animations.
-    usage: /swap
-  decouple:
-    description: Decouples minecarts.
-    usage: /decouple <no. of minecarts>
-  opengate:
-    description: Opens gates
-    usage: /opengate <x> <y> <z> <direction> <ticks>
-  reload:
-    description: reloads config
-
 permissions:
   mikestcaddons.throttle:
     description: allows use of /throttle

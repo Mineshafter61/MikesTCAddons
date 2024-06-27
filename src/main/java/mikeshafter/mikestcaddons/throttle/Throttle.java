@@ -82,10 +82,7 @@ public class Throttle {
           power = 0d;
         }
         // air valve closed, maintain dynamic brake
-        case 2 -> {
-          //
-          power = airUsed == 0d && speed > 0.15 ? (0.15-speed)/200 : 0d;
-        }
+        case 2 -> power = airUsed == 0d && speed > 0.15 ? (0.15 - speed) / 200 : 0d;
         // release air, dynamic brake on
         case 3 -> {
           //

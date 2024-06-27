@@ -1,7 +1,6 @@
 package mikeshafter.mikestcaddons.config;
 
 import mikeshafter.mikestcaddons.MikesTCAddons;
-
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -73,7 +72,7 @@ public void reload () {
 		config.load(file);
 	}
 	catch (Exception e) {
-		e.printStackTrace();
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 }

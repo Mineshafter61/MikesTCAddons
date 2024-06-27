@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -26,8 +27,8 @@ public class PlatformGate {
 	private final BlockFace openDirection;
 	private final long openTime;
 	private final Plugin plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
-	private Entity armorStand;
-	private Entity fallingBlock;
+	private ArmorStand armorStand;
+	private FallingBlock fallingBlock;
 	private BukkitTask task = null;
 	private boolean gateClosing = false;
 	private int remainCount = 0;
@@ -71,8 +72,8 @@ public class PlatformGate {
 		this.fallingBlock.setInvulnerable(true);
 		this.fallingBlock.setGravity(false);
 		this.resetCountdown();
-		FallingBlock fallingBlock = (FallingBlock) this.fallingBlock;
-		fallingBlock.setDropItem(false);
+		//FallingBlock fallingBlock = (FallingBlock) this.fallingBlock;
+		this.fallingBlock.setDropItem(false);
 	}
 
 	private void killFallingSand() {
@@ -96,20 +97,14 @@ public class PlatformGate {
 	private void teleportFallingSand(Entity entity, Vector direction, int count, boolean canCancel) {
 		if (canCancel && this.task.isCancelled()) {
 			this.remainCount = count;
-		} else {
-			if (count > 0 && !entity.isDead()) {
-				Location newLoc = entity.getLocation().add(direction);
-				Entity passenger = !entity.getPassengers().isEmpty() ? entity.getPassengers().get(0) : null;
-				if (passenger == null) {
-					return;
-				}
-
-				entity.removePassenger(passenger);
-				entity.teleport(newLoc);
-				entity.addPassenger(passenger);
-				Bukkit.getScheduler().runTaskLater(plugin, () -> this.teleportFallingSand(entity, direction, count - 1, canCancel), 1L);
-			}
-
+		} else if (count > 0 && !entity.isDead()) {
+			if (entity.getPassengers().isEmpty()) return;
+			Location newLoc = entity.getLocation().add(direction);
+			Entity passenger = entity.getPassengers().get(0);
+			entity.removePassenger(passenger);
+			entity.teleport(newLoc);
+			entity.addPassenger(passenger);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> this.teleportFallingSand(entity, direction, count - 1, canCancel), 1L);
 		}
 	}
 
@@ -125,14 +120,14 @@ public class PlatformGate {
 	}
 
 	public void closeGate(boolean force) {
-		if (!force) {
-			if (this.task != null && !this.gateClosing && !this.task.isCancelled()) {
-				this.task.cancel();
-				this.doCloseGate();
-			}
-		} else {
+		if (force) {
 			this.killFallingSand();
 			this.getBlock().setBlockData(this.blockData);
+			return;
+		}
+		if (this.task != null && !this.gateClosing && !this.task.isCancelled()) {
+			this.task.cancel();
+			this.doCloseGate();
 		}
 	}
 
