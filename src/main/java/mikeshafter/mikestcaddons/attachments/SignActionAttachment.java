@@ -33,7 +33,7 @@ public class SignActionAttachment extends SignAction {
 
 			for (MinecartMember<?> member : info.getMembers()) {
 				Changer a = new Changer(member, name, material, customModelData);
-				new Thread(a).start();
+				a.run();
 			}
 		}
 	}

@@ -22,14 +22,15 @@ public class Changer extends RecurseHelper {
 	@Override
 	protected ConfigurationNode call(ConfigurationNode node) {
 		List<String> names = node.getList("names", String.class);
-		if (names.contains(this.name)) {
-			ItemStack item = node.get("item", ItemStack.class);
-			var meta = item.getItemMeta();
-			item.setType(this.type);
-			meta.setCustomModelData(this.data);
-			item.setItemMeta(meta);
-			node.set("item", item);
-		}
+		if (!names.contains(this.name)) return node;
+
+		ItemStack item = node.get("item", ItemStack.class);
+		var meta = item.getItemMeta();
+		item.setType(this.type);
+		meta.setCustomModelData(this.data);
+		item.setItemMeta(meta);
+		node.set("item", item);
+
 		return node;
 	}
 }
