@@ -65,8 +65,8 @@ public class Commands {
 		if (vehicle == null || !vehicle.getProperties().hasOwnership(player)) return;
 
 		for (MinecartMember<?> member : vehicle) {
-			Swapper a = new Swapper(member, "door_L", "door_R");
-			new Thread(a).start();
+			Swapper a = new Swapper(member, animation0, animation1);
+			a.run();
 		}
 	}
 
@@ -88,7 +88,7 @@ public class Commands {
 
 		for (MinecartMember<?> member : vehicle) {
 			Changer a = new Changer(member, name, Material.getMaterial(material.toUpperCase()), customModelData);
-			new Thread(a).start();
+			a.run();
 		}
 }
 

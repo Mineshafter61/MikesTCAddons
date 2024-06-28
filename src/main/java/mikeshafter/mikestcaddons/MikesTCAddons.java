@@ -12,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
-
 public final class MikesTCAddons extends JavaPlugin {
 
 private final SignActionSwap signActionSwap = new SignActionSwap();

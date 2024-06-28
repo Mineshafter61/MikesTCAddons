@@ -23,7 +23,7 @@ public class SignActionSwap extends SignAction {
 				&& info.isPowered()) {
 			for (MinecartMember<?> member : info.getMembers()) {
 				Swapper a = new Swapper(member, "door_L", "door_R");
-				new Thread(a).start();
+				a.run();
 			}
 		}
 	}
