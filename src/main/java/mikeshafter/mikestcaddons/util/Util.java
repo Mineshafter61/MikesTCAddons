@@ -16,13 +16,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 
 public class Util {
 
-public static List<PlatformGate> gates = new ArrayList<>(); // List for forced closing
+    public static HashMap<Location, PlatformGate> gates = new HashMap<>();
 
 // Parse a string to ticks
 public static long parseTicks(String timestring) {
@@ -170,21 +169,41 @@ public static void playSoundPoly (String sound, String source, float volume, flo
             _playSound(player, sound, source, volume, pitch);
     }
 }
-// Open door smoothly
+
 public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
     Location location = new Location(world, x, y, z);
+    openDoor(location, direction, openTime);
+}
+
+    // Open door smoothly
+    public static void openDoor(Location location, BlockFace direction, long openTime) {
     Block block = location.getBlock();
     // optimise code
-    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && world.getNearbyEntities(location, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).size() > 0) {
+        if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && !location.getWorld().getNearbyEntities(location, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).isEmpty()) {
         PlatformGate platformGate = new PlatformGate(block, direction, openTime);
+            gates.put(location, platformGate);
         platformGate.activateGate();
     }
 }
 
-public static void closeDoor(World world, int x, int y, int z) {
-    for (PlatformGate gate : gates) {
-        if (gate.getBlock().getLocation().equals(new Location(world, x, y, z))) gate.closeGate(false);
+    public static void closeDoor(Location location) {
+        gates.get(location).closeGate(false);
     }
+
+public static void closeDoor(World world, int x, int y, int z) {
+    Location location = new Location(world, x, y, z);
+    closeDoor(location);
 }
 
+    public static int parseRelative(String str, char axis, Location loc) {
+        if (!str.startsWith("~")) return Integer.parseInt(str);
+
+        int i = str.substring(1).isEmpty() ? 0 : Integer.parseInt(str.substring(1));
+        switch (axis) {
+            case 'x' -> i += loc.getBlockX();
+            case 'y' -> i += loc.getBlockY();
+            case 'z' -> i += loc.getBlockZ();
+        }
+        return i;
+    }
 }

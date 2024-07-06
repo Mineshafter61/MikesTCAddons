@@ -25,20 +25,24 @@ public CustomConfig (String name) {
 	}
 
 	config = new YamlConfiguration();
-	try { config.load(file); }
-	catch (Exception e) { e.printStackTrace(); }
+	try { config.load(file); } catch (Exception e) {
+		plugin.getLogger().warning(e.getLocalizedMessage());
+	}
 }
 
 public void save () {
-	try { config.save(file); }
-	catch (Exception e) { e.printStackTrace(); }
+	try { config.save(file); } catch (Exception e) {
+		plugin.getLogger().warning(e.getLocalizedMessage());
+	}
 }
 
 protected Plugin getConfigPlugin () { return this.plugin; }
 
-public void saveDefaultConfig () {
-	if (!file.exists()) { plugin.saveResource(name, false); }
-}
+	public void saveDefaultConfig() {
+		if (!file.exists()) {
+			plugin.saveResource(name, false);
+		}
+	}
 
 public File getFile () {return file;}
 
@@ -47,7 +51,9 @@ public YamlConfiguration get () {
 	return config;
 }
 
-public Object get (String path) {return this.config.get(path);}
+	public Object get(String path) {
+		return this.config.get(path);
+	}
 
 public String getString (String path) {
 	var s = this.config.getString(path);

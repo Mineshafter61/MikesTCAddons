@@ -15,12 +15,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class PlatformGate {
-	private static final List<PlatformGate> activeGates = new ArrayList<>();
 	private final Block block;
 	private final BlockData blockData;
 	private final Location blockLoc;
@@ -39,10 +35,6 @@ public class PlatformGate {
 		this.blockLoc = block.getLocation();
 		this.openDirection = openDirection;
 		this.blockData = block.getBlockData();
-	}
-
-	public static List<PlatformGate> getActiveGates() {
-		return activeGates;
 	}
 
 	private BlockFace getOpenDirection() {
@@ -91,7 +83,6 @@ public class PlatformGate {
 			this.killFallingSand();
 			this.getBlock().setBlockData(this.blockData);
 		}, (45 - this.remainCount));
-		activeGates.remove(this);
 	}
 
 	private void teleportFallingSand(Entity entity, Vector direction, int count, boolean canCancel) {
@@ -109,7 +100,6 @@ public class PlatformGate {
 	}
 
 	public void activateGate() {
-		activeGates.add(this);
 		this.spawnFallingBlock();
 		Bukkit.getScheduler().runTaskLater(plugin, () -> this.getBlock().setType(Material.AIR), 5L);
 		this.task = Bukkit.getScheduler().runTaskLater(plugin, () -> {

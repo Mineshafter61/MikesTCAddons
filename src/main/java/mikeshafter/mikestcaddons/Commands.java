@@ -8,7 +8,11 @@ import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import mikeshafter.mikestcaddons.attachments.Changer;
 import mikeshafter.mikestcaddons.attachments.Swapper;
+import mikeshafter.mikestcaddons.util.Util;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.BlockFace;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotations.Argument;
@@ -35,8 +39,7 @@ public class Commands {
 		cloud.enable(plugin);
 		cloud.annotations(this);
 		cloud.helpCommand(Collections.singletonList("mikestcaddons"), "Shows information about all of Mike's TC Addons' commands");
-}
-
+	}
 
 	@Command("throttle <type>")
 	@CommandDescription("Turns on or off throttle")
@@ -47,7 +50,7 @@ public class Commands {
 			final @Argument("type") String throttleType
 	) {
 		// Command method here
-}
+	}
 
 	@Command("swap <animation0> <animation1>")
 	@CommandDescription("Swaps two animations")
@@ -72,7 +75,7 @@ public class Commands {
 
 	@Command("changeitem <name> <item_type> <custom_model_data>")
 	@CommandDescription("Changes an item on the train to the item specified")
-	@Permission("mikestcaddons.swap")
+	@Permission("mikestcaddons.changeitem")
 	public void changeItemCmd(
 			final CommandSender sender,
 			final MikesTCAddons plugin,
@@ -90,11 +93,11 @@ public class Commands {
 			Changer a = new Changer(member, name, Material.getMaterial(material.toUpperCase()), customModelData);
 			a.run();
 		}
-}
+	}
 
 	@Command("decouple <number>")
 	@CommandDescription("Decouples carts")
-	@Permission("mikestcaddons.throttle")
+	@Permission("mikestcaddons.decouple")
 	public void decoupleCmd(
 			final CommandSender sender,
 			final MikesTCAddons plugin,
@@ -134,6 +137,43 @@ public class Commands {
 
 		// Create new train and store
 		MinecartGroupStore.createSplitFrom(properties, newGroup);
+	}
 
-}
+	@Command("opengate <x> <y> <z> <direction> <time>")
+	@CommandDescription("Opens glass doors")
+	@Permission("mikestcaddons.gate")
+	public void gateCmd(
+			final CommandSender sender,
+			final MikesTCAddons plugin,
+			final @Argument("x") String x,
+			final @Argument("y") String y,
+			final @Argument("y") String z,
+			final @Argument("direction") String direction,
+			final @Argument("time") String time
+	) {
+		long ticks = Util.parseTicks(time);
+		World world;
+		int X, Y, Z;
+		if (sender instanceof Player player) {
+			world = player.getWorld();
+			X = Util.parseRelative(x, 'x', player.getLocation());
+			Y = Util.parseRelative(y, 'y', player.getLocation());
+			Z = Util.parseRelative(z, 'z', player.getLocation());
+		} else {
+			BlockCommandSender commandBlock = (BlockCommandSender) sender;
+			world = commandBlock.getBlock().getWorld();
+			X = Util.parseRelative(x, 'x', commandBlock.getBlock().getLocation());
+			Y = Util.parseRelative(y, 'y', commandBlock.getBlock().getLocation());
+			Z = Util.parseRelative(z, 'z', commandBlock.getBlock().getLocation());
+		}
+		BlockFace dir = switch (direction.toUpperCase()) {
+			case "S", "SOUTH" -> BlockFace.SOUTH;
+			case "N", "NORTH" -> BlockFace.NORTH;
+			case "E", "EAST" -> BlockFace.EAST;
+			case "W", "WEST" -> BlockFace.WEST;
+			default -> BlockFace.SELF;
+		};
+		Util.openDoor(world, X, Y, Z, dir, ticks);
+	}
+
 }
