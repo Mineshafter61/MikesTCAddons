@@ -1,29 +1,40 @@
 package mikeshafter.mikestcaddons.util;
 
+import com.bergerkiller.bukkit.common.utils.BlockUtil;
 import com.bergerkiller.bukkit.common.utils.LogicUtil;
 import com.bergerkiller.bukkit.common.utils.ParseUtil;
 import com.bergerkiller.bukkit.sl.API.TickMode;
 import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
+import mikeshafter.mikestcaddons.MikesTCAddons;
 import mikeshafter.mikestcaddons.dynamics.PlatformGate;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Fence;
+import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
 
-import java.util.HashMap;
+import java.util.*;
 
 
-public class Util {
+public class AddonsUtil {
 
-    public static HashMap<Location, PlatformGate> gates = new HashMap<>();
+public static Map<Location, PlatformGate> gates = Collections.synchronizedMap(new HashMap<>());
 
-// Parse a string to ticks
+/**
+ * Parse a string to ticks
+ *
+ * @param timestring String containing the time to parse
+ * @return Number of ticks
+ */
 public static long parseTicks(String timestring) {
     long rval = 0;
     if (!LogicUtil.nullOrEmpty(timestring)) {
@@ -57,11 +68,9 @@ public static void announceCuboid(int x1, int y1, int z1, int x2, int y2, int z2
         int x = location.getBlockX();
         int y = location.getBlockY();
         int z = location.getBlockZ();
-        if (
-            ((x1 <= x && x <= x2) || (x1 >= x && x >= x2)) &&
-            ((y1 <= y && y <= y2) || (y1 >= y && y >= y2)) &&
-            ((z1 <= z && z <= z2) || (z1 >= z && z >= z2))
-        ) player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        if (((x1 <= x && x <= x2) || (x1 >= x && x >= x2)) && ((y1 <= y && y <= y2) || (y1 >= y && y >= y2)) && ((z1 <= z && z <= z2) || (z1 >= z && z >= z2))) {
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        }
     }
 }
 
@@ -69,8 +78,9 @@ public static void announceCuboid(int x1, int y1, int z1, int x2, int y2, int z2
 public static void announceSphere(double x, double y, double z, double r, String message) {
     for (Player player : Bukkit.getOnlinePlayers()) {
         Location location = player.getLocation();
-        if ((location.getX()-x)*(location.getX()-x)+(location.getY()-y)*(location.getY()-y)+(location.getZ()-z)*(location.getZ()-z) <= r*r)
+        if ((location.getX() - x) * (location.getX() - x) + (location.getY() - y) * (location.getY() - y) + (location.getZ() - z) * (location.getZ() - z) <= r * r) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        }
     }
 }
 
@@ -80,8 +90,7 @@ public static void announcePoly (String message, int[]... points) {
         int x = location.getBlockX();
         int y = location.getBlockY();
         int z = location.getBlockZ();
-        if (inPolygonWE(x, y, z, points))
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        if (inPolygonWE(x, y, z, points)) {player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));}
     }
 }
 
@@ -145,8 +154,9 @@ private static void _playSound(Player player, @Subst("minecraft") String sound, 
 public static void playSoundCuboid(double x1, double y1, double z1, double x2, double y2, double z2, String sound, String source, float volume, float pitch) {
     for (Player player : Bukkit.getOnlinePlayers()) {
         Location location = player.getLocation();
-        if (Math.abs(x1-location.getX()) < Math.abs(x1-x2) && Math.abs(y1-location.getY()) < Math.abs(y1-y2) && Math.abs(z1-location.getZ()) < Math.abs(z1-z2))
+        if (Math.abs(x1 - location.getX()) < Math.abs(x1 - x2) && Math.abs(y1 - location.getY()) < Math.abs(y1 - y2) && Math.abs(z1 - location.getZ()) < Math.abs(z1 - z2)) {
             _playSound(player, sound, source, volume, pitch);
+        }
     }
 }
 
@@ -154,8 +164,9 @@ public static void playSoundCuboid(double x1, double y1, double z1, double x2, d
 public static void playSoundSphere(double x, double y, double z, double r, String sound, String source, float volume, float pitch) {
     for (Player player : Bukkit.getOnlinePlayers()) {
         Location location = player.getLocation();
-        if ((location.getX()-x)*(location.getX()-x)+(location.getY()-y)*(location.getY()-y)+(location.getZ()-z)*(location.getZ()-z) <= r*r)
+        if ((location.getX() - x) * (location.getX() - x) + (location.getY() - y) * (location.getY() - y) + (location.getZ() - z) * (location.getZ() - z) <= r * r) {
             _playSound(player, sound, source, volume, pitch);
+        }
     }
 }
 
@@ -165,8 +176,7 @@ public static void playSoundPoly (String sound, String source, float volume, flo
         int x = location.getBlockX();
         int y = location.getBlockY();
         int z = location.getBlockZ();
-        if (inPolygonWE(x, y, z, points))
-            _playSound(player, sound, source, volume, pitch);
+        if (inPolygonWE(x, y, z, points)) {_playSound(player, sound, source, volume, pitch);}
     }
 }
 
@@ -176,34 +186,86 @@ public static void openDoor(World world, int x, int y, int z, BlockFace directio
 }
 
     // Open door smoothly
-    public static void openDoor(Location location, BlockFace direction, long openTime) {
-    Block block = location.getBlock();
+public static void openDoor (Location loc, BlockFace direction, long openTime) {
+    Block block = loc.getBlock();
     // optimise code
-        if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && !location.getWorld().getNearbyEntities(location, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).isEmpty()) {
+    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && (block.getBlockData() instanceof Fence || block.getBlockData() instanceof GlassPane) && !loc.getWorld().getNearbyEntities(loc, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).isEmpty()) {
         PlatformGate platformGate = new PlatformGate(block, direction, openTime);
-            gates.put(location, platformGate);
-        platformGate.activateGate();
+        platformGate.activateGate(); gates.put(loc, platformGate);
     }
 }
 
-    public static void closeDoor(Location location) {
-        gates.get(location).closeGate(false);
+public static void closeDoor (Location loc) {
+    if (gates.get(loc) != null) {
+        MikesTCAddons.getPlugin(MikesTCAddons.class).getLogger().info("Closing gate " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+        gates.get(loc).closeGate(false); gates.remove(loc);
     }
+}
 
 public static void closeDoor(World world, int x, int y, int z) {
     Location location = new Location(world, x, y, z);
     closeDoor(location);
 }
 
-    public static int parseRelative(String str, char axis, Location loc) {
+    /** Turn relative coordinates into absolute coordinates
+     * @param str Coordinate string
+     * @param axis Axis to parse
+     * @param loc Current player location
+     * @return Absolute coordinates from relative coordinates
+     */
+    public static int parseRelative (String str, char axis, Location loc) {
         if (!str.startsWith("~")) return Integer.parseInt(str);
 
-        int i = str.substring(1).isEmpty() ? 0 : Integer.parseInt(str.substring(1));
-        switch (axis) {
-            case 'x' -> i += loc.getBlockX();
-            case 'y' -> i += loc.getBlockY();
-            case 'z' -> i += loc.getBlockZ();
-        }
-        return i;
+        int i = str.substring(1).isEmpty() ? 0 : Integer.parseInt(str.substring(1)); switch (axis) {
+            case 'x' -> i += loc.getBlockX(); case 'y' -> i += loc.getBlockY(); case 'z' -> i += loc.getBlockZ();
+        } return i;
     }
+
+/**
+ * Gets the block to reference when using a sign
+ *
+ * @param sign Sign to check
+ * @return The block to reference
+ */
+public static Block getReferenceBlock (org.bukkit.block.Sign sign) {
+    if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign) {
+        return BlockUtil.getAttachedBlock((Block) sign);
+    } return sign.getBlock();
+}
+
+/**
+ * Gets the way a sign is facing
+ *
+ * @param sign Sign to parse
+ * @return Returns the rotation of a standing sign, and the facing of a wall sign.
+ */
+public static BlockFace getSignFacing (org.bukkit.block.Sign sign) {
+    if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w) {
+        return w.getFacing();
+    } else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) {return s.getRotation();} else {
+        return BlockFace.SELF;
+    }
+}
+
+/**
+ * Converts a list of Components componentList to a list of Strings.
+ *
+ * @param cList The component to parse.
+ * @return a list of Strings from the list of Components
+ */
+public static List<String> parseComponents (List<Component> cList) {
+    List<String> r = new ArrayList<>(); cList.forEach(c -> r.add(parseComponent(c))); return r;
+}
+
+/**
+ * Converts a Component c to a String. For the other way around, use {@link TextComponent#content(String)}.
+ *
+ * @param c The component to parse.
+ * @return the Component in String format
+ */
+public static String parseComponent (final Component c) {
+    if (c instanceof TextComponent) {return ((TextComponent) c).content();} else if (c == null) {return "";} else {
+        return c.examinableName();
+    }
+}
 }

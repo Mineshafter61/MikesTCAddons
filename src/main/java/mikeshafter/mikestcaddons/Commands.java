@@ -8,7 +8,7 @@ import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import mikeshafter.mikestcaddons.attachments.Changer;
 import mikeshafter.mikestcaddons.attachments.Swapper;
-import mikeshafter.mikestcaddons.util.Util;
+import mikeshafter.mikestcaddons.util.AddonsUtil;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -146,25 +146,23 @@ public class Commands {
 			final CommandSender sender,
 			final MikesTCAddons plugin,
 			final @Argument("x") String x,
-			final @Argument("y") String y,
-			final @Argument("y") String z,
+			final @Argument("y") String y, final @Argument("z") String z,
 			final @Argument("direction") String direction,
 			final @Argument("time") String time
 	) {
-		long ticks = Util.parseTicks(time);
+		long ticks = AddonsUtil.parseTicks(time);
 		World world;
 		int X, Y, Z;
 		if (sender instanceof Player player) {
-			world = player.getWorld();
-			X = Util.parseRelative(x, 'x', player.getLocation());
-			Y = Util.parseRelative(y, 'y', player.getLocation());
-			Z = Util.parseRelative(z, 'z', player.getLocation());
+			world = player.getWorld(); X = AddonsUtil.parseRelative(x, 'x', player.getLocation());
+			Y = AddonsUtil.parseRelative(y, 'y', player.getLocation());
+			Z = AddonsUtil.parseRelative(z, 'z', player.getLocation());
 		} else {
 			BlockCommandSender commandBlock = (BlockCommandSender) sender;
 			world = commandBlock.getBlock().getWorld();
-			X = Util.parseRelative(x, 'x', commandBlock.getBlock().getLocation());
-			Y = Util.parseRelative(y, 'y', commandBlock.getBlock().getLocation());
-			Z = Util.parseRelative(z, 'z', commandBlock.getBlock().getLocation());
+			X = AddonsUtil.parseRelative(x, 'x', commandBlock.getBlock().getLocation());
+			Y = AddonsUtil.parseRelative(y, 'y', commandBlock.getBlock().getLocation());
+			Z = AddonsUtil.parseRelative(z, 'z', commandBlock.getBlock().getLocation());
 		}
 		BlockFace dir = switch (direction.toUpperCase()) {
 			case "S", "SOUTH" -> BlockFace.SOUTH;
@@ -172,8 +170,23 @@ public class Commands {
 			case "E", "EAST" -> BlockFace.EAST;
 			case "W", "WEST" -> BlockFace.WEST;
 			default -> BlockFace.SELF;
-		};
-		Util.openDoor(world, X, Y, Z, dir, ticks);
+		}; AddonsUtil.openDoor(world, X, Y, Z, dir, ticks);
 	}
+
+@Command("closegate <x> <y> <z>")
+@CommandDescription("Closes glass doors")
+@Permission("mikestcaddons.gate")
+public void gateCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("x") String x, final @Argument("y") String y, final @Argument("z") String z) {
+	World world; int X, Y, Z; if (sender instanceof Player player) {
+		world = player.getWorld(); X = AddonsUtil.parseRelative(x, 'x', player.getLocation());
+		Y = AddonsUtil.parseRelative(y, 'y', player.getLocation());
+		Z = AddonsUtil.parseRelative(z, 'z', player.getLocation());
+	} else {
+		BlockCommandSender commandBlock = (BlockCommandSender) sender; world = commandBlock.getBlock().getWorld();
+		X = AddonsUtil.parseRelative(x, 'x', commandBlock.getBlock().getLocation());
+		Y = AddonsUtil.parseRelative(y, 'y', commandBlock.getBlock().getLocation());
+		Z = AddonsUtil.parseRelative(z, 'z', commandBlock.getBlock().getLocation());
+	} AddonsUtil.closeDoor(world, X, Y, Z);
+}
 
 }

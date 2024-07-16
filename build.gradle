@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.mikeshafter'
-version '1.20.100'
+version '1.20.101'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -14,12 +14,6 @@ repositories {
     maven {url 'https://papermc.io/repo/repository/maven-public/'}
     maven {url 'https://oss.sonatype.org/content/groups/public/'}
     maven {url 'https://ci.mg-dev.eu/plugin/repository/everything'}
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
 }
 
 dependencies {
