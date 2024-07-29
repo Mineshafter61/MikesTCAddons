@@ -8,29 +8,30 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class Changer extends RecurseHelper {
-	private final String name;
-	private final Material type;
-	private final int data;
 
-	public Changer(MinecartMember<?> member, String name, Material type, int data) {
-		super(member);
-		this.name = name;
-		this.type = type;
-		this.data = data;
-	}
+private final String name;
+private final Material type;
+private final int data;
 
-	@Override
-	protected ConfigurationNode call(ConfigurationNode node) {
-		List<String> names = node.getList("names", String.class);
-		if (!names.contains(this.name)) return node;
+public Changer (MinecartMember<?> member, String name, Material type, int data) {
+	super(member);
+	this.name = name;
+	this.type = type;
+	this.data = data;
+}
 
-		ItemStack item = node.get("item", ItemStack.class);
-		var meta = item.getItemMeta();
-		item.setType(this.type);
-		meta.setCustomModelData(this.data);
-		item.setItemMeta(meta);
-		node.set("item", item);
+@Override
+protected ConfigurationNode call (ConfigurationNode node) {
+	List<String> names = node.getList("names", String.class);
+	if (!names.contains(this.name)) return node;
 
-		return node;
-	}
+	ItemStack item = node.get("item", ItemStack.class);
+	var meta = item.getItemMeta();
+	item.setType(this.type);
+	meta.setCustomModelData(this.data);
+	item.setItemMeta(meta);
+	node.set("item", item);
+
+	return node;
+}
 }

@@ -5,37 +5,40 @@ import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import java.util.Set;
 
 public abstract class RecurseHelper {
-	final MinecartMember<?> member;
 
-	public RecurseHelper(MinecartMember<?> member) {
-		this.member = member;
-	}
+final MinecartMember<?> member;
 
-	public void run() {
-		ConfigurationNode fullConfig = this.member.getProperties().getModel().getConfig();
+public RecurseHelper (MinecartMember<?> member) {this.member = member;}
 
-		ConfigurationNode attachmentsNode = fullConfig.getNode("attachments");
-		Set<ConfigurationNode> attachmentsSet = attachmentsNode.getNodes();
+public void run () {
+	ConfigurationNode fullConfig = this.member.getProperties().getModel().getConfig();
 
-		if (attachmentsSet != null) for (ConfigurationNode innerNode : attachmentsSet) {
+	ConfigurationNode attachmentsNode = fullConfig.getNode("attachments");
+	Set<ConfigurationNode> attachmentsSet = attachmentsNode.getNodes();
+
+	if (attachmentsSet != null) {
+		for (ConfigurationNode innerNode : attachmentsSet) {
 			attachmentsNode.set(innerNode.getPath(), recurse(innerNode));
 			fullConfig.set("attachments", attachmentsNode);
 		}
-
-		this.member.getProperties().getModel().update(fullConfig);
 	}
 
-	private ConfigurationNode recurse(ConfigurationNode node) {
-		ConfigurationNode attachmentsNode = node.getNode("attachments");
-		Set<ConfigurationNode> attachmentsSet = attachmentsNode.getNodes();
+	this.member.getProperties().getModel().update(fullConfig);
+}
 
-		if (attachmentsSet != null) for (ConfigurationNode innerNode : attachmentsSet) {
+private ConfigurationNode recurse (ConfigurationNode node) {
+	ConfigurationNode attachmentsNode = node.getNode("attachments");
+	Set<ConfigurationNode> attachmentsSet = attachmentsNode.getNodes();
+
+	if (attachmentsSet != null) {
+		for (ConfigurationNode innerNode : attachmentsSet) {
 			attachmentsNode.set(innerNode.getPath(), recurse(innerNode));
 			node.set("attachments", attachmentsNode);
 		}
-
-		return call(node);
 	}
 
-	protected abstract ConfigurationNode call(ConfigurationNode node);
+	return call(node);
+}
+
+protected abstract ConfigurationNode call (ConfigurationNode node);
 }

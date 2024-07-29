@@ -66,7 +66,6 @@ private void killFallingSand () {
 }
 
 private void doCloseGate () {
-	MikesTCAddons.getPlugin(MikesTCAddons.class).getLogger().info("(do) Closing gate...");
 	this.teleportFallingSand(this.getArmorStand(), this.getOpenDirection().getOppositeFace().getDirection().multiply(0.025D), 40 - this.remainCount, false);
 	Bukkit.getScheduler().runTaskLater(plugin, () -> {
 		this.killFallingSand(); this.getBlock().setBlockData(this.blockData);
@@ -94,9 +93,12 @@ public void activateGate () {
 }
 
 public void closeGate (boolean force) {
-	MikesTCAddons.getPlugin(MikesTCAddons.class).getLogger().info("Closing gate..."); if (force) {
-		this.killFallingSand(); this.getBlock().setBlockData(this.blockData); return;
-	} if (this.task != null && !this.gateClosing && !this.task.isCancelled()) {
+	if (force) {
+		this.killFallingSand();
+		this.getBlock().setBlockData(this.blockData);
+		return;
+	}
+	if (this.task != null && !this.gateClosing && !this.task.isCancelled()) {
 		this.task.cancel(); this.doCloseGate();
 	}
 }
