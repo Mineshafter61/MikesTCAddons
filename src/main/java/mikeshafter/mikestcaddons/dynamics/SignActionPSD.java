@@ -14,7 +14,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Lightable;
 import org.bukkit.block.sign.Side;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +47,12 @@ public void execute (SignActionEvent info) {
 				dx = ParseUtil.parseInt(parts[0], dx);
 				dy = ParseUtil.parseInt(parts[1], dy);
 				dz = ParseUtil.parseInt(parts[2], dz);
-			} else if (parts.length == 2) {
+			}
+			else if (parts.length == 2) {
 				dx = dz = ParseUtil.parseInt(parts[0], dx);
 				dy = ParseUtil.parseInt(parts[1], dy);
-			} else if (parts.length == 1) {
+			}
+			else if (parts.length == 1) {
 				dx = dy = dz = ParseUtil.parseInt(parts[0], dx);
 			}
 		}
@@ -96,8 +97,9 @@ private List<Sign> getSigns (Block block, int dx, int dy, int dz) {
 	// check if the signs are correct
 	for (Sign sign : signs) {
 		List<String> lines = AddonsUtil.parseComponents(sign.getSide(Side.FRONT).lines());
+		// incorrect, update!
 		if (!(lines.get(0).equalsIgnoreCase("[psd]"))) {
-			// goto front and return
+			updateSignCache = true;
 			return getSigns(block, dx, dy, dz);
 		}
 	}

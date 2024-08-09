@@ -4,7 +4,7 @@ import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
+import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class Changer extends RecurseHelper {
@@ -26,12 +26,13 @@ protected ConfigurationNode call (ConfigurationNode node) {
 	if (!names.contains(this.name)) return node;
 
 	ItemStack item = node.get("item", ItemStack.class);
-	var meta = item.getItemMeta();
+	ItemMeta meta = item.getItemMeta();
 	item.setType(this.type);
-	meta.setCustomModelData(this.data);
-	item.setItemMeta(meta);
+	if (meta != null && this.data != 0) {
+		meta.setCustomModelData(this.data);
+		item.setItemMeta(meta);
+	}
 	node.set("item", item);
-
 	return node;
 }
 }

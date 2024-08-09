@@ -8,6 +8,10 @@ import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import mikeshafter.mikestcaddons.attachments.Changer;
 import mikeshafter.mikestcaddons.attachments.Swapper;
+import mikeshafter.mikestcaddons.throttle.ManGear;
+import mikeshafter.mikestcaddons.throttle.SimpleLever;
+import mikeshafter.mikestcaddons.throttle.Throttle;
+import mikeshafter.mikestcaddons.throttle.ThrottleController;
 import mikeshafter.mikestcaddons.util.AddonsUtil;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -20,7 +24,6 @@ import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.CommandDescription;
 import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.annotations.processing.CommandContainer;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -42,8 +45,21 @@ public void enable (MikesTCAddons plugin) {
 @Command("throttle <type>")
 @CommandDescription("Turns on or off throttle")
 @Permission("mikestcaddons.throttle")
-public void throttleCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("type") String throttleType) {
-	// Command method here
+public void throttleCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("type") Integer throttleType) {
+	if (!(sender instanceof Player player)) return;
+	MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
+	if (vehicle == null || !vehicle.getProperties().hasOwnership(player)) return;
+
+	if (throttleType == 0) {
+		ThrottleController.removeThrottle(player);
+		return;
+	}
+	Throttle throttle = switch (throttleType) {
+		case 1 -> new SimpleLever(vehicle);
+		case 2 -> new ManGear(vehicle);
+		default -> null;
+	};
+	if (throttle != null) ThrottleController.addThrottle(player, throttle);
 }
 
 @Command("swap <animation0> <animation1>")
@@ -63,13 +79,17 @@ public void swapCmd (final CommandSender sender, final MikesTCAddons plugin, fin
 @Command("changeitem <name> <item_type> <custom_model_data>")
 @CommandDescription("Changes an item on the train to the item specified")
 @Permission("mikestcaddons.changeitem")
-public void changeItemCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("name") String name, final @Argument("item_type") String material, final @Argument("custom_model_data") Integer customModelData) {
+public void changeItemCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("name") String name, final @Argument("item_type") String matString, final @Argument("custom_model_data") Integer customModelData) {
 	if (!(sender instanceof Player player)) return;
 	MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
 	if (vehicle == null || !vehicle.getProperties().hasOwnership(player)) return;
 
+	// material checker
+	if (Material.matchMaterial(matString.toUpperCase()) == null) return;
+	Material material = Material.matchMaterial(matString.toUpperCase());
+
 	for (MinecartMember<?> member : vehicle) {
-		Changer a = new Changer(member, name, Material.getMaterial(material.toUpperCase()), customModelData);
+		Changer a = new Changer(member, name, material, customModelData);
 		a.run();
 	}
 }
@@ -93,10 +113,10 @@ public void decoupleCmd (final CommandSender sender, final MikesTCAddons plugin,
 	if (number < 0) {
 		number = -number;
 
-		for (int i = size - 1, j = 0; i > size - number; i--, j++) {
+		for (int i = size - 1, j = 0; i >= size - number; i--, j++) {
 			newGroup[j] = members.get(i);
-			vehicle.remove(i);
 		}
+		vehicle.subList(size - number, size).clear();
 	}
 
 	else {

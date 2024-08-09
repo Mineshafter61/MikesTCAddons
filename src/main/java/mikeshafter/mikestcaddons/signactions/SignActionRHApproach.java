@@ -2,9 +2,6 @@ package mikeshafter.mikestcaddons.signactions;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.common.config.FileConfiguration;
-import com.bergerkiller.bukkit.common.utils.ParseUtil;
-import com.bergerkiller.bukkit.tc.Direction;
-import com.bergerkiller.bukkit.tc.attachments.animation.AnimationOptions;
 import com.bergerkiller.bukkit.tc.events.SignActionEvent;
 import com.bergerkiller.bukkit.tc.events.SignChangeActionEvent;
 import com.bergerkiller.bukkit.tc.signactions.SignAction;
@@ -42,7 +39,6 @@ public class SignActionRHApproach extends SignAction {
 		FileConfiguration config = new FileConfiguration(plugin, "config.yml");
 		var sequence = config.getNode("announcement-format."+operator);
 
-		return;
 	}
 
 }

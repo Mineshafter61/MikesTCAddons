@@ -21,7 +21,6 @@ import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
-
 import java.util.*;
 
 
@@ -94,20 +93,14 @@ public static void announcePoly (String message, int[]... points) {
     }
 }
 
-private static boolean inPolygonWE (int x, int y, int z, int[][] vertices) {
-    boolean result = java.util.stream.IntStream.range(0, vertices.length)
-        .map(i -> 
-            (vertices[i][2] > z) != (vertices[(i + 1) % vertices.length][2] > z) ?
-                (x < (vertices[(i + 1) % vertices.length][0] - vertices[i][0]) * (z - vertices[i][2]) / (vertices[(i + 1) % vertices.length][2] - vertices[i][2]) + vertices[i][0]) ?
-                    1 : 0 
-                : 0).sum() % 2 == 1;
-
-    int minY = vertices[0][1], maxY = vertices[0][1];
-    for (int j = 1; j < vertices.length; j++) {
-        minY = Math.min(minY, vertices[j][1]);
-        maxY = Math.max(maxY, vertices[j][1]);
+// Play sound in a sphere shape
+public static void playSoundSphere (double x, double y, double z, double r, String sound, String source, float volume, float pitch) {
+    for (Player player : Bukkit.getOnlinePlayers()) {
+        Location location = player.getLocation();
+        if ((location.getX() - x) * (location.getX() - x) + (location.getY() - y) * (location.getY() - y) + (location.getZ() - z) * (location.getZ() - z) <= r * r) {
+            _playSound(player, sound, source, volume, pitch);
+        }
     }
-    return minY <= y && y <= maxY && result;
 }
 
 // Sets a certain SignLink variable
@@ -160,16 +153,6 @@ public static void playSoundCuboid(double x1, double y1, double z1, double x2, d
     }
 }
 
-// Play sound in a sphere shape
-public static void playSoundSphere(double x, double y, double z, double r, String sound, String source, float volume, float pitch) {
-    for (Player player : Bukkit.getOnlinePlayers()) {
-        Location location = player.getLocation();
-        if ((location.getX() - x) * (location.getX() - x) + (location.getY() - y) * (location.getY() - y) + (location.getZ() - z) * (location.getZ() - z) <= r * r) {
-            _playSound(player, sound, source, volume, pitch);
-        }
-    }
-}
-
 public static void playSoundPoly (String sound, String source, float volume, float pitch, int[]... points) {
     for (Player player : Bukkit.getOnlinePlayers()) {
         Location location = player.getLocation();
@@ -178,6 +161,17 @@ public static void playSoundPoly (String sound, String source, float volume, flo
         int z = location.getBlockZ();
         if (inPolygonWE(x, y, z, points)) {_playSound(player, sound, source, volume, pitch);}
     }
+}
+
+private static boolean inPolygonWE (int x, int y, int z, int[][] vertices) {
+    boolean result = java.util.stream.IntStream.range(0, vertices.length).map(i -> (vertices[i][2] > z) != (vertices[(i + 1) % vertices.length][2] > z) ? (x < (vertices[(i + 1) % vertices.length][0] - vertices[i][0]) * (z - vertices[i][2]) / (vertices[(i + 1) % vertices.length][2] - vertices[i][2]) + vertices[i][0]) ? 1 : 0 : 0).sum() % 2 == 1;
+
+    int minY = vertices[0][1], maxY = vertices[0][1];
+    for (int j = 1; j < vertices.length; j++) {
+        minY = Math.min(minY, vertices[j][1]);
+        maxY = Math.max(maxY, vertices[j][1]);
+    }
+    return minY <= y && y <= maxY && result;
 }
 
 public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
@@ -191,14 +185,16 @@ public static void openDoor (Location loc, BlockFace direction, long openTime) {
     // optimise code
     if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && (block.getBlockData() instanceof Fence || block.getBlockData() instanceof GlassPane) && !loc.getWorld().getNearbyEntities(loc, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).isEmpty()) {
         PlatformGate platformGate = new PlatformGate(block, direction, openTime);
-        platformGate.activateGate(); gates.put(loc, platformGate);
+        platformGate.activateGate();
+        gates.put(loc, platformGate);
     }
 }
 
 public static void closeDoor (Location loc) {
     if (gates.get(loc) != null) {
         MikesTCAddons.getPlugin(MikesTCAddons.class).getLogger().info("Closing gate " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-        gates.get(loc).closeGate(false); gates.remove(loc);
+        gates.get(loc).closeGate(false);
+        gates.remove(loc);
     }
 }
 
@@ -228,9 +224,7 @@ public static void closeDoor(World world, int x, int y, int z) {
  * @return The block to reference
  */
 public static Block getReferenceBlock (org.bukkit.block.Sign sign) {
-    if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign) {
-        return BlockUtil.getAttachedBlock((Block) sign);
-    } return sign.getBlock();
+    return sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign ? BlockUtil.getAttachedBlock((Block) sign) : sign.getBlock();
 }
 
 /**
@@ -240,11 +234,7 @@ public static Block getReferenceBlock (org.bukkit.block.Sign sign) {
  * @return Returns the rotation of a standing sign, and the facing of a wall sign.
  */
 public static BlockFace getSignFacing (org.bukkit.block.Sign sign) {
-    if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w) {
-        return w.getFacing();
-    } else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) {return s.getRotation();} else {
-        return BlockFace.SELF;
-    }
+    return sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w ? w.getFacing() : sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s ? s.getRotation() : BlockFace.SELF;
 }
 
 /**
@@ -264,8 +254,6 @@ public static List<String> parseComponents (List<Component> cList) {
  * @return the Component in String format
  */
 public static String parseComponent (final Component c) {
-    if (c instanceof TextComponent) {return ((TextComponent) c).content();} else if (c == null) {return "";} else {
-        return c.examinableName();
-    }
+    return c instanceof TextComponent ? ((TextComponent) c).content() : c == null ? "" : c.examinableName();
 }
 }
