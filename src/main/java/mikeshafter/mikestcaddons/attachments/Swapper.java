@@ -15,7 +15,7 @@ public Swapper (MinecartMember<?> member, String a, String b) {
 }
 
 @Override
-protected ConfigurationNode call (ConfigurationNode node) {
+protected void call (ConfigurationNode node) {
 	ConfigurationNode animations = node.getNode("animations");
 	Object ab = animations.contains(a) ? animations.getNode(a) : null;
 	Object ba = animations.contains(b) ? animations.getNode(b) : null;
@@ -25,7 +25,6 @@ protected ConfigurationNode call (ConfigurationNode node) {
 	if (ba != null) animations.set(a, ba);
 
 	node.set("animations", animations);
-	return node;
 }
 
 }

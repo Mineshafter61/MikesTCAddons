@@ -35,15 +35,19 @@ public void onReceive (int bitArray) {
 		// I = P/V
 		current = (float) (speed * 0.002 / gear);
 		if (current <= 0.2f && gear > 0.0004f) gear -= 0.0002f;
+		if (speed < 0f) speed = 0f;
 		this.controlledGroup.setForwardForce(speed);
 	}
+	if (current < 0f) current = 0f;
 }
 
 @Override
 public void updateHUD (Player player) {
 	player.sendActionBar(Component.text(speed));
-	BossBar.bossBar(Component.text("Main Reservoir").asComponent(), 0.75F, BossBar.Color.PINK, BossBar.Overlay.NOTCHED_10);
-	BossBar.bossBar(Component.text("Traction Current").asComponent(), current, BossBar.Color.RED, BossBar.Overlay.NOTCHED_10);
+	var resr = BossBar.bossBar(Component.text("Main Reservoir").asComponent(), 0.75F, BossBar.Color.PINK, BossBar.Overlay.NOTCHED_10);
+	var trac = BossBar.bossBar(Component.text("Traction Current").asComponent(), current, BossBar.Color.RED, BossBar.Overlay.NOTCHED_10);
+	player.showBossBar(resr);
+	player.showBossBar(trac);
 }
 
 }

@@ -35,9 +35,9 @@ public static void removeThrottle (Player player) {
 @Override
 public void onPacketReceive (PacketReceiveEvent event) {
 	Player player = event.getPlayer();
-	if (getThrottle(player) == null) return;
-
 	final var throttle = getThrottle(player);
+	if (throttle == null) return;
+
 	if (event.getType() != PacketType.IN_STEER_VEHICLE) return;
 	float forwards = event.getPacket().read(PacketType.IN_STEER_VEHICLE.forwards);
 	float sideways = event.getPacket().read(PacketType.IN_STEER_VEHICLE.sideways);

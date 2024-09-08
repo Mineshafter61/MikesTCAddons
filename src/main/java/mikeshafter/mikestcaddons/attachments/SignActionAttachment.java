@@ -11,23 +11,21 @@ public class SignActionAttachment extends SignAction {
 
 @Override
 public boolean match (SignActionEvent info) {
-	return info.isType("attachment");
+	return info.isType("attachment", "changeitem");
 }
 
 @Override
 public void execute (SignActionEvent info) {
-	/*
-	[train]
-	attachment
-	<name>
-	<item_type> <custom_model_data>
-	 */
-
 	if ((info.isTrainSign() || info.isCartSign()) && info.isAction(SignActionType.GROUP_ENTER, SignActionType.MEMBER_ENTER, SignActionType.REDSTONE_ON) && info.isPowered()) {
 		String name = info.getLine(2);
-		String[] newItem = info.getLine(3).split(" ");
-		Material material = Material.valueOf(newItem[0].toUpperCase());
-		int customModelData = Integer.parseInt(newItem[1]);
+		String[] newItem = info.getLine(3).split(" ", 2);
+		Material material = null;
+		int customModelData;
+		if (newItem.length == 2) {
+			material = Material.valueOf(newItem[0].toUpperCase());
+			customModelData = Integer.parseInt(newItem[1]);
+		}
+		else {customModelData = Integer.parseInt(newItem[0]);}
 
 		for (MinecartMember<?> member : info.getMembers()) {
 			Changer a = new Changer(member, name, material, customModelData);
@@ -35,7 +33,6 @@ public void execute (SignActionEvent info) {
 		}
 	}
 }
-
 
 @Override
 public boolean build (SignChangeActionEvent event) {

@@ -12,7 +12,6 @@ public void onSignChange (SignChangeEvent event) {
 	String t = parseComponent(event.line(0));
 	if (t.equalsIgnoreCase("[psd]")) {
 		event.getPlayer().sendMessage(Component.text("You have created a PSD sign!"));
-		SignActionPSD.updatePSD();
 	}
 }
 

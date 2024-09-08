@@ -203,19 +203,18 @@ public static void closeDoor(World world, int x, int y, int z) {
     closeDoor(location);
 }
 
-    /** Turn relative coordinates into absolute coordinates
-     * @param str Coordinate string
-     * @param axis Axis to parse
-     * @param loc Current player location
-     * @return Absolute coordinates from relative coordinates
-     */
-    public static int parseRelative (String str, char axis, Location loc) {
-        if (!str.startsWith("~")) return Integer.parseInt(str);
-
-        int i = str.substring(1).isEmpty() ? 0 : Integer.parseInt(str.substring(1)); switch (axis) {
-            case 'x' -> i += loc.getBlockX(); case 'y' -> i += loc.getBlockY(); case 'z' -> i += loc.getBlockZ();
-        } return i;
-    }
+/**
+ * Turn relative coordinates into absolute coordinates
+ *
+ * @param str Relative coordinate string
+ * @param i   Current coordinate integer
+ * @return Absolute coordinates from relative coordinates
+ */
+public static int parseRelative (String str, int i) {
+    if (!str.startsWith("~")) return Integer.parseInt(str);
+    if (str.substring(1).isEmpty()) return i;
+    return i + Integer.parseInt(str.substring(1));
+}
 
 /**
  * Gets the block to reference when using a sign

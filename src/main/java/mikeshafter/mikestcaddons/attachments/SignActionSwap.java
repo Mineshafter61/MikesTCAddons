@@ -15,8 +15,6 @@ public boolean match (SignActionEvent info) {
 
 @Override
 public void execute (SignActionEvent info) {
-	// When a [train] sign is placed, activate when powered by redstone when the train
-	// goes over the sign, or when redstone is activated.
 	if ((info.isTrainSign() || info.isCartSign()) && info.isAction(SignActionType.GROUP_ENTER, SignActionType.MEMBER_ENTER, SignActionType.REDSTONE_ON) && info.isPowered()) {
 		for (MinecartMember<?> member : info.getMembers()) {
 			Swapper a = new Swapper(member, "door_L", "door_R");

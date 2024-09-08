@@ -1,10 +1,10 @@
 package mikeshafter.mikestcaddons.attachments;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
+import com.bergerkiller.bukkit.common.inventory.CommonItemStack;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class Changer extends RecurseHelper {
@@ -21,18 +21,15 @@ public Changer (MinecartMember<?> member, String name, Material type, int data) 
 }
 
 @Override
-protected ConfigurationNode call (ConfigurationNode node) {
+protected void call (ConfigurationNode node) {
 	List<String> names = node.getList("names", String.class);
-	if (!names.contains(this.name)) return node;
+	if (!names.contains(this.name)) return;
 
 	ItemStack item = node.get("item", ItemStack.class);
-	ItemMeta meta = item.getItemMeta();
-	item.setType(this.type);
-	if (meta != null && this.data != 0) {
-		meta.setCustomModelData(this.data);
-		item.setItemMeta(meta);
-	}
-	node.set("item", item);
-	return node;
+	var c = CommonItemStack.copyOf(item);
+	c.setCustomModelData(this.data);
+	if (this.type != null) c.setType(this.type);
+
+	node.set("item", c.toBukkit());
 }
 }

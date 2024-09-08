@@ -15,6 +15,7 @@ import mikeshafter.mikestcaddons.throttle.ThrottleController;
 import mikeshafter.mikestcaddons.util.AddonsUtil;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
@@ -62,16 +63,16 @@ public void throttleCmd (final CommandSender sender, final MikesTCAddons plugin,
 	if (throttle != null) ThrottleController.addThrottle(player, throttle);
 }
 
-@Command("swap <animation0> <animation1>")
+@Command("swap <a1> <a2>")
 @CommandDescription("Swaps two animations")
 @Permission("mikestcaddons.swap")
-public void swapCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("animation0") String animation0, final @Argument("animation1") String animation1) {
+public void swapCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("a1") String a1, final @Argument("a2") String a2) {
 	if (!(sender instanceof Player player)) return;
 	MinecartGroup vehicle = CartPropertiesStore.getEditing(player).getHolder().getGroup();
 	if (vehicle == null || !vehicle.getProperties().hasOwnership(player)) return;
 
 	for (MinecartMember<?> member : vehicle) {
-		Swapper a = new Swapper(member, animation0, animation1);
+		Swapper a = new Swapper(member, a1, a2);
 		a.run();
 	}
 }
@@ -129,25 +130,32 @@ public void decoupleCmd (final CommandSender sender, final MikesTCAddons plugin,
 }
 
 @Command("opengate <x> <y> <z> <direction> <time>")
-@CommandDescription("Opens glass doors")
+@CommandDescription("Opens glass doors. Time argument is in the HH:MM:SS format.")
 @Permission("mikestcaddons.gate")
 public void gateCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("x") String x, final @Argument("y") String y, final @Argument("z") String z, final @Argument("direction") String direction, final @Argument("time") String time) {
 	long ticks = AddonsUtil.parseTicks(time);
-	World world;
+	if (ticks > 6000) {
+		sender.sendMessage("Cannot open a door for more than 5 minutes!");
+		return;
+	}
+	World w;
 	int X, Y, Z;
 	if (sender instanceof Player player) {
-		world = player.getWorld();
-		X = AddonsUtil.parseRelative(x, 'x', player.getLocation());
-		Y = AddonsUtil.parseRelative(y, 'y', player.getLocation());
-		Z = AddonsUtil.parseRelative(z, 'z', player.getLocation());
+		w = player.getWorld();
+		X = player.getLocation().getBlockX();
+		Y = player.getLocation().getBlockY();
+		Z = player.getLocation().getBlockZ();
 	}
 	else {
-		BlockCommandSender commandBlock = (BlockCommandSender) sender;
-		world = commandBlock.getBlock().getWorld();
-		X = AddonsUtil.parseRelative(x, 'x', commandBlock.getBlock().getLocation());
-		Y = AddonsUtil.parseRelative(y, 'y', commandBlock.getBlock().getLocation());
-		Z = AddonsUtil.parseRelative(z, 'z', commandBlock.getBlock().getLocation());
+		Block commandBlock = ((BlockCommandSender) sender).getBlock();
+		w = commandBlock.getWorld();
+		X = commandBlock.getLocation().getBlockX();
+		Y = commandBlock.getLocation().getBlockY();
+		Z = commandBlock.getLocation().getBlockZ();
 	}
+	X = AddonsUtil.parseRelative(x, X);
+	Y = AddonsUtil.parseRelative(y, Y);
+	Z = AddonsUtil.parseRelative(z, Z);
 	BlockFace dir = switch (direction.toUpperCase()) {
 		case "S", "SOUTH" -> BlockFace.SOUTH;
 		case "N", "NORTH" -> BlockFace.NORTH;
@@ -155,28 +163,29 @@ public void gateCmd (final CommandSender sender, final MikesTCAddons plugin, fin
 		case "W", "WEST" -> BlockFace.WEST;
 		default -> BlockFace.SELF;
 	};
-	AddonsUtil.openDoor(world, X, Y, Z, dir, ticks);
+	AddonsUtil.openDoor(w, X, Y, Z, dir, ticks);
 }
 
 @Command("closegate <x> <y> <z>")
 @CommandDescription("Closes glass doors")
 @Permission("mikestcaddons.gate")
 public void gateCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("x") String x, final @Argument("y") String y, final @Argument("z") String z) {
-	World world;
+	World w;
 	int X, Y, Z;
 	if (sender instanceof Player player) {
-		world = player.getWorld();
-		X = AddonsUtil.parseRelative(x, 'x', player.getLocation());
-		Y = AddonsUtil.parseRelative(y, 'y', player.getLocation());
-		Z = AddonsUtil.parseRelative(z, 'z', player.getLocation());
+		w = player.getWorld();
+		X = player.getLocation().getBlockX();
+		Y = player.getLocation().getBlockY();
+		Z = player.getLocation().getBlockZ();
 	}
 	else {
-		BlockCommandSender commandBlock = (BlockCommandSender) sender;
-		world = commandBlock.getBlock().getWorld();
-		X = AddonsUtil.parseRelative(x, 'x', commandBlock.getBlock().getLocation());
-		Y = AddonsUtil.parseRelative(y, 'y', commandBlock.getBlock().getLocation());
-		Z = AddonsUtil.parseRelative(z, 'z', commandBlock.getBlock().getLocation());
-	} AddonsUtil.closeDoor(world, X, Y, Z);
+		Block commandBlock = ((BlockCommandSender) sender).getBlock();
+		w = commandBlock.getWorld();
+		X = commandBlock.getLocation().getBlockX();
+		Y = commandBlock.getLocation().getBlockY();
+		Z = commandBlock.getLocation().getBlockZ();
+	}
+	AddonsUtil.closeDoor(w, X, Y, Z);
 }
 
 }

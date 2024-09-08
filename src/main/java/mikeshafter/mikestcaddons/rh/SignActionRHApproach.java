@@ -1,4 +1,4 @@
-package mikeshafter.mikestcaddons.signactions;
+package mikeshafter.mikestcaddons.rh;
 
 import com.bergerkiller.bukkit.common.config.ConfigurationNode;
 import com.bergerkiller.bukkit.common.config.FileConfiguration;
