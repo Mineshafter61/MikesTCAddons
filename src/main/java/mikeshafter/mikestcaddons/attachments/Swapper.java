@@ -16,9 +16,9 @@ public Swapper (MinecartMember<?> member, String a, String b) {
 
 @Override
 protected void call (ConfigurationNode node) {
-	ConfigurationNode animations = node.getNode("animations");
-	Object ab = animations.contains(a) ? animations.getNode(a) : null;
-	Object ba = animations.contains(b) ? animations.getNode(b) : null;
+	ConfigurationNode animations = node.getNode("animations").clone();
+	var ab = animations.contains(a) ? animations.getNode(a) : null;
+	var ba = animations.contains(b) ? animations.getNode(b) : null;
 	animations.remove(a);
 	animations.remove(b);
 	if (ab != null) animations.set(b, ab);

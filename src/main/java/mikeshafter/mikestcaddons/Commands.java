@@ -9,15 +9,9 @@ import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import mikeshafter.mikestcaddons.attachments.Changer;
 import mikeshafter.mikestcaddons.attachments.Swapper;
 import mikeshafter.mikestcaddons.throttle.ManGear;
-import mikeshafter.mikestcaddons.throttle.SimpleLever;
 import mikeshafter.mikestcaddons.throttle.Throttle;
 import mikeshafter.mikestcaddons.throttle.ThrottleController;
-import mikeshafter.mikestcaddons.util.AddonsUtil;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotations.Argument;
@@ -55,12 +49,8 @@ public void throttleCmd (final CommandSender sender, final MikesTCAddons plugin,
 		ThrottleController.removeThrottle(player);
 		return;
 	}
-	Throttle throttle = switch (throttleType) {
-		case 1 -> new SimpleLever(vehicle);
-		case 2 -> new ManGear(vehicle);
-		default -> null;
-	};
-	if (throttle != null) ThrottleController.addThrottle(player, throttle);
+	Throttle throttle = new ManGear(vehicle);
+	ThrottleController.addThrottle(player, throttle);
 }
 
 @Command("swap <a1> <a2>")
@@ -128,64 +118,4 @@ public void decoupleCmd (final CommandSender sender, final MikesTCAddons plugin,
 
 	MinecartGroupStore.createSplitFrom(properties, newGroup);
 }
-
-@Command("opengate <x> <y> <z> <direction> <time>")
-@CommandDescription("Opens glass doors. Time argument is in the HH:MM:SS format.")
-@Permission("mikestcaddons.gate")
-public void gateCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("x") String x, final @Argument("y") String y, final @Argument("z") String z, final @Argument("direction") String direction, final @Argument("time") String time) {
-	long ticks = AddonsUtil.parseTicks(time);
-	if (ticks > 6000) {
-		sender.sendMessage("Cannot open a door for more than 5 minutes!");
-		return;
-	}
-	World w;
-	int X, Y, Z;
-	if (sender instanceof Player player) {
-		w = player.getWorld();
-		X = player.getLocation().getBlockX();
-		Y = player.getLocation().getBlockY();
-		Z = player.getLocation().getBlockZ();
-	}
-	else {
-		Block commandBlock = ((BlockCommandSender) sender).getBlock();
-		w = commandBlock.getWorld();
-		X = commandBlock.getLocation().getBlockX();
-		Y = commandBlock.getLocation().getBlockY();
-		Z = commandBlock.getLocation().getBlockZ();
-	}
-	X = AddonsUtil.parseRelative(x, X);
-	Y = AddonsUtil.parseRelative(y, Y);
-	Z = AddonsUtil.parseRelative(z, Z);
-	BlockFace dir = switch (direction.toUpperCase()) {
-		case "S", "SOUTH" -> BlockFace.SOUTH;
-		case "N", "NORTH" -> BlockFace.NORTH;
-		case "E", "EAST" -> BlockFace.EAST;
-		case "W", "WEST" -> BlockFace.WEST;
-		default -> BlockFace.SELF;
-	};
-	AddonsUtil.openDoor(w, X, Y, Z, dir, ticks);
-}
-
-@Command("closegate <x> <y> <z>")
-@CommandDescription("Closes glass doors")
-@Permission("mikestcaddons.gate")
-public void gateCmd (final CommandSender sender, final MikesTCAddons plugin, final @Argument("x") String x, final @Argument("y") String y, final @Argument("z") String z) {
-	World w;
-	int X, Y, Z;
-	if (sender instanceof Player player) {
-		w = player.getWorld();
-		X = player.getLocation().getBlockX();
-		Y = player.getLocation().getBlockY();
-		Z = player.getLocation().getBlockZ();
-	}
-	else {
-		Block commandBlock = ((BlockCommandSender) sender).getBlock();
-		w = commandBlock.getWorld();
-		X = commandBlock.getLocation().getBlockX();
-		Y = commandBlock.getLocation().getBlockY();
-		Z = commandBlock.getLocation().getBlockZ();
-	}
-	AddonsUtil.closeDoor(w, X, Y, Z);
-}
-
 }
