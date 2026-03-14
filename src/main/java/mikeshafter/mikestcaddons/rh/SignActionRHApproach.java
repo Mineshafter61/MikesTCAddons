@@ -49,4 +49,3 @@ public class SignActionRHApproach extends SignAction {
 		.handle(event.getPlayer());
 }
 }
-

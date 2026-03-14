@@ -8,7 +8,7 @@ import com.bergerkiller.bukkit.tc.properties.CartPropertiesStore;
 import com.bergerkiller.bukkit.tc.properties.TrainProperties;
 import mikeshafter.mikestcaddons.attachments.Changer;
 import mikeshafter.mikestcaddons.attachments.Swapper;
-import mikeshafter.mikestcaddons.throttle.ManGear;
+import mikeshafter.mikestcaddons.throttle.Test;
 import mikeshafter.mikestcaddons.throttle.Throttle;
 import mikeshafter.mikestcaddons.throttle.ThrottleController;
 import org.bukkit.Material;
@@ -49,7 +49,7 @@ public void throttleCmd (final CommandSender sender, final MikesTCAddons plugin,
 		ThrottleController.removeThrottle(player);
 		return;
 	}
-	Throttle throttle = new ManGear(vehicle);
+	Throttle throttle = new Test(vehicle);
 	ThrottleController.addThrottle(player, throttle);
 }
 

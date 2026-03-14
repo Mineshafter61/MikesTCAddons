@@ -39,6 +39,8 @@ public void onEnable() {
 	this.saveDefaultConfig();
 	this.commands.enable(this);
 
+	this.getServer().getScheduler().scheduleSyncRepeatingTask(this, ThrottleController::run, 0, 1);
+
 	SignAction.register(signActionSwap);
 	SignAction.register(signActionAttachment);
 	PacketUtil.addPacketListener(this, new ThrottleController(), PacketType.IN_STEER_VEHICLE);

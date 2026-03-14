@@ -39,4 +39,3 @@ public boolean build (SignChangeActionEvent event) {
 	return SignBuildOptions.create().setName("attachment changer").setDescription("changes named attachments").handle(event.getPlayer());
 }
 }
-
