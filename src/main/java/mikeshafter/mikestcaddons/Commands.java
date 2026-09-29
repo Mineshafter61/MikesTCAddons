@@ -65,6 +65,7 @@ public void swapCmd (final CommandSender sender, final MikesTCAddons plugin, fin
 		Swapper a = new Swapper(member, a1, a2);
 		a.run();
 	}
+	sender.sendMessage("Swapped animations " + a1 + " and " + a2 + "!");
 }
 
 @Command("changeitem <name> <item_type> <custom_model_data>")
@@ -83,6 +84,7 @@ public void changeItemCmd (final CommandSender sender, final MikesTCAddons plugi
 		Changer a = new Changer(member, name, material, customModelData);
 		a.run();
 	}
+	sender.sendMessage("Changed item " + name + " to " + material + " - " + customModelData + "!");
 }
 
 @Command("decouple <number>")
@@ -108,12 +110,15 @@ public void decoupleCmd (final CommandSender sender, final MikesTCAddons plugin,
 			newGroup[j] = members.get(i);
 		}
 		vehicle.subList(size - number, size).clear();
+		sender.sendMessage("Decoupled " + -number + " carts from the REAR of the train!");
 	}
 
 	else {
 		// decouple from the front
 		for (int i = 0; i < number; i++) newGroup[i] = members.get(i);
 		vehicle.subList(0, number).clear();
+
+		sender.sendMessage("Decoupled " + number + " carts from the FRONT of the train!");
 	}
 
 	MinecartGroupStore.createSplitFrom(properties, newGroup);

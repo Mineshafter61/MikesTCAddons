@@ -10,11 +10,15 @@ import java.util.HashMap;
 public class ThrottleController implements PacketListener {
 
 private static final MikesTCAddons plugin = MikesTCAddons.getPlugin(MikesTCAddons.class);
-private static final HashMap<Player, Throttle> throttleMap = new HashMap<>(plugin.getServer().getMaxPlayers());
+	private static final HashMap<Player, Throttle> throttleMap = new HashMap<>(plugin.getServer().getMaxPlayers(), 1.125f);
 
 public static void addThrottle (Player player, Throttle throttle) {
 	throttleMap.put(player, throttle);
 }
+
+	public static void removeThrottle (Player player) {
+		throttleMap.remove(player);
+	}
 
 public static void run () {
 	throttleMap.forEach((p, t) -> t.always(p));
@@ -39,10 +43,6 @@ public void onPacketReceive (PacketReceiveEvent event) {
 
 public Throttle getThrottle (Player player) {
 	return throttleMap.get(player);
-}
-
-public static void removeThrottle (Player player) {
-	throttleMap.remove(player);
 }
 
 @Override

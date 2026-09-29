@@ -9,14 +9,13 @@ final MinecartMember<?> member;
 
 public RecurseHelper (MinecartMember<?> member) {this.member = member;}
 
-public void run () {
+	public synchronized void run () {
 	ArrayDeque<ConfigurationNode> stack = new ArrayDeque<>();
-	ConfigurationNode node = this.member.getProperties().getModel().getConfig();
-	stack.addFirst(node);
+		stack.addFirst(this.member.getProperties().getModel().getConfig());
 	while (!stack.isEmpty()) {
+		ConfigurationNode node = stack.removeFirst();
 		stack.addAll(node.getNodeList("attachments"));
 		call(node);
-		node = stack.removeFirst();
 	}
 	this.member.getProperties().getModel().sync();
 }
