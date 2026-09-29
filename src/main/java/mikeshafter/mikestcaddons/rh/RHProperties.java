@@ -40,7 +40,7 @@ public static final ICartProperty<Float> MOTOR = new ICartProperty<>() {
 		Util.setConfigOptional(config, "motor", value);
 	}
 };
-private static final ITrainProperty<String> COMPANY = new ITrainProperty<>() {
+public static final ITrainProperty<String> COMPANY = new ITrainProperty<>() {
 	@Override
 	public String getDefault () {
 		return "";

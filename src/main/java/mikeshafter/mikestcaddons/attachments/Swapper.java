@@ -15,16 +15,24 @@ public Swapper (MinecartMember<?> member, String a, String b) {
 }
 
 @Override
-protected void call (ConfigurationNode node) {
-	ConfigurationNode animations = node.getNode("animations");
-	Object ab = animations.contains(a) ? animations.getNode(a) : null;
-	Object ba = animations.contains(b) ? animations.getNode(b) : null;
-	animations.remove(a);
-	animations.remove(b);
-	if (ab != null) animations.set(b, ab);
-	if (ba != null) animations.set(a, ba);
+protected synchronized void call (ConfigurationNode node) {
+	ConfigurationNode animations = node.getNodeIfExists("animations");
+	if (animations == null) return;
+	if (a.equals(b)) return;
 
-	node.set("animations", animations);
+	ConfigurationNode ab = animations.getNodeIfExists(a);
+	ConfigurationNode ba = animations.getNodeIfExists(b);
+	if (ab == null && ba == null) return;
+
+	// Deep-copy so we can safely reset without aliasing
+	ConfigurationNode abcp = ab == null ? null : ab.clone();
+	ConfigurationNode bacp = ba == null ? null : ba.clone();
+
+	if (bacp != null) {animations.set(a, bacp);}
+	else {animations.remove(a);}
+
+	if (abcp != null) {animations.set(b, abcp);}
+	else {animations.remove(b);}
 }
 
 }

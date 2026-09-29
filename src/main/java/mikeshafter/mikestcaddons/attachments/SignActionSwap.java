@@ -15,10 +15,12 @@ public boolean match (SignActionEvent info) {
 
 @Override
 public void execute (SignActionEvent info) {
-	if ((info.isTrainSign() || info.isCartSign()) && info.isAction(SignActionType.GROUP_ENTER, SignActionType.MEMBER_ENTER, SignActionType.REDSTONE_ON) && info.isPowered()) {
+	if (((info.isTrainSign() && info.isAction(SignActionType.GROUP_ENTER)) || (info.isCartSign() && info.isAction(SignActionType.MEMBER_ENTER))) && info.isPowered()) {
+		String a = info.getLine(2);
+		String b = info.getLine(3);
 		for (MinecartMember<?> member : info.getMembers()) {
-			Swapper a = new Swapper(member, "door_L", "door_R");
-			a.run();
+			Swapper s = new Swapper(member, a, b);
+			s.run();
 		}
 	}
 }

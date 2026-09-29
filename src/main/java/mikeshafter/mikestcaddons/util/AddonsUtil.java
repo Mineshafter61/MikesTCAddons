@@ -7,26 +7,22 @@ import com.bergerkiller.bukkit.sl.API.TickMode;
 import com.bergerkiller.bukkit.sl.API.Variables;
 import com.bergerkiller.bukkit.tc.controller.MinecartGroup;
 import com.bergerkiller.bukkit.tc.controller.MinecartMember;
-import mikeshafter.mikestcaddons.MikesTCAddons;
-import mikeshafter.mikestcaddons.dynamics.PlatformGate;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Fence;
-import org.bukkit.block.data.type.GlassPane;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class AddonsUtil {
-
-public static Map<Location, PlatformGate> gates = Collections.synchronizedMap(new HashMap<>());
 
 /**
  * Parse a string to ticks
@@ -173,36 +169,6 @@ private static boolean inPolygonWE (int x, int y, int z, int[][] vertices) {
     }
     return minY <= y && y <= maxY && result;
 }
-
-public static void openDoor(World world, int x, int y, int z, BlockFace direction, long openTime) {
-    Location location = new Location(world, x, y, z);
-    openDoor(location, direction, openTime);
-}
-
-    // Open door smoothly
-public static void openDoor (Location loc, BlockFace direction, long openTime) {
-    Block block = loc.getBlock();
-    // optimise code
-    if (!(block.getType() == Material.AIR || block.getType() == Material.CAVE_AIR || block.getType() == Material.VOID_AIR) && (block.getBlockData() instanceof Fence || block.getBlockData() instanceof GlassPane) && !loc.getWorld().getNearbyEntities(loc, 48, 32, 48, (entity) -> entity.getType() == EntityType.PLAYER).isEmpty()) {
-        PlatformGate platformGate = new PlatformGate(block, direction, openTime);
-        platformGate.activateGate();
-        gates.put(loc, platformGate);
-    }
-}
-
-public static void closeDoor (Location loc) {
-    if (gates.get(loc) != null) {
-        MikesTCAddons.getPlugin(MikesTCAddons.class).getLogger().info("Closing gate " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-        gates.get(loc).closeGate(false);
-        gates.remove(loc);
-    }
-}
-
-public static void closeDoor(World world, int x, int y, int z) {
-    Location location = new Location(world, x, y, z);
-    closeDoor(location);
-}
-
 /**
  * Turn relative coordinates into absolute coordinates
  *
